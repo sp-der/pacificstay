@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import "./details.css";
+import "./readability.css";
 
 export const metadata: Metadata = {
   title: "Pacific Stay Properties | North County Coastal Rentals & Management",
