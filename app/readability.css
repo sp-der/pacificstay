@@ -1,0 +1,26 @@
+/* Readability pass for Pacific Stay service cards.
+   Keeps the editorial type treatment while adding enough weight/contrast for easier scanning. */
+
+.expanded-service-grid .service-card h3 {
+  font-weight: 600;
+  letter-spacing: -0.012em;
+  color: var(--ink);
+}
+
+.expanded-service-grid .service-card p {
+  font-size: 14px;
+  line-height: 1.7;
+  font-weight: 500;
+  color: rgba(23, 34, 31, 0.74);
+}
+
+.expanded-service-grid .service-card-top span {
+  font-weight: 600;
+  color: rgba(49, 91, 94, 0.82);
+}
+
+@media (max-width: 560px) {
+  .expanded-service-grid .service-card p {
+    font-size: 13.5px;
+  }
+}
