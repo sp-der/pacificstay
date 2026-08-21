@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import "./globals.css";
 import "./details.css";
 import "./readability.css";
+import "./property.css";
+import PropertyLinkEnhancer from "./PropertyLinkEnhancer";
 
 export const metadata: Metadata = {
   title: "Pacific Stay Properties | North County Coastal Rentals & Management",
@@ -16,7 +18,10 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <PropertyLinkEnhancer />
+        {children}
+      </body>
     </html>
   );
 }
