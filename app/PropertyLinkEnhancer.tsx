@@ -3,27 +3,36 @@
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 
+const propertyRoutes: Record<string, string> = {
+  "The Pacific House": "/properties/pacific-house",
+  "Salt + Sand Retreat": "/properties/salt-sand-retreat",
+};
+
 export default function PropertyLinkEnhancer() {
   const router = useRouter();
 
   useEffect(() => {
-    const buttons = Array.from(
-      document.querySelectorAll<HTMLButtonElement>(".stay-card .text-link")
-    );
-    const slugs = ["pacific-house", "salt-sand-retreat"];
-    const cleanups: Array<() => void> = [];
+    function handlePropertyClick(event: MouseEvent) {
+      const target = event.target as HTMLElement | null;
+      const button = target?.closest(".stay-card .text-link") as HTMLElement | null;
 
-    buttons.forEach((button, index) => {
-      const slug = slugs[index];
-      if (!slug) return;
+      if (!button) return;
 
-      const handler = () => router.push(`/properties/${slug}`);
-      button.addEventListener("click", handler);
-      button.setAttribute("aria-label", `View property ${index + 1}`);
-      cleanups.push(() => button.removeEventListener("click", handler));
-    });
+      const card = button.closest(".stay-card");
+      const propertyName = card?.querySelector("h3")?.textContent?.trim();
+      const route = propertyName ? propertyRoutes[propertyName] : undefined;
 
-    return () => cleanups.forEach((cleanup) => cleanup());
+      if (!route) return;
+
+      event.preventDefault();
+      router.push(route);
+    }
+
+    document.addEventListener("click", handlePropertyClick);
+
+    return () => {
+      document.removeEventListener("click", handlePropertyClick);
+    };
   }, [router]);
 
   return null;
