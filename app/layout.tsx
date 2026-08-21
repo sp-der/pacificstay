@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import "./details.css";
 
 export const metadata: Metadata = {
-  title: "Pacific Stay Properties | Coastal Short-Term Rentals",
+  title: "Pacific Stay Properties | North County Coastal Rentals & Management",
   description:
-    "A coastal short-term rental and property management experience by Pacific Stay Properties.",
+    "Pacific Stay Properties provides short-term rental property management and coastal guest stays across Del Mar, La Jolla, Encinitas, Carlsbad, and Oceanside.",
 };
 
 export default function RootLayout({
