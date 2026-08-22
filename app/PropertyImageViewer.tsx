@@ -7,12 +7,14 @@ import { chestnutPhotoTour } from "./properties/photoTourData";
 type ViewerImage = {
   src: string;
   alt: string;
+  label: string;
 };
 
 const chestnutViewerImages: ViewerImage[] = chestnutPhotoTour.flatMap((section) =>
   section.images.map((src, index) => ({
     src,
     alt: `${section.label} photo ${index + 1}`,
+    label: section.label,
   })),
 );
 
@@ -22,6 +24,22 @@ function imageKey(src: string) {
   } catch {
     return src.split("?")[0];
   }
+}
+
+function fallbackLabel(image: HTMLImageElement) {
+  const section = image.closest(".photo-tour-section");
+  const sectionHeading = section?.querySelector("h2")?.textContent?.trim();
+  if (sectionHeading) return sectionHeading;
+
+  const fileName = decodeURIComponent((image.currentSrc || image.src).split("/").pop() || "Property photo")
+    .replace(/\.[^.]+$/, "")
+    .replace(/\s*\(\d+\)(?:_\d+)?$/g, "")
+    .replace(/_\d+$/g, "")
+    .replace(/\d+$/g, "")
+    .replace(/([a-z])([A-Z])/g, "$1 $2")
+    .trim();
+
+  return fileName || "Property photo";
 }
 
 export default function PropertyImageViewer() {
@@ -86,6 +104,7 @@ export default function PropertyImageViewer() {
       const nextImages = imageNodes.map((image) => ({
         src: image.currentSrc || image.src,
         alt: image.alt || "Property photo",
+        label: fallbackLabel(image),
       }));
       const clickedIndex = imageNodes.indexOf(clickedImage);
 
@@ -128,6 +147,11 @@ export default function PropertyImageViewer() {
           <strong>Chestnut By the Sea</strong>
           <span>{activeIndex + 1} / {images.length}</span>
         </div>
+
+        <div className="property-lightbox-room-title" aria-live="polite">
+          {images[activeIndex].label}
+        </div>
+
         <button type="button" onClick={closeViewer} aria-label="Close photo viewer">
           <X size={25} />
         </button>
@@ -164,7 +188,7 @@ export default function PropertyImageViewer() {
             key={`${image.src}-${index}`}
             className={index === activeIndex ? "active" : ""}
             onClick={() => setActiveIndex(index)}
-            aria-label={`View photo ${index + 1}`}
+            aria-label={`View ${image.label} photo ${index + 1}`}
             aria-current={index === activeIndex ? "true" : undefined}
           >
             <img src={image.src} alt="" />
