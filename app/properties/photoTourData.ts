@@ -9,8 +9,6 @@ const LISTING_ID = "1553757930360534380";
 const airbnbPhoto = (id: string) =>
   `https://a0.muscache.com/im/pictures/hosting/Hosting-${LISTING_ID}/original/${id}.jpeg?im_w=1440`;
 
-// These five are the current Airbnb gallery assets corresponding to the
-// client-selected named photos in the uploaded archive.
 const exterior1 = airbnbPhoto("5c5954bb-afdb-4cdc-aa69-11f27d3d1f0e");
 const exterior2 = airbnbPhoto("dfd49318-26cc-4801-98bf-578c8dc5801e");
 const exterior3 = airbnbPhoto("f3d84380-5aaa-40a1-b5ed-d84eed5d2277");
@@ -64,14 +62,14 @@ export const chestnutPhotoTour: PhotoTourSection[] = [
     thumbnail: airbnbPhoto("150d13fc-794c-4b74-9c72-0663d20a7354"),
     images: [
       airbnbPhoto("150d13fc-794c-4b74-9c72-0663d20a7354"),
-      airbnbPhoto("4f387424-aeef-421c-8252-fbcb348462a5"),
-      airbnbPhoto("527816a6-6e0c-4a2c-bd1d-17fa0556e49f"),
-      airbnbPhoto("5f0baadb-a006-4a42-8c8d-e6bfb651afa2"),
-      airbnbPhoto("76ca1b1c-c1d9-4eaa-8886-3b2092730c9e"),
-      airbnbPhoto("886964cd-a680-4d35-a07e-d91520146eb8"),
+      "/chestnut/full-kitchen-2.webp",
+      "/chestnut/full-kitchen-3.webp",
+      "/chestnut/full-kitchen-4.webp",
+      "/chestnut/full-kitchen-5.webp",
+      "/chestnut/full-kitchen-6.webp",
       airbnbPhoto("8b5c467a-33e4-44e9-a422-f1bfdc318ee1"),
-      airbnbPhoto("b35615e9-d776-4fc1-bc34-1b398f1149dc"),
-      airbnbPhoto("e99d2308-422a-4628-9f71-4e71ec2aca51"),
+      "/chestnut/full-kitchen-8.webp",
+      "/chestnut/full-kitchen-9.webp",
       airbnbPhoto("ec1e9bfd-6f01-4dbb-83a3-89830cae5320"),
     ],
   },
@@ -130,8 +128,8 @@ export const chestnutPhotoTour: PhotoTourSection[] = [
   {
     id: "downstairs-kitchenette",
     label: "Downstairs Kitchenette",
-    thumbnail: airbnbPhoto("158b8856-25f8-40c2-840f-cca8b242f38e"),
-    images: [airbnbPhoto("158b8856-25f8-40c2-840f-cca8b242f38e")],
+    thumbnail: "/chestnut/downstairs-kitchenette-1.webp",
+    images: ["/chestnut/downstairs-kitchenette-1.webp"],
   },
   {
     id: "additional-photos",
@@ -140,7 +138,7 @@ export const chestnutPhotoTour: PhotoTourSection[] = [
     images: [
       airbnbPhoto("33a76452-abd1-4ab8-b52d-e37d2755a8c9"),
       airbnbPhoto("3fe4728f-3353-4fca-a0a2-29689ed87e5a"),
-      airbnbPhoto("856d9856-8728-49e6-9128-a39fbb1e7918"),
+      "/chestnut/additional-3.webp",
     ],
   },
 ];
