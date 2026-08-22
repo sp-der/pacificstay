@@ -2,11 +2,27 @@
 
 import { ChevronLeft, ChevronRight, X } from "lucide-react";
 import { useEffect, useState } from "react";
+import { chestnutPhotoTour } from "./properties/photoTourData";
 
 type ViewerImage = {
   src: string;
   alt: string;
 };
+
+const chestnutViewerImages: ViewerImage[] = chestnutPhotoTour.flatMap((section) =>
+  section.images.map((src, index) => ({
+    src,
+    alt: `${section.label} photo ${index + 1}`,
+  })),
+);
+
+function imageKey(src: string) {
+  try {
+    return new URL(src, window.location.origin).pathname;
+  } catch {
+    return src.split("?")[0];
+  }
+}
 
 export default function PropertyImageViewer() {
   const [images, setImages] = useState<ViewerImage[]>([]);
@@ -33,26 +49,6 @@ export default function PropertyImageViewer() {
   }
 
   useEffect(() => {
-    const portraitTargets = Array.from(
-      document.querySelectorAll<HTMLElement>(
-        ".jami-portrait-placeholder, .contact-photo-slot, .property-host-photo",
-      ),
-    );
-
-    portraitTargets.forEach((target) => {
-      if (target.querySelector(".jami-live-photo")) return;
-
-      const image = document.createElement("img");
-      image.src = "/jami-real.webp";
-      image.alt = "Jami Jimenez";
-      image.className = "jami-live-photo";
-      image.loading = "eager";
-      image.decoding = "async";
-      target.prepend(image);
-    });
-  }, []);
-
-  useEffect(() => {
     function handleGalleryClick(event: MouseEvent) {
       const target = event.target as HTMLElement | null;
       const clickedImage = target?.closest(
@@ -60,6 +56,21 @@ export default function PropertyImageViewer() {
       ) as HTMLImageElement | null;
 
       if (!clickedImage) return;
+
+      const isChestnutProperty = window.location.pathname.includes(
+        "/properties/chestnut-by-the-sea",
+      );
+
+      if (isChestnutProperty) {
+        const clickedKey = imageKey(clickedImage.currentSrc || clickedImage.src);
+        const clickedIndex = chestnutViewerImages.findIndex(
+          (image) => imageKey(image.src) === clickedKey,
+        );
+
+        setImages(chestnutViewerImages);
+        setActiveIndex(clickedIndex >= 0 ? clickedIndex : 0);
+        return;
+      }
 
       const photoTour = clickedImage.closest(".photo-tour-page");
       const propertyGallery = clickedImage.closest(".property-gallery");
