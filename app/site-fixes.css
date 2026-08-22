@@ -57,7 +57,7 @@
 .property-google-map-frame {
   position: relative;
   width: 100%;
-  min-height: 420px;
+  min-height: 460px;
   background: var(--sand);
 }
 
@@ -68,7 +68,7 @@
   height: 100%;
   border: 0;
   display: block;
-  filter: saturate(.82) contrast(.96);
+  filter: saturate(.84) contrast(.97);
 }
 
 .property-google-map-footer {
@@ -109,6 +109,31 @@
   font-weight: 600;
 }
 
+.property-nearby-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  background: var(--sand);
+}
+
+.property-nearby-strip span {
+  min-height: 58px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-right: 1px solid var(--line);
+  color: rgba(23,34,31,.7);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+
+.property-nearby-strip span:last-child {
+  border-right: 0;
+}
+
 @media (max-width: 760px) {
   .property-inline-booking {
     width: 100%;
@@ -121,7 +146,7 @@
   }
 
   .property-google-map-frame {
-    min-height: 340px;
+    min-height: 360px;
   }
 
   .property-google-map-footer {
@@ -134,5 +159,22 @@
 
   .property-google-map-footer strong {
     font-size: 21px;
+  }
+
+  .property-nearby-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .property-nearby-strip span {
+    min-height: 52px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .property-nearby-strip span:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .property-nearby-strip span:nth-last-child(-n + 2) {
+    border-bottom: 0;
   }
 }
