@@ -1,9 +1,9 @@
 "use client";
 
+import Link from "next/link";
 import {
   ArrowRight,
   BedDouble,
-  CalendarDays,
   Check,
   ChevronDown,
   CircleDollarSign,
@@ -23,46 +23,39 @@ import {
   Wrench,
   X,
 } from "lucide-react";
-import { FormEvent, useMemo, useState } from "react";
+import { useState } from "react";
 
 type Stay = {
+  slug: string;
   name: string;
   location: string;
   image: string;
   guests: number;
   beds: number;
   baths: number;
-  price: number;
+  rating: string;
+  reviews: number;
   tag: string;
   description: string;
+  airbnbUrl: string;
 };
 
 const stays: Stay[] = [
   {
-    name: "The Pacific House",
-    location: "Del Mar • Sample listing",
+    slug: "chestnut-by-the-sea",
+    name: "Chestnut By the Sea",
+    location: "Carlsbad, California",
     image:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=1800&q=88",
-    guests: 8,
-    beds: 4,
-    baths: 3,
-    price: 495,
-    tag: "Ocean-view escape",
-    description:
-      "Sun-washed interiors, open-air gathering spaces, and an easygoing coastal rhythm made for slow mornings and golden-hour dinners.",
-  },
-  {
-    name: "Salt + Sand Retreat",
-    location: "Encinitas • Sample listing",
-    image:
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1800&q=88",
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/5c5954bb-afdb-4cdc-aa69-11f27d3d1f0e.jpeg?im_w=720",
     guests: 6,
     beds: 3,
     baths: 2,
-    price: 365,
-    tag: "Steps from the coast",
+    rating: "4.88",
+    reviews: 24,
+    tag: "Steps from Carlsbad State Beach",
     description:
-      "A calm, design-forward stay with airy rooms, warm natural textures, and everything guests need for a polished weekend by the water.",
+      "A luxury Bali-inspired coastal stay with a jacuzzi, fire pit, outdoor shower, BBQ patio, beach cruisers, and easy access to Carlsbad Village.",
+    airbnbUrl: "https://www.airbnb.com/h/chestnutbytheseav2",
   },
 ];
 
@@ -144,20 +137,6 @@ function scrollToId(id: string) {
 
 export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
-  const [selectedStay, setSelectedStay] = useState<Stay | null>(null);
-  const [submitted, setSubmitted] = useState(false);
-
-  const today = useMemo(() => new Date().toISOString().slice(0, 10), []);
-
-  function openBooking(stay: Stay) {
-    setSubmitted(false);
-    setSelectedStay(stay);
-  }
-
-  function submitBooking(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubmitted(true);
-  }
 
   return (
     <main>
@@ -169,11 +148,7 @@ export default function HomePage() {
       </div>
 
       <header className="site-header">
-        <button
-          className="wordmark"
-          onClick={() => scrollToId("top")}
-          aria-label="Go to top"
-        >
+        <button className="wordmark" onClick={() => scrollToId("top")} aria-label="Go to top">
           <span>PACIFIC STAY</span>
           <small>PROPERTIES</small>
         </button>
@@ -186,18 +161,11 @@ export default function HomePage() {
           <button onClick={() => scrollToId("contact")}>Contact</button>
         </nav>
 
-        <button
-          className="nav-cta desktop-only"
-          onClick={() => scrollToId("contact")}
-        >
+        <button className="nav-cta desktop-only" onClick={() => scrollToId("contact")}>
           Discuss your property <ArrowRight size={16} />
         </button>
 
-        <button
-          className="mobile-menu-button"
-          aria-label="Open menu"
-          onClick={() => setMenuOpen(true)}
-        >
+        <button className="mobile-menu-button" aria-label="Open menu" onClick={() => setMenuOpen(true)}>
           <Menu size={24} />
         </button>
       </header>
@@ -261,18 +229,14 @@ export default function HomePage() {
             <span>Detail oriented.</span>
           </h1>
           <p className="hero-copy">
-            Pacific Stay Properties pairs hands-on local property care with
-            professional guest support, helping owners protect their homes,
-            create 5-star experiences, and maximize returns.
+            Pacific Stay Properties pairs hands-on local property care with professional guest support,
+            helping owners protect their homes, create 5-star experiences, and maximize returns.
           </p>
           <div className="hero-actions">
             <button className="button button-light" onClick={() => scrollToId("stays")}>
               Explore our stays <ArrowRight size={17} />
             </button>
-            <button
-              className="button button-ghost"
-              onClick={() => scrollToId("contact")}
-            >
+            <button className="button button-ghost" onClick={() => scrollToId("contact")}>
               Discuss your property
             </button>
           </div>
@@ -290,14 +254,11 @@ export default function HomePage() {
         <div className="shell intro-grid">
           <p className="eyebrow">Exceptional care. 5-star experiences. Maximum returns.</p>
           <div>
-            <h2 className="display-heading">
-              Hands-on support for the home. A seamless stay for the guest.
-            </h2>
+            <h2 className="display-heading">Hands-on support for the home. A seamless stay for the guest.</h2>
             <p className="lead-copy">
-              Led by local Airbnb host and short-term rental manager Jami Jimenez,
-              Pacific Stay Properties brings proactive communication, on-site
-              assistance, and careful attention to the details that keep a
-              vacation rental running smoothly.
+              Led by local Airbnb host and short-term rental manager Jami Jimenez, Pacific Stay Properties
+              brings proactive communication, on-site assistance, and careful attention to the details that
+              keep a vacation rental running smoothly.
             </p>
           </div>
         </div>
@@ -307,17 +268,16 @@ export default function HomePage() {
         <div className="shell">
           <div className="section-heading-row">
             <div>
-              <p className="eyebrow">Featured stays</p>
+              <p className="eyebrow">Featured stay</p>
               <h2 className="display-heading">Your coast is calling.</h2>
             </div>
             <p className="section-side-copy">
-              Two sample homes are staged here for the client mock. Jami&apos;s
-              real listing photos, names, rates, and availability can replace
-              these as soon as they are provided.
+              Explore Chestnut By the Sea, a real Pacific Stay-managed Carlsbad home just steps from the beach.
+              Direct booking is the next system being connected to this property.
             </p>
           </div>
 
-          <div className="stay-grid">
+          <div className="stay-grid single-stay-grid">
             {stays.map((stay, index) => (
               <article className="stay-card" key={stay.name}>
                 <div className="stay-image-wrap">
@@ -328,14 +288,12 @@ export default function HomePage() {
                 <div className="stay-card-content">
                   <div className="stay-title-row">
                     <div>
-                      <p className="location-line">
-                        <MapPin size={15} /> {stay.location}
-                      </p>
+                      <p className="location-line"><MapPin size={15} /> {stay.location}</p>
                       <h3>{stay.name}</h3>
                     </div>
-                    <div className="mock-rate">
-                      <strong>${stay.price}</strong>
-                      <span>/ night</span>
+                    <div className="mock-rate listing-rating">
+                      <strong>{stay.rating} ★</strong>
+                      <span>{stay.reviews} reviews</span>
                     </div>
                   </div>
                   <div className="stay-meta">
@@ -345,10 +303,12 @@ export default function HomePage() {
                   </div>
                   <p>{stay.description}</p>
                   <div className="stay-card-actions">
-                    <button className="text-link">View property <ArrowRight size={16} /></button>
-                    <button className="pill-button" onClick={() => openBooking(stay)}>
-                      Check dates
-                    </button>
+                    <Link className="text-link" href={`/properties/${stay.slug}`}>
+                      View property <ArrowRight size={16} />
+                    </Link>
+                    <a className="pill-button" href={stay.airbnbUrl} target="_blank" rel="noreferrer">
+                      Current availability
+                    </a>
                   </div>
                 </div>
               </article>
@@ -363,10 +323,7 @@ export default function HomePage() {
           <div className="path-content">
             <p className="eyebrow light-eyebrow">For guests</p>
             <h2>5-star standards from arrival to checkout.</h2>
-            <p>
-              Prompt communication, seamless check-in and check-out, well-stocked
-              essentials, and local support when a guest needs it.
-            </p>
+            <p>Prompt communication, seamless check-in and check-out, well-stocked essentials, and local support when a guest needs it.</p>
             <button className="button button-light" onClick={() => scrollToId("stays")}>
               Browse stays <ArrowRight size={17} />
             </button>
@@ -377,14 +334,8 @@ export default function HomePage() {
           <div className="path-content">
             <p className="eyebrow light-eyebrow">For homeowners</p>
             <h2>Your investment, locally supported.</h2>
-            <p>
-              Hands-on short-term rental management with calendar oversight,
-              vendor coordination, property support, and regular owner updates.
-            </p>
-            <button
-              className="button button-light"
-              onClick={() => scrollToId("management")}
-            >
+            <p>Hands-on short-term rental management with calendar oversight, vendor coordination, property support, and regular owner updates.</p>
+            <button className="button button-light" onClick={() => scrollToId("management")}>
               Explore management <ArrowRight size={17} />
             </button>
           </div>
@@ -396,13 +347,10 @@ export default function HomePage() {
           <div className="management-top">
             <div>
               <p className="eyebrow">Property management services</p>
-              <h2 className="display-heading">
-                The details are the service.
-              </h2>
+              <h2 className="display-heading">The details are the service.</h2>
             </div>
             <p className="lead-copy compact-copy">
-              Pacific Stay provides hands-on support designed to help owners
-              maximize revenue while delivering exceptional guest experiences.
+              Pacific Stay provides hands-on support designed to help owners maximize revenue while delivering exceptional guest experiences.
             </p>
           </div>
 
@@ -430,27 +378,9 @@ export default function HomePage() {
               <p className="eyebrow">Local support, clear communication</p>
               <h3>Care that protects the property and the guest experience.</h3>
               <div className="steps-list">
-                <div>
-                  <span>01</span>
-                  <div>
-                    <strong>Protect the home</strong>
-                    <p>Monthly safety checks, responsive on-site support, and trusted vendor coordination when property needs arise.</p>
-                  </div>
-                </div>
-                <div>
-                  <span>02</span>
-                  <div>
-                    <strong>Optimize the operation</strong>
-                    <p>Calendar monitoring, pricing adjustments, inventory oversight, and communication that keeps the stay running smoothly.</p>
-                  </div>
-                </div>
-                <div>
-                  <span>03</span>
-                  <div>
-                    <strong>Keep owners informed</strong>
-                    <p>Regular property updates so owners know what is happening with their investment without chasing answers.</p>
-                  </div>
-                </div>
+                <div><span>01</span><div><strong>Protect the home</strong><p>Monthly safety checks, responsive on-site support, and trusted vendor coordination when property needs arise.</p></div></div>
+                <div><span>02</span><div><strong>Optimize the operation</strong><p>Calendar monitoring, pricing adjustments, inventory oversight, and communication that keeps the stay running smoothly.</p></div></div>
+                <div><span>03</span><div><strong>Keep owners informed</strong><p>Regular property updates so owners know what is happening with their investment without chasing answers.</p></div></div>
               </div>
               <button className="dark-link" onClick={() => scrollToId("contact")}>
                 Talk with Jami <ArrowRight size={17} />
@@ -472,25 +402,19 @@ export default function HomePage() {
 
       <section className="story-section section-pad" id="story">
         <div className="shell jami-story-grid">
-          <div className="jami-portrait-frame" aria-label="Portrait placeholder for Jami Jimenez">
-            <div className="jami-portrait-placeholder">
-              <span>JJ</span>
-              <small>Portrait ready for Jami&apos;s photo</small>
-            </div>
+          <div className="jami-portrait-frame" aria-label="Portrait of Jami Jimenez">
+            <div className="jami-portrait-placeholder"><span>JJ</span><small>Jami Jimenez</small></div>
           </div>
 
           <div className="story-copy jami-story-copy">
             <p className="eyebrow">About Jami</p>
             <h2 className="display-heading">Local. Reliable. Detail oriented.</h2>
             <p className="lead-copy">
-              As a local Airbnb Host and Short-Term Rental Manager, Jami Jimenez
-              provides hands-on support, proactive communication, and on-site
-              assistance to help owners maximize revenue while delivering
-              exceptional guest experiences.
+              As a local Airbnb Host and Short-Term Rental Manager, Jami Jimenez provides hands-on support,
+              proactive communication, and on-site assistance to help owners maximize revenue while delivering exceptional guest experiences.
             </p>
             <blockquote className="jami-quote">
-              “My goal is simple: to protect your property and create exceptional
-              guest experiences that lead to 5-star reviews and repeat bookings.”
+              “My goal is simple: to protect your property and create exceptional guest experiences that lead to 5-star reviews and repeat bookings.”
             </blockquote>
             <div className="story-points">
               <span><Check size={16} /> Local Airbnb host</span>
@@ -502,14 +426,9 @@ export default function HomePage() {
           <aside className="service-area-panel">
             <p className="eyebrow">Serving North County Coastal</p>
             <h3>Close enough to show up.</h3>
-            <p>
-              Local availability is part of the Pacific Stay approach, with
-              service across the coastal communities Jami knows and supports.
-            </p>
+            <p>Local availability is part of the Pacific Stay approach, with service across the coastal communities Jami knows and supports.</p>
             <div className="service-area-list">
-              {serviceAreas.map((area) => (
-                <span key={area}><MapPin size={15} /> {area}</span>
-              ))}
+              {serviceAreas.map((area) => <span key={area}><MapPin size={15} /> {area}</span>)}
             </div>
           </aside>
         </div>
@@ -518,14 +437,9 @@ export default function HomePage() {
       <section className="reviews-section section-pad" id="reviews">
         <div className="shell">
           <div className="reviews-heading">
-            <div>
-              <p className="eyebrow">Client reviews</p>
-              <h2 className="display-heading">Care people notice.</h2>
-            </div>
+            <div><p className="eyebrow">Client reviews</p><h2 className="display-heading">Care people notice.</h2></div>
             <p className="lead-copy compact-copy">
-              Owners describe Jami&apos;s work in the same words Pacific Stay is
-              built around: responsive, reliable, professional, and attentive to
-              the details.
+              Owners describe Jami&apos;s work in the same words Pacific Stay is built around: responsive, reliable, professional, and attentive to the details.
             </p>
           </div>
 
@@ -533,15 +447,10 @@ export default function HomePage() {
             {testimonials.map((testimonial) => (
               <article className="review-card" key={testimonial.name}>
                 <div className="review-stars" aria-label="5 out of 5 stars">
-                  {Array.from({ length: 5 }).map((_, index) => (
-                    <Star key={index} size={19} fill="currentColor" />
-                  ))}
+                  {Array.from({ length: 5 }).map((_, index) => <Star key={index} size={19} fill="currentColor" />)}
                 </div>
                 <blockquote>“{testimonial.quote}”</blockquote>
-                <div className="review-author">
-                  <span>{testimonial.name}</span>
-                  <small>Pacific Stay client review</small>
-                </div>
+                <div className="review-author"><span>{testimonial.name}</span><small>Pacific Stay client review</small></div>
               </article>
             ))}
           </div>
@@ -551,39 +460,24 @@ export default function HomePage() {
       <section className="contact-section personal-contact-section" id="contact">
         <div className="shell personal-contact-grid">
           <div className="contact-person-card">
-            <div className="contact-photo-slot">
-              <span>JJ</span>
-            </div>
+            <div className="contact-photo-slot"><span>JJ</span></div>
             <div>
               <p className="eyebrow light-eyebrow">Your local contact</p>
               <h3>Jami Jimenez</h3>
               <p>Airbnb Host &amp; Short-Term Rental Manager</p>
-              <small>Portrait slot is ready for the updated client photo.</small>
             </div>
           </div>
 
           <div className="contact-main-copy">
             <p className="eyebrow light-eyebrow">Let&apos;s discuss your property</p>
             <h2>Local support starts with a conversation.</h2>
-            <p>
-              Serving Del Mar, La Jolla, Encinitas, Carlsbad, and Oceanside.
-              Reach Jami directly to talk about your short-term rental.
-            </p>
+            <p>Serving Del Mar, La Jolla, Encinitas, Carlsbad, and Oceanside. Reach Jami directly to talk about your short-term rental.</p>
           </div>
 
           <div className="contact-detail-list">
-            <a href="tel:+17604296633">
-              <Phone size={19} />
-              <span><small>Call Jami</small>760-429-6633</span>
-            </a>
-            <a href="mailto:Jami.jimenez718@gmail.com">
-              <Mail size={19} />
-              <span><small>Email</small>Jami.jimenez718@gmail.com</span>
-            </a>
-            <div>
-              <MapPin size={19} />
-              <span><small>Service area</small>North County Coastal</span>
-            </div>
+            <a href="tel:+17604296633"><Phone size={19} /><span><small>Call Jami</small>760-429-6633</span></a>
+            <a href="mailto:Jami.jimenez718@gmail.com"><Mail size={19} /><span><small>Email</small>Jami.jimenez718@gmail.com</span></a>
+            <div><MapPin size={19} /><span><small>Service area</small>North County Coastal</span></div>
             <button className="button button-light" onClick={() => scrollToId("stays")}>
               Find a stay <ArrowRight size={17} />
             </button>
@@ -594,10 +488,7 @@ export default function HomePage() {
       <footer className="site-footer">
         <div className="shell footer-grid">
           <div className="footer-brand">
-            <div className="wordmark static-mark footer-wordmark">
-              <span>PACIFIC STAY</span>
-              <small>PROPERTIES</small>
-            </div>
+            <div className="wordmark static-mark footer-wordmark"><span>PACIFIC STAY</span><small>PROPERTIES</small></div>
             <p>Local. Reliable. Detail oriented.</p>
           </div>
           <div>
@@ -616,7 +507,7 @@ export default function HomePage() {
           <div className="footer-note">
             <span>North County Coastal</span>
             <p>Del Mar • La Jolla • Encinitas • Carlsbad • Oceanside</p>
-            <p>Mock listing names, photos, rates, and availability remain placeholders. Management details, reviews, service area, and contact information reflect client-provided content.</p>
+            <p>Pacific Stay Properties provides local short-term rental management and guest support across coastal North County.</p>
           </div>
         </div>
         <div className="shell footer-bottom">
@@ -624,74 +515,6 @@ export default function HomePage() {
           <span>Exceptional care • 5-star experiences • Maximum returns</span>
         </div>
       </footer>
-
-      {selectedStay && (
-        <div className="booking-overlay" role="dialog" aria-modal="true" aria-label="Mock direct booking">
-          <button
-            className="booking-backdrop"
-            aria-label="Close booking"
-            onClick={() => setSelectedStay(null)}
-          />
-          <div className="booking-panel">
-            <div className="booking-panel-top">
-              <div>
-                <span className="mini-label">Mock direct booking</span>
-                <h2>{selectedStay.name}</h2>
-                <p><MapPin size={15} /> {selectedStay.location}</p>
-              </div>
-              <button className="close-button" onClick={() => setSelectedStay(null)} aria-label="Close">
-                <X size={22} />
-              </button>
-            </div>
-
-            <div className="booking-image">
-              <img src={selectedStay.image} alt={selectedStay.name} />
-            </div>
-
-            {!submitted ? (
-              <form onSubmit={submitBooking} className="booking-form">
-                <div className="booking-form-grid">
-                  <label>
-                    <span><CalendarDays size={15} /> Check-in</span>
-                    <input type="date" min={today} required />
-                  </label>
-                  <label>
-                    <span><CalendarDays size={15} /> Check-out</span>
-                    <input type="date" min={today} required />
-                  </label>
-                  <label className="full-field">
-                    <span><Users size={15} /> Guests</span>
-                    <select defaultValue="2">
-                      {Array.from({ length: selectedStay.guests }, (_, i) => i + 1).map((guest) => (
-                        <option value={guest} key={guest}>{guest} guest{guest > 1 ? "s" : ""}</option>
-                      ))}
-                    </select>
-                  </label>
-                </div>
-                <div className="booking-summary">
-                  <div><span>Sample nightly rate</span><strong>${selectedStay.price}</strong></div>
-                  <div><span>Cleaning + taxes</span><strong>Calculated later</strong></div>
-                  <div className="booking-total"><span>Booking system</span><strong>Demo only</strong></div>
-                </div>
-                <button className="booking-submit" type="submit">
-                  Request to book <ArrowRight size={17} />
-                </button>
-                <small>No charge will be made. This is a presentation mock for the client.</small>
-              </form>
-            ) : (
-              <div className="booking-success">
-                <div className="success-icon"><Check size={28} /></div>
-                <span className="mini-label">Demo complete</span>
-                <h3>This is where the real booking flow will continue.</h3>
-                <p>
-                  Once Pacific Stay chooses its PMS or booking provider, this panel can sync live availability, pricing, taxes, policies, and payments.
-                </p>
-                <button className="booking-submit" onClick={() => setSelectedStay(null)}>Back to the site</button>
-              </div>
-            )}
-          </div>
-        </div>
-      )}
     </main>
   );
 }
