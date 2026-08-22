@@ -1,80 +1,37 @@
 "use client";
 
-import { ArrowRight, CalendarDays, Check, Users } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { ArrowRight, CalendarDays, ExternalLink, Users } from "lucide-react";
 
 type BookingCardProps = {
   name: string;
-  price: number;
   guests: number;
+  airbnbUrl: string;
 };
 
-export default function BookingCard({ name, price, guests }: BookingCardProps) {
-  const [submitted, setSubmitted] = useState(false);
-
-  function submit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-    setSubmitted(true);
-  }
-
-  if (submitted) {
-    return (
-      <div className="property-booking-card booking-card-success">
-        <div className="property-success-icon"><Check size={24} /></div>
-        <p className="property-mini-label">Demo request received</p>
-        <h3>That&apos;s the guest flow.</h3>
-        <p>
-          The production version can connect this step to live availability,
-          taxes, cleaning fees, agreements, and payment through Pacific Stay&apos;s
-          final booking provider.
-        </p>
-        <button type="button" onClick={() => setSubmitted(false)}>
-          Back to dates
-        </button>
-      </div>
-    );
-  }
-
+export default function BookingCard({ name, guests, airbnbUrl }: BookingCardProps) {
   return (
-    <form className="property-booking-card" onSubmit={submit}>
-      <p className="property-mini-label">Mock direct booking</p>
-      <div className="property-rate-line">
-        <strong>${price}</strong>
-        <span>/ night sample rate</span>
+    <div className="property-booking-card current-booking-card">
+      <p className="property-mini-label">Current availability</p>
+      <div className="property-rate-line current-booking-heading">
+        <strong>Book your stay</strong>
       </div>
 
-      <div className="property-booking-fields">
-        <label>
-          <span><CalendarDays size={15} /> Check-in</span>
-          <input type="date" required />
-        </label>
-        <label>
-          <span><CalendarDays size={15} /> Check-out</span>
-          <input type="date" required />
-        </label>
-        <label className="property-guests-field">
-          <span><Users size={15} /> Guests</span>
-          <select defaultValue="2">
-            {Array.from({ length: guests }, (_, index) => index + 1).map((guest) => (
-              <option key={guest} value={guest}>
-                {guest} guest{guest === 1 ? "" : "s"}
-              </option>
-            ))}
-          </select>
-        </label>
+      <div className="current-booking-facts">
+        <div><CalendarDays size={18} /><span>Live dates and current pricing</span></div>
+        <div><Users size={18} /><span>Up to {guests} guests</span></div>
       </div>
 
-      <div className="property-price-preview">
-        <div><span>3 nights × ${price}</span><strong>${price * 3}</strong></div>
-        <div><span>Cleaning fee</span><strong>Added later</strong></div>
-        <div><span>Taxes</span><strong>Added later</strong></div>
-        <div className="property-price-total"><span>Demo subtotal</span><strong>${price * 3}</strong></div>
-      </div>
+      <p className="current-booking-copy">
+        Pacific Stay&apos;s direct booking and payment system is now being connected.
+        Until that launches, current availability, rates, and reservations for {name}
+        remain available through the property&apos;s active Airbnb listing.
+      </p>
 
-      <button className="property-book-button" type="submit">
-        Request to book {name} <ArrowRight size={17} />
-      </button>
-      <small>No payment is collected in this presentation mock.</small>
-    </form>
+      <a className="property-book-button" href={airbnbUrl} target="_blank" rel="noreferrer">
+        Check live availability <ExternalLink size={17} />
+      </a>
+
+      <small>Direct booking through Pacific Stay is coming next.</small>
+    </div>
   );
 }
