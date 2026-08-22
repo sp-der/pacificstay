@@ -45,6 +45,7 @@
 }
 
 .property-lightbox-topbar {
+  position: relative;
   min-height: 76px;
   padding: 14px 22px;
   display: flex;
@@ -54,7 +55,7 @@
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-.property-lightbox-topbar > div {
+.property-lightbox-topbar > div:first-child {
   display: flex;
   align-items: baseline;
   gap: 14px;
@@ -71,6 +72,23 @@
   color: rgba(255, 255, 255, 0.58);
   font-size: 11px;
   letter-spacing: 0.08em;
+}
+
+.property-lightbox-room-title {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: 42vw;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.13em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.86);
+  pointer-events: none;
 }
 
 .property-lightbox-topbar button,
@@ -207,6 +225,12 @@
     font-size: 18px;
   }
 
+  .property-lightbox-room-title {
+    max-width: 34vw;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+  }
+
   .property-lightbox-topbar button {
     width: 42px;
     height: 42px;
@@ -274,15 +298,20 @@
 }
 
 @media (max-width: 430px) {
-  .property-lightbox-topbar > div {
+  .property-lightbox-topbar > div:first-child {
     gap: 8px;
   }
 
   .property-lightbox-topbar strong {
-    max-width: 230px;
+    max-width: 200px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
+  }
+
+  .property-lightbox-room-title {
+    max-width: 30vw;
+    font-size: 9px;
   }
 
   .property-lightbox-arrow {
