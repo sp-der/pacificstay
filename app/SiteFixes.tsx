@@ -3,6 +3,10 @@
 import { useEffect } from "react";
 
 const JAMI_SRC = "/jami-final.jpg?v=3";
+const CHESTNUT_MAP_EMBED =
+  "https://www.google.com/maps?q=Carlsbad%20State%20Beach%2C%20Carlsbad%2C%20CA&z=15&output=embed";
+const CHESTNUT_MAP_LINK =
+  "https://www.google.com/maps/search/?api=1&query=Carlsbad+State+Beach,+Carlsbad,+CA";
 
 function ensureJamiPhoto(container: Element | null, alt: string) {
   if (!container || container.querySelector("img.jami-live-photo")) return;
@@ -14,6 +18,49 @@ function ensureJamiPhoto(container: Element | null, alt: string) {
   img.loading = "eager";
   img.decoding = "async";
   container.appendChild(img);
+}
+
+function ensurePropertyMap(propertyPage: Element | null) {
+  if (!propertyPage || propertyPage.querySelector(".property-google-map")) return;
+
+  const locationCard = propertyPage.querySelector(".property-location-card");
+  const locationSection = locationCard?.closest(".property-copy-section");
+  if (!locationCard || !locationSection) return;
+
+  const mapBlock = document.createElement("div");
+  mapBlock.className = "property-google-map";
+
+  const mapFrame = document.createElement("div");
+  mapFrame.className = "property-google-map-frame";
+
+  const iframe = document.createElement("iframe");
+  iframe.src = CHESTNUT_MAP_EMBED;
+  iframe.title = "Chestnut By the Sea area map";
+  iframe.loading = "lazy";
+  iframe.referrerPolicy = "no-referrer-when-downgrade";
+  iframe.allowFullscreen = true;
+  mapFrame.appendChild(iframe);
+
+  const mapFooter = document.createElement("div");
+  mapFooter.className = "property-google-map-footer";
+
+  const mapCopy = document.createElement("div");
+  const mapEyebrow = document.createElement("span");
+  mapEyebrow.className = "property-google-map-eyebrow";
+  mapEyebrow.textContent = "Explore the area";
+  const mapTitle = document.createElement("strong");
+  mapTitle.textContent = "Carlsbad State Beach & Village";
+  mapCopy.append(mapEyebrow, mapTitle);
+
+  const mapLink = document.createElement("a");
+  mapLink.href = CHESTNUT_MAP_LINK;
+  mapLink.target = "_blank";
+  mapLink.rel = "noreferrer";
+  mapLink.textContent = "Open in Google Maps ↗";
+
+  mapFooter.append(mapCopy, mapLink);
+  mapBlock.append(mapFrame, mapFooter);
+  locationSection.appendChild(mapBlock);
 }
 
 export default function SiteFixes() {
@@ -37,6 +84,8 @@ export default function SiteFixes() {
       bookingColumn.classList.add("property-booking-column-inline");
       propertyBody.classList.add("booking-moved");
     }
+
+    ensurePropertyMap(propertyPage);
   }, []);
 
   return null;
