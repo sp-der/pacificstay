@@ -47,6 +47,9 @@ export type Property = {
   reviewScores: ReviewScore[];
 };
 
+const chestnutImage = (id: string) =>
+  `https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/${id}.jpeg?im_w=1440`;
+
 export const properties: Property[] = [
   {
     slug: "chestnut-by-the-sea",
@@ -54,13 +57,11 @@ export const properties: Property[] = [
     location: "Carlsbad, California",
     area: "Carlsbad Village • North County Coastal",
     tag: "Luxury Bali-inspired beach retreat",
-    heroImage:
-      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/5c5954bb-afdb-4cdc-aa69-11f27d3d1f0e.jpeg?im_w=720",
+    heroImage: chestnutImage("5c5954bb-afdb-4cdc-aa69-11f27d3d1f0e"),
     gallery: [
-      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/dfd49318-26cc-4801-98bf-578c8dc5801e.jpeg?im_w=720",
-      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/f3d84380-5aaa-40a1-b5ed-d84eed5d2277.jpeg?im_w=720",
-      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/35d0dde6-5ffb-47cf-8546-a0aeebfff5d6.jpeg?im_w=720",
-      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/3af56cb1-4b75-4e69-97d8-2be50f8cb93b.jpeg?im_w=720",
+      chestnutImage("dfd49318-26cc-4801-98bf-578c8dc5801e"),
+      chestnutImage("f3d84380-5aaa-40a1-b5ed-d84eed5d2277"),
+      chestnutImage("3af56cb1-4b75-4e69-97d8-2be50f8cb93b"),
     ],
     guests: 6,
     bedrooms: 3,
@@ -131,6 +132,7 @@ export const properties: Property[] = [
     sleeping: [
       { room: "Bedroom 1", bed: "1 king bed", note: "Upstairs primary bedroom" },
       { room: "Bedroom 2", bed: "2 single beds", note: "Flexible sleeping setup for guests" },
+      { room: "Bedroom 3", bed: "1 bed", note: "Additional private bedroom" },
     ],
     checkIn: "After 4:00 PM",
     checkOut: "Before 11:00 AM",

@@ -11,7 +11,6 @@ type ViewerImage = {
 export default function PropertyImageViewer() {
   const [images, setImages] = useState<ViewerImage[]>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
-
   const isOpen = activeIndex !== null;
 
   function closeViewer() {
@@ -35,21 +34,34 @@ export default function PropertyImageViewer() {
   useEffect(() => {
     function handleGalleryClick(event: MouseEvent) {
       const target = event.target as HTMLElement | null;
-      const clickedImage = target?.closest(".property-gallery img") as HTMLImageElement | null;
+      if (!target) return;
+
+      const listingGallery = target.closest(".property-gallery");
+      if (listingGallery) {
+        const base = window.location.pathname.replace(/\/$/, "");
+        if (base.startsWith("/properties/") && !base.endsWith("/photos")) {
+          window.location.assign(`${base}/photos`);
+          return;
+        }
+      }
+
+      const clickedPhotoButton = target.closest(".photo-tour-photo") as HTMLButtonElement | null;
+      const clickedImage = clickedPhotoButton?.querySelector("img") as HTMLImageElement | null;
       if (!clickedImage) return;
 
-      const gallery = clickedImage.closest(".property-gallery");
-      if (!gallery) return;
+      const tour = clickedImage.closest(".photo-tour-page");
+      if (!tour) return;
 
-      const galleryImages = Array.from(gallery.querySelectorAll<HTMLImageElement>("img"));
-      const nextImages = galleryImages.map((image) => ({
+      const tourImages = Array.from(
+        tour.querySelectorAll<HTMLImageElement>(".photo-tour-photo-grid img"),
+      );
+      const nextImages = tourImages.map((image) => ({
         src: image.currentSrc || image.src,
         alt: image.alt || "Property photo",
       }));
-      const clickedIndex = galleryImages.indexOf(clickedImage);
+      const clickedIndex = tourImages.indexOf(clickedImage);
 
       if (clickedIndex < 0 || nextImages.length === 0) return;
-
       setImages(nextImages);
       setActiveIndex(clickedIndex);
     }
@@ -71,7 +83,6 @@ export default function PropertyImageViewer() {
     }
 
     window.addEventListener("keydown", handleKeyDown);
-
     return () => {
       document.body.style.overflow = previousOverflow;
       window.removeEventListener("keydown", handleKeyDown);
@@ -84,7 +95,7 @@ export default function PropertyImageViewer() {
     <div className="property-lightbox" role="dialog" aria-modal="true" aria-label="Property photo viewer">
       <div className="property-lightbox-topbar">
         <div>
-          <strong>Property photos</strong>
+          <strong>Chestnut By the Sea</strong>
           <span>{activeIndex + 1} / {images.length}</span>
         </div>
         <button type="button" onClick={closeViewer} aria-label="Close photo viewer">
@@ -93,25 +104,13 @@ export default function PropertyImageViewer() {
       </div>
 
       <div className="property-lightbox-stage">
-        <button
-          type="button"
-          className="property-lightbox-arrow property-lightbox-prev"
-          onClick={showPrevious}
-          aria-label="Previous photo"
-        >
+        <button type="button" className="property-lightbox-arrow property-lightbox-prev" onClick={showPrevious} aria-label="Previous photo">
           <ChevronLeft size={31} />
         </button>
-
         <div className="property-lightbox-image-wrap">
           <img src={images[activeIndex].src} alt={images[activeIndex].alt} />
         </div>
-
-        <button
-          type="button"
-          className="property-lightbox-arrow property-lightbox-next"
-          onClick={showNext}
-          aria-label="Next photo"
-        >
+        <button type="button" className="property-lightbox-arrow property-lightbox-next" onClick={showNext} aria-label="Next photo">
           <ChevronRight size={31} />
         </button>
       </div>

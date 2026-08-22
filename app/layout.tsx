@@ -6,6 +6,7 @@ import "./property.css";
 import "./jami-photo.css";
 import "./production.css";
 import "./gallery-viewer.css";
+import "./photo-tour.css";
 import PropertyImageViewer from "./PropertyImageViewer";
 
 export const metadata: Metadata = {
