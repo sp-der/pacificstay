@@ -3,6 +3,7 @@ import "./globals.css";
 import "./details.css";
 import "./readability.css";
 import "./property.css";
+import "./jami-photo.css";
 import PropertyLinkEnhancer from "./PropertyLinkEnhancer";
 
 export const metadata: Metadata = {

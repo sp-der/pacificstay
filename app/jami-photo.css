@@ -1,0 +1,24 @@
+/* Jami Jimenez portrait
+   Uses the client-provided portrait in both the About Jami and contact areas. */
+
+.jami-portrait-placeholder {
+  background: url('/jami.webp') center 22% / cover no-repeat;
+}
+
+.jami-portrait-placeholder::before,
+.jami-portrait-placeholder::after {
+  display: none;
+}
+
+.jami-portrait-placeholder > span,
+.jami-portrait-placeholder > small {
+  display: none;
+}
+
+.contact-photo-slot {
+  background: url('/jami.webp') center 20% / cover no-repeat;
+}
+
+.contact-photo-slot > span {
+  display: none;
+}
