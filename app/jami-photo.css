@@ -1,31 +1,44 @@
 /* Jami Jimenez portrait
-   Uses the client-provided portrait in the About, contact, and property-host areas. */
+   The real client-provided image is injected as a normal img element so it cannot be hidden by background shorthand styles. */
+
+.jami-portrait-placeholder,
+.contact-photo-slot,
+.property-host-photo {
+  position: relative;
+  overflow: hidden;
+}
 
 .jami-portrait-placeholder {
-  background: url('/jami-real.webp') center 22% / cover no-repeat;
+  background: #d8ded8 !important;
+}
+
+.contact-photo-slot,
+.property-host-photo {
+  background: #315b5e !important;
+}
+
+.jami-live-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+}
+
+.property-host-photo .jami-live-photo {
+  object-position: center 18%;
 }
 
 .jami-portrait-placeholder::before,
 .jami-portrait-placeholder::after {
-  display: none;
+  display: none !important;
 }
 
 .jami-portrait-placeholder > span,
-.jami-portrait-placeholder > small {
-  display: none;
-}
-
-.contact-photo-slot {
-  background: url('/jami-real.webp') center 20% / cover no-repeat;
-}
-
+.jami-portrait-placeholder > small,
 .contact-photo-slot > span {
-  display: none;
-}
-
-.property-host-photo {
-  background-image: url('/jami-real.webp') !important;
-  background-size: cover !important;
-  background-position: center 18% !important;
-  background-repeat: no-repeat !important;
+  display: none !important;
 }
