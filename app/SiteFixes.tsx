@@ -4,9 +4,9 @@ import { useEffect } from "react";
 
 const JAMI_SRC = "/jami-final.jpg?v=3";
 const CHESTNUT_MAP_EMBED =
-  "https://www.google.com/maps?q=164%20Chestnut%20Ave%2C%20Carlsbad%2C%20CA%2092008&z=16&output=embed";
+  "https://www.google.com/maps?q=Carlsbad%20Village%2C%20Carlsbad%2C%20CA&z=15&output=embed";
 const CHESTNUT_MAP_LINK =
-  "https://www.google.com/maps/search/?api=1&query=164+Chestnut+Ave,+Carlsbad,+CA+92008";
+  "https://www.google.com/maps/search/?api=1&query=Carlsbad+Village,+Carlsbad,+CA";
 
 function ensureJamiPhoto(container: Element | null, alt: string) {
   if (!container || container.querySelector("img.jami-live-photo")) return;
@@ -35,7 +35,7 @@ function ensurePropertyMap(propertyPage: Element | null) {
 
   const iframe = document.createElement("iframe");
   iframe.src = CHESTNUT_MAP_EMBED;
-  iframe.title = "Chestnut By the Sea location map";
+  iframe.title = "Carlsbad Village area map";
   iframe.loading = "lazy";
   iframe.referrerPolicy = "no-referrer-when-downgrade";
   iframe.allowFullscreen = true;
@@ -47,9 +47,9 @@ function ensurePropertyMap(propertyPage: Element | null) {
   const mapCopy = document.createElement("div");
   const mapEyebrow = document.createElement("span");
   mapEyebrow.className = "property-google-map-eyebrow";
-  mapEyebrow.textContent = "Chestnut By the Sea";
+  mapEyebrow.textContent = "Explore the area";
   const mapTitle = document.createElement("strong");
-  mapTitle.textContent = "164 Chestnut Ave · Carlsbad, CA";
+  mapTitle.textContent = "Carlsbad Village & Coast";
   mapCopy.append(mapEyebrow, mapTitle);
 
   const mapLink = document.createElement("a");
