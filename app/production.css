@@ -130,6 +130,28 @@
   background-repeat: no-repeat;
 }
 
+/* Booking belongs directly beneath the gallery instead of in a desktop sidebar. */
+.property-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  align-items: stretch;
+  padding-top: 42px;
+}
+
+.property-booking-column {
+  order: -1;
+  position: static;
+  top: auto;
+  width: min(560px, 100%);
+  margin: 0 auto 34px;
+}
+
+.property-content-column {
+  width: min(980px, 100%);
+  margin: 0 auto;
+}
+
 @media (max-width: 760px) {
   .single-stay-grid {
     max-width: none;
@@ -142,6 +164,15 @@
 
   .property-review-score-grid {
     grid-template-columns: 1fr 1fr;
+  }
+
+  .property-body {
+    padding-top: 28px;
+  }
+
+  .property-booking-column {
+    width: 100%;
+    margin-bottom: 24px;
   }
 }
 
