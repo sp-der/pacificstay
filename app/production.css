@@ -1,0 +1,152 @@
+/* Production listing pass: replaces presentation/mock content with live property details. */
+
+.single-stay-grid {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 980px;
+}
+
+.single-stay-grid .stay-card {
+  width: 100%;
+}
+
+.listing-rating {
+  min-width: 112px;
+  text-align: right;
+}
+
+.listing-rating strong {
+  font-size: 22px;
+  line-height: 1;
+}
+
+.listing-rating span {
+  display: block;
+  margin-top: 5px;
+  font-size: 10px;
+  color: rgba(23,34,31,.52);
+}
+
+.property-review-section {
+  display: grid;
+  gap: 28px;
+}
+
+.property-rating-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  align-items: center;
+}
+
+.property-rating-header > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: #a86a2b;
+}
+
+.property-rating-header strong {
+  font-family: var(--serif);
+  font-size: 48px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+.property-rating-header span {
+  color: rgba(23,34,31,.55);
+  font-size: 12px;
+}
+
+.property-rating-header a {
+  border-bottom: 1px solid var(--ink);
+  padding-bottom: 5px;
+  font-size: 11px;
+}
+
+.property-review-score-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+
+.property-review-score-grid > div {
+  min-height: 86px;
+  padding: 18px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.property-review-score-grid span {
+  color: rgba(23,34,31,.58);
+  font-size: 11px;
+}
+
+.property-review-score-grid strong {
+  font-size: 16px;
+  font-weight: 600;
+}
+
+.current-booking-heading {
+  margin-bottom: 18px;
+}
+
+.current-booking-heading strong {
+  font-size: 34px;
+}
+
+.current-booking-facts {
+  display: grid;
+  gap: 10px;
+  padding: 18px 0;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.current-booking-facts > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: rgba(23,34,31,.68);
+  font-size: 12px;
+}
+
+.current-booking-copy {
+  margin: 20px 0;
+  color: rgba(23,34,31,.58);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.current-booking-card .property-book-button {
+  text-decoration: none;
+}
+
+.property-host-photo {
+  background-color: var(--sea);
+  background-repeat: no-repeat;
+}
+
+@media (max-width: 760px) {
+  .single-stay-grid {
+    max-width: none;
+  }
+
+  .property-rating-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .property-review-score-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+@media (max-width: 520px) {
+  .property-review-score-grid {
+    grid-template-columns: 1fr;
+  }
+}
