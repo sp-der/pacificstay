@@ -9,6 +9,11 @@ export type SleepingSpace = {
   note: string;
 };
 
+export type ReviewScore = {
+  label: string;
+  score: string;
+};
+
 export type Property = {
   slug: string;
   name: string;
@@ -21,7 +26,6 @@ export type Property = {
   bedrooms: number;
   beds: number;
   baths: number;
-  price: number;
   propertyType: string;
   summary: string;
   description: string[];
@@ -36,161 +40,128 @@ export type Property = {
   houseRules: string[];
   safety: string[];
   locationCopy: string;
+  airbnbUrl: string;
+  rating: string;
+  reviewCount: number;
+  guestFavorite: boolean;
+  reviewScores: ReviewScore[];
 };
 
 export const properties: Property[] = [
   {
-    slug: "pacific-house",
-    name: "The Pacific House",
-    location: "Del Mar, California",
-    area: "North County Coastal",
-    tag: "Ocean-view escape",
+    slug: "chestnut-by-the-sea",
+    name: "Chestnut By the Sea",
+    location: "Carlsbad, California",
+    area: "Carlsbad Village • North County Coastal",
+    tag: "Luxury Bali-inspired beach retreat",
     heroImage:
-      "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?auto=format&fit=crop&w=2200&q=90",
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/5c5954bb-afdb-4cdc-aa69-11f27d3d1f0e.jpeg?im_w=720",
     gallery: [
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=88",
-      "https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?auto=format&fit=crop&w=1400&q=88",
-      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=88",
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=1400&q=88",
-    ],
-    guests: 8,
-    bedrooms: 4,
-    beds: 4,
-    baths: 3,
-    price: 495,
-    propertyType: "Entire coastal home",
-    summary:
-      "A sun-washed coastal home designed around open gathering spaces, slow mornings, and easy access to the North County coast.",
-    description: [
-      "The Pacific House is a presentation listing created to show how a Pacific Stay direct-booking property can feel online. The layout is intentionally rich enough to demonstrate the complete guest journey while the client gathers the real home details.",
-      "For the final listing, this space can hold the property story, neighborhood advantages, special design details, recent upgrades, and the small touches that make the home memorable to guests.",
-    ],
-    highlights: [
-      "Bright indoor-outdoor living",
-      "Dedicated spaces for groups and families",
-      "Locally managed guest support",
-      "Stocked essentials for an easy arrival",
-    ],
-    amenities: [
-      {
-        title: "Guest essentials",
-        items: ["High-speed Wi-Fi", "Central heating & air", "Fresh linens", "Bath essentials", "Hair dryer", "Iron & ironing board"],
-      },
-      {
-        title: "Kitchen & dining",
-        items: ["Full kitchen", "Cookware & utensils", "Coffee setup", "Dishwasher", "Refrigerator", "Indoor dining area"],
-      },
-      {
-        title: "Home & entertainment",
-        items: ["Smart TV", "Washer & dryer", "Dedicated workspace", "Family gathering area", "Closet storage", "Private entrance"],
-      },
-      {
-        title: "Outdoor & access",
-        items: ["Outdoor seating", "Patio space", "On-site parking", "Self check-in", "Exterior lighting", "Local support when needed"],
-      },
-    ],
-    sleeping: [
-      { room: "Primary bedroom", bed: "1 king bed", note: "Private primary sleeping space" },
-      { room: "Bedroom two", bed: "1 queen bed", note: "Comfortable guest room" },
-      { room: "Bedroom three", bed: "1 queen bed", note: "Comfortable guest room" },
-      { room: "Bedroom four", bed: "1 full bed", note: "Additional private sleeping space" },
-    ],
-    checkIn: "4:00 PM",
-    checkOut: "10:00 AM",
-    parking: "On-site parking shown as a sample amenity",
-    wifi: "High-speed Wi-Fi shown as a sample amenity",
-    access: "Self check-in details are provided before arrival",
-    houseRules: [
-      "No smoking inside the home",
-      "No parties or unregistered events",
-      "Respect neighborhood quiet hours",
-      "Only registered guests may stay overnight",
-      "Final pet policy will be confirmed with the real listing",
-    ],
-    safety: [
-      "Smoke detectors",
-      "Carbon monoxide detectors",
-      "Exterior lighting",
-      "Emergency contact support",
-    ],
-    locationCopy:
-      "Presented as a Del Mar stay for this mockup, the final page can include beach access, nearby dining, shopping, freeway access, local landmarks, and drive times once the actual property address and listing information are provided.",
-  },
-  {
-    slug: "salt-sand-retreat",
-    name: "Salt + Sand Retreat",
-    location: "Encinitas, California",
-    area: "North County Coastal",
-    tag: "Steps from the coast",
-    heroImage:
-      "https://images.unsplash.com/photo-1600607687920-4e2a09cf159d?auto=format&fit=crop&w=2200&q=90",
-    gallery: [
-      "https://images.unsplash.com/photo-1600210492486-724fe5c67fb0?auto=format&fit=crop&w=1400&q=88",
-      "https://images.unsplash.com/photo-1600566752355-35792bedcfea?auto=format&fit=crop&w=1400&q=88",
-      "https://images.unsplash.com/photo-1600566753086-00f18fb6b3ea?auto=format&fit=crop&w=1400&q=88",
-      "https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?auto=format&fit=crop&w=1400&q=88",
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/dfd49318-26cc-4801-98bf-578c8dc5801e.jpeg?im_w=720",
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/f3d84380-5aaa-40a1-b5ed-d84eed5d2277.jpeg?im_w=720",
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/35d0dde6-5ffb-47cf-8546-a0aeebfff5d6.jpeg?im_w=720",
+      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/3af56cb1-4b75-4e69-97d8-2be50f8cb93b.jpeg?im_w=720",
     ],
     guests: 6,
     bedrooms: 3,
     beds: 3,
     baths: 2,
-    price: 365,
-    propertyType: "Entire coastal retreat",
+    propertyType: "Entire home",
     summary:
-      "An airy, design-forward coastal retreat with warm natural textures and the essentials for a polished North County weekend.",
+      "A luxury Bali-inspired Carlsbad escape just steps from the beach, with a private outdoor setup made for slow mornings, sunset drinks, and relaxed coastal evenings.",
     description: [
-      "Salt + Sand Retreat is a second presentation listing built to demonstrate how Pacific Stay can showcase a smaller short-term rental with the same level of care and direct-booking detail.",
-      "The finished version can be customized around the real home's personality, including its best amenities, favorite local stops, beach access, family features, work-from-home setup, and any special guest perks.",
+      "Chestnut By the Sea was designed as a polished coastal oasis by designer Shirley Slee. The home pairs warm, Bali-inspired details with the easy pace of Carlsbad living, placing guests close to the beach and the heart of the Village.",
+      "Guests can take the beach cruisers toward downtown, unwind in the outdoor jacuzzi, rinse off in the outdoor shower, gather around the fire pit, cook on the BBQ, or settle in with a drink at the home's secret bar. The outdoor entertainment patio and swings make the space especially well suited for families and small groups.",
     ],
     highlights: [
-      "Relaxed coastal interiors",
-      "Comfortable setup for up to six guests",
-      "Simple self check-in experience",
-      "Hands-on Pacific Stay local support",
+      "Steps from Carlsbad State Beach",
+      "Jacuzzi, fire pit, outdoor shower & BBQ patio",
+      "Beach cruisers for exploring Carlsbad Village",
+      "Walkable access to restaurants, wine tasting rooms, shops and the coast",
+      "Guest favorite with a 4.88 rating",
+      "Locally supported by Jami Jimenez",
     ],
     amenities: [
       {
+        title: "Beach & outdoor living",
+        items: [
+          "Beach access",
+          "Outdoor jacuzzi",
+          "Outdoor shower",
+          "Fire pit",
+          "BBQ area",
+          "Outdoor entertainment patio",
+          "Outdoor swings",
+          "Beach cruisers",
+        ],
+      },
+      {
+        title: "Kitchen & work",
+        items: [
+          "Full kitchen",
+          "Well-equipped cookware",
+          "Drip coffee maker",
+          "Dedicated workspace",
+          "Dining and gathering space",
+        ],
+      },
+      {
         title: "Guest essentials",
-        items: ["High-speed Wi-Fi", "Heating & air", "Fresh linens", "Bath essentials", "Hair dryer", "Extra pillows & blankets"],
+        items: [
+          "Wi-Fi",
+          "Free parking on premises",
+          "Keypad self check-in",
+          "Room-darkening shades",
+          "Extra bedding",
+          "Smoke alarm",
+          "Carbon monoxide alarm",
+        ],
       },
       {
-        title: "Kitchen & dining",
-        items: ["Full kitchen", "Cookware & utensils", "Coffee setup", "Microwave", "Refrigerator", "Dining area"],
-      },
-      {
-        title: "Home & entertainment",
-        items: ["Smart TV", "Washer & dryer", "Workspace", "Living room", "Closet storage", "Private entrance"],
-      },
-      {
-        title: "Outdoor & access",
-        items: ["Outdoor seating", "Patio or balcony", "On-site parking", "Self check-in", "Exterior lighting", "Local property support"],
+        title: "Experience",
+        items: [
+          "Secret bar",
+          "Family-friendly setup",
+          "Comfortable beds",
+          "Walkable Carlsbad Village location",
+          "Responsive local hosting support",
+        ],
       },
     ],
     sleeping: [
-      { room: "Primary bedroom", bed: "1 king bed", note: "Private primary sleeping space" },
-      { room: "Bedroom two", bed: "1 queen bed", note: "Comfortable guest room" },
-      { room: "Bedroom three", bed: "1 queen bed", note: "Comfortable guest room" },
+      { room: "Bedroom 1", bed: "1 king bed", note: "Upstairs primary bedroom" },
+      { room: "Bedroom 2", bed: "2 single beds", note: "Flexible sleeping setup for guests" },
     ],
-    checkIn: "4:00 PM",
-    checkOut: "10:00 AM",
-    parking: "On-site parking shown as a sample amenity",
-    wifi: "High-speed Wi-Fi shown as a sample amenity",
-    access: "Self check-in details are provided before arrival",
+    checkIn: "After 4:00 PM",
+    checkOut: "Before 11:00 AM",
+    parking: "Free parking on premises",
+    wifi: "Wi-Fi included",
+    access: "Self check-in with keypad",
     houseRules: [
-      "No smoking inside the home",
-      "No parties or unregistered events",
-      "Respect neighborhood quiet hours",
-      "Only registered guests may stay overnight",
-      "Final pet policy will be confirmed with the real listing",
+      "Maximum of 6 guests",
+      "Check-in after 4:00 PM",
+      "Checkout before 11:00 AM",
+      "Cancellation terms are shown during booking based on the selected stay dates",
     ],
     safety: [
-      "Smoke detectors",
-      "Carbon monoxide detectors",
-      "Exterior lighting",
-      "Emergency contact support",
+      "Exterior security cameras on the property",
+      "Carbon monoxide alarm",
+      "Smoke alarm",
     ],
     locationCopy:
-      "Presented as an Encinitas stay for this mockup, the finished listing can call out nearby beaches, coffee shops, restaurants, shopping, surf spots, local attractions, and drive times once the actual property information is available.",
+      "Chestnut By the Sea is in Carlsbad, California, near Carlsbad State Beach and Carlsbad Village. The beach is only a short walk away, while restaurants, wine tasting rooms, shopping, and other Village favorites are within an easy walk. The neighborhood is known for its scenic coastal setting and walkability.",
+    airbnbUrl: "https://www.airbnb.com/h/chestnutbytheseav2",
+    rating: "4.88",
+    reviewCount: 24,
+    guestFavorite: true,
+    reviewScores: [
+      { label: "Cleanliness", score: "4.8" },
+      { label: "Accuracy", score: "4.8" },
+      { label: "Check-in", score: "5.0" },
+      { label: "Communication", score: "4.9" },
+      { label: "Location", score: "5.0" },
+      { label: "Value", score: "4.8" },
+    ],
   },
 ];
 
