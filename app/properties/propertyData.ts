@@ -1,3 +1,5 @@
+import { chestnutPreviewImages } from "./photoTourData";
+
 export type PropertyAmenityGroup = {
   title: string;
   items: string[];
@@ -47,9 +49,6 @@ export type Property = {
   reviewScores: ReviewScore[];
 };
 
-const chestnutImage = (id: string) =>
-  `https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/${id}.jpeg?im_w=1440`;
-
 export const properties: Property[] = [
   {
     slug: "chestnut-by-the-sea",
@@ -57,12 +56,8 @@ export const properties: Property[] = [
     location: "Carlsbad, California",
     area: "Carlsbad Village • North County Coastal",
     tag: "Luxury Bali-inspired beach retreat",
-    heroImage: chestnutImage("5c5954bb-afdb-4cdc-aa69-11f27d3d1f0e"),
-    gallery: [
-      chestnutImage("dfd49318-26cc-4801-98bf-578c8dc5801e"),
-      chestnutImage("f3d84380-5aaa-40a1-b5ed-d84eed5d2277"),
-      chestnutImage("3af56cb1-4b75-4e69-97d8-2be50f8cb93b"),
-    ],
+    heroImage: chestnutPreviewImages[0],
+    gallery: chestnutPreviewImages.slice(1),
     guests: 6,
     bedrooms: 3,
     beds: 3,
