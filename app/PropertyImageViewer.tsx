@@ -33,6 +33,26 @@ export default function PropertyImageViewer() {
   }
 
   useEffect(() => {
+    const portraitTargets = Array.from(
+      document.querySelectorAll<HTMLElement>(
+        ".jami-portrait-placeholder, .contact-photo-slot, .property-host-photo",
+      ),
+    );
+
+    portraitTargets.forEach((target) => {
+      if (target.querySelector(".jami-live-photo")) return;
+
+      const image = document.createElement("img");
+      image.src = "/jami-real.webp";
+      image.alt = "Jami Jimenez";
+      image.className = "jami-live-photo";
+      image.loading = "eager";
+      image.decoding = "async";
+      target.prepend(image);
+    });
+  }, []);
+
+  useEffect(() => {
     function handleGalleryClick(event: MouseEvent) {
       const target = event.target as HTMLElement | null;
       const clickedImage = target?.closest(
@@ -94,7 +114,7 @@ export default function PropertyImageViewer() {
     <div className="property-lightbox" role="dialog" aria-modal="true" aria-label="Property photo viewer">
       <div className="property-lightbox-topbar">
         <div>
-          <strong>Property photos</strong>
+          <strong>Chestnut By the Sea</strong>
           <span>{activeIndex + 1} / {images.length}</span>
         </div>
         <button type="button" onClick={closeViewer} aria-label="Close photo viewer">
