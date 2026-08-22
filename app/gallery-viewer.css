@@ -1,0 +1,252 @@
+.property-gallery img {
+  cursor: zoom-in;
+}
+
+.property-gallery-main,
+.property-gallery-side > div {
+  position: relative;
+}
+
+.property-gallery-main::after,
+.property-gallery-side > div::after {
+  content: "View";
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: rgba(16, 25, 23, 0.72);
+  color: #fff;
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  backdrop-filter: blur(8px);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .property-gallery-main:hover::after,
+  .property-gallery-side > div:hover::after {
+    opacity: 1;
+  }
+}
+
+.property-lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  background: rgba(7, 12, 11, 0.985);
+  color: #fff;
+}
+
+.property-lightbox-topbar {
+  min-height: 76px;
+  padding: 14px 22px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.property-lightbox-topbar > div {
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+  min-width: 0;
+}
+
+.property-lightbox-topbar strong {
+  font-family: var(--serif);
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.property-lightbox-topbar span {
+  color: rgba(255, 255, 255, 0.58);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.property-lightbox-topbar button,
+.property-lightbox-arrow {
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.property-lightbox-topbar button {
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+}
+
+.property-lightbox-stage {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 72px minmax(0, 1fr) 72px;
+  align-items: center;
+  gap: 12px;
+  padding: 18px 24px;
+}
+
+.property-lightbox-image-wrap {
+  min-width: 0;
+  min-height: 0;
+  height: 100%;
+  display: grid;
+  place-items: center;
+}
+
+.property-lightbox-image-wrap img {
+  display: block;
+  max-width: 100%;
+  max-height: 100%;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  user-select: none;
+}
+
+.property-lightbox-arrow {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+}
+
+.property-lightbox-prev {
+  justify-self: start;
+}
+
+.property-lightbox-next {
+  justify-self: end;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .property-lightbox-topbar button:hover,
+  .property-lightbox-arrow:hover {
+    background: rgba(255, 255, 255, 0.16);
+    border-color: rgba(255, 255, 255, 0.34);
+  }
+}
+
+.property-lightbox-thumbs {
+  min-height: 94px;
+  padding: 12px 18px 16px;
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  overflow-x: auto;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  scrollbar-width: thin;
+}
+
+.property-lightbox-thumbs button {
+  width: 82px;
+  height: 60px;
+  flex: 0 0 auto;
+  padding: 0;
+  border: 2px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  opacity: 0.54;
+  transition: opacity 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.property-lightbox-thumbs button.active {
+  opacity: 1;
+  border-color: #fff;
+}
+
+.property-lightbox-thumbs img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .property-lightbox-thumbs button:hover {
+    opacity: 0.9;
+    transform: translateY(-1px);
+  }
+}
+
+@media (max-width: 760px) {
+  .property-gallery-main::after,
+  .property-gallery-side > div::after {
+    display: none;
+  }
+
+  .property-lightbox-topbar {
+    min-height: 66px;
+    padding: 10px 14px;
+  }
+
+  .property-lightbox-topbar strong {
+    font-size: 18px;
+  }
+
+  .property-lightbox-topbar button {
+    width: 42px;
+    height: 42px;
+  }
+
+  .property-lightbox-stage {
+    grid-template-columns: 48px minmax(0, 1fr) 48px;
+    gap: 4px;
+    padding: 10px 8px;
+  }
+
+  .property-lightbox-arrow {
+    width: 42px;
+    height: 42px;
+  }
+
+  .property-lightbox-thumbs {
+    justify-content: flex-start;
+    min-height: 82px;
+    padding: 10px 12px 12px;
+  }
+
+  .property-lightbox-thumbs button {
+    width: 72px;
+    height: 52px;
+  }
+}
+
+@media (max-width: 430px) {
+  .property-lightbox-topbar > div {
+    gap: 8px;
+  }
+
+  .property-lightbox-topbar strong {
+    max-width: 190px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .property-lightbox-stage {
+    grid-template-columns: 42px minmax(0, 1fr) 42px;
+    padding-left: 4px;
+    padding-right: 4px;
+  }
+
+  .property-lightbox-arrow {
+    width: 38px;
+    height: 38px;
+  }
+}
