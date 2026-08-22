@@ -1,0 +1,60 @@
+/* Final production layout fixes for portrait rendering and booking placement. */
+
+.jami-portrait-placeholder,
+.contact-photo-slot,
+.property-host-photo {
+  position: relative;
+  overflow: hidden;
+}
+
+.jami-live-photo {
+  position: absolute;
+  inset: 0;
+  z-index: 20;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center 20%;
+}
+
+.property-host-photo .jami-live-photo {
+  object-position: center 18%;
+}
+
+.property-inline-booking {
+  display: flex;
+  justify-content: center;
+  padding-top: 34px;
+  padding-bottom: 60px;
+}
+
+.property-inline-booking .property-booking-column {
+  position: static !important;
+  top: auto !important;
+  width: min(100%, 560px);
+  max-width: 560px;
+  margin: 0 auto;
+}
+
+.property-body.booking-moved {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.property-body.booking-moved .property-content-column {
+  width: 100%;
+  max-width: 980px;
+  margin: 0 auto;
+}
+
+@media (max-width: 760px) {
+  .property-inline-booking {
+    width: 100%;
+    padding: 20px 15px 38px;
+  }
+
+  .property-inline-booking .property-booking-column {
+    width: 100%;
+    max-width: none;
+  }
+}
