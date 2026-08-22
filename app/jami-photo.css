@@ -2,7 +2,7 @@
    Uses the client-provided portrait in the About, contact, and property-host areas. */
 
 .jami-portrait-placeholder {
-  background: url('/jami-portrait.svg') center 22% / cover no-repeat;
+  background: url('/jami-real.webp') center 22% / cover no-repeat;
 }
 
 .jami-portrait-placeholder::before,
@@ -16,7 +16,7 @@
 }
 
 .contact-photo-slot {
-  background: url('/jami-portrait.svg') center 20% / cover no-repeat;
+  background: url('/jami-real.webp') center 20% / cover no-repeat;
 }
 
 .contact-photo-slot > span {
@@ -24,7 +24,7 @@
 }
 
 .property-host-photo {
-  background-image: url('/jami-portrait.svg') !important;
+  background-image: url('/jami-real.webp') !important;
   background-size: cover !important;
   background-position: center 18% !important;
   background-repeat: no-repeat !important;

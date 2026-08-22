@@ -10,14 +10,26 @@ type PhotoTourProps = {
 
 export default function PhotoTour({ propertyName, sections }: PhotoTourProps) {
   const [activeId, setActiveId] = useState(sections[0]?.id ?? "");
-  const categoryRefs = useRef<Record<string, HTMLButtonElement | null>>({});
+  const navigatingRef = useRef(false);
+  const navigationTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function scrollToSection(id: string) {
+    const target = document.getElementById(`photo-section-${id}`);
+    if (!target) return;
+
     setActiveId(id);
-    document.getElementById(`photo-section-${id}`)?.scrollIntoView({
-      behavior: "smooth",
-      block: "start",
-    });
+    navigatingRef.current = true;
+
+    if (navigationTimerRef.current) clearTimeout(navigationTimerRef.current);
+
+    const headerOffset = window.innerWidth <= 760 ? 88 : 108;
+    const top = target.getBoundingClientRect().top + window.scrollY - headerOffset;
+
+    window.scrollTo({ top, behavior: "smooth" });
+
+    navigationTimerRef.current = setTimeout(() => {
+      navigatingRef.current = false;
+    }, 900);
   }
 
   useEffect(() => {
@@ -29,23 +41,25 @@ export default function PhotoTour({ propertyName, sections }: PhotoTourProps) {
 
     const observer = new IntersectionObserver(
       (entries) => {
+        if (navigatingRef.current) return;
+
         const visible = entries
           .filter((entry) => entry.isIntersecting)
           .sort((a, b) => b.intersectionRatio - a.intersectionRatio)[0];
+
         if (!visible) return;
         const id = visible.target.id.replace("photo-section-", "");
         setActiveId(id);
-        categoryRefs.current[id]?.scrollIntoView({
-          behavior: "smooth",
-          block: "nearest",
-          inline: "center",
-        });
       },
       { rootMargin: "-18% 0px -56% 0px", threshold: [0, 0.08, 0.2, 0.4] },
     );
 
     sectionElements.forEach((element) => observer.observe(element));
-    return () => observer.disconnect();
+
+    return () => {
+      observer.disconnect();
+      if (navigationTimerRef.current) clearTimeout(navigationTimerRef.current);
+    };
   }, [sections]);
 
   return (
@@ -61,7 +75,6 @@ export default function PhotoTour({ propertyName, sections }: PhotoTourProps) {
             <button
               type="button"
               key={section.id}
-              ref={(element) => { categoryRefs.current[section.id] = element; }}
               className={`photo-tour-category${activeId === section.id ? " active" : ""}`}
               onClick={() => scrollToSection(section.id)}
               aria-current={activeId === section.id ? "true" : undefined}
