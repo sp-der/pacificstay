@@ -94,16 +94,18 @@
 .property-lightbox-stage {
   min-height: 0;
   display: grid;
-  grid-template-columns: 72px minmax(0, 1fr) 72px;
+  grid-template-columns: 64px minmax(0, 1fr) 64px;
   align-items: center;
-  gap: 12px;
-  padding: 18px 24px;
+  gap: 16px;
+  padding: 20px 28px 24px;
 }
 
 .property-lightbox-image-wrap {
   min-width: 0;
   min-height: 0;
-  height: 100%;
+  width: min(80vw, 1400px);
+  height: min(68vh, 720px);
+  justify-self: center;
   display: grid;
   place-items: center;
 }
