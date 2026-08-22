@@ -15,6 +15,7 @@ import {
   Phone,
   ShieldCheck,
   Sparkles,
+  Star,
   Users,
   Wifi,
 } from "lucide-react";
@@ -39,7 +40,7 @@ export async function generateMetadata({
 
   return {
     title: `${property.name} | Pacific Stay Properties`,
-    description: `${property.summary} Presentation listing for Pacific Stay Properties.`,
+    description: property.summary,
   };
 }
 
@@ -51,8 +52,6 @@ export default async function PropertyPage({
   const { slug } = await params;
   const property = getProperty(slug);
   if (!property) notFound();
-
-  const otherProperty = properties.find((item) => item.slug !== property.slug)!;
 
   return (
     <main className="property-page">
@@ -79,16 +78,15 @@ export default async function PropertyPage({
           </Link>
           <div className="property-title-grid">
             <div>
-              <p className="property-eyebrow">Sample direct-booking property</p>
+              <p className="property-eyebrow">Pacific Stay property</p>
               <h1>{property.name}</h1>
               <p className="property-location"><MapPin size={17} /> {property.location}</p>
             </div>
             <div className="property-title-note">
               <span>{property.tag}</span>
               <p>
-                This is a presentation listing. Photos, rates, amenities, house
-                rules, and property specifics will be replaced with the real
-                listing information when provided.
+                {property.guestFavorite ? "Guest favorite · " : ""}
+                {property.rating} out of 5 from {property.reviewCount} Airbnb reviews.
               </p>
             </div>
           </div>
@@ -120,16 +118,33 @@ export default async function PropertyPage({
 
           <section className="property-copy-section">
             <p className="property-eyebrow">The stay</p>
-            <h2>Coastal comfort, handled with care.</h2>
+            <h2>Bali-inspired calm, steps from the coast.</h2>
             <p className="property-summary">{property.summary}</p>
             {property.description.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           </section>
 
           <section className="property-copy-section">
-            <p className="property-eyebrow">Why guests will love it</p>
+            <p className="property-eyebrow">Listing highlights</p>
             <div className="property-highlight-grid">
               {property.highlights.map((highlight) => (
                 <div key={highlight}><Sparkles size={19} /><span>{highlight}</span></div>
+              ))}
+            </div>
+          </section>
+
+          <section className="property-copy-section property-review-section">
+            <p className="property-eyebrow">Guest favorite</p>
+            <div className="property-rating-header">
+              <div>
+                <Star size={24} fill="currentColor" />
+                <strong>{property.rating}</strong>
+                <span>{property.reviewCount} Airbnb reviews</span>
+              </div>
+              <a href={property.airbnbUrl} target="_blank" rel="noreferrer">View current reviews on Airbnb</a>
+            </div>
+            <div className="property-review-score-grid">
+              {property.reviewScores.map((item) => (
+                <div key={item.label}><span>{item.label}</span><strong>{item.score}</strong></div>
               ))}
             </div>
           </section>
@@ -151,7 +166,7 @@ export default async function PropertyPage({
 
           <section className="property-copy-section">
             <p className="property-eyebrow">Amenities</p>
-            <h2>Everything guests look for before they book.</h2>
+            <h2>Built for beach days and easy evenings.</h2>
             <div className="amenity-group-grid">
               {property.amenities.map((group) => (
                 <div className="amenity-group" key={group.title}>
@@ -177,14 +192,14 @@ export default async function PropertyPage({
 
           <section className="property-copy-section property-two-column-details">
             <div>
-              <p className="property-eyebrow">Sample house rules</p>
+              <p className="property-eyebrow">House rules</p>
               <h2>Good to know.</h2>
               <ul className="property-rule-list">
                 {property.houseRules.map((rule) => <li key={rule}><Check size={16} /> {rule}</li>)}
               </ul>
             </div>
             <div>
-              <p className="property-eyebrow">Safety</p>
+              <p className="property-eyebrow">Safety & property</p>
               <h2>Guest-ready basics.</h2>
               <ul className="property-rule-list">
                 {property.safety.map((item) => <li key={item}><ShieldCheck size={16} /> {item}</li>)}
@@ -205,14 +220,17 @@ export default async function PropertyPage({
           </section>
 
           <section className="property-host-section">
-            <div className="property-host-avatar">JJ</div>
+            <div
+              className="property-host-avatar property-host-photo"
+              style={{ backgroundImage: "url('/jami.webp')", backgroundSize: "cover", backgroundPosition: "center 18%" }}
+              aria-label="Jami Jimenez"
+            />
             <div>
-              <p className="property-eyebrow">Hosted & managed locally</p>
+              <p className="property-eyebrow">Managed locally</p>
               <h2>Meet Jami Jimenez.</h2>
               <p>
-                Local Airbnb Host and Short-Term Rental Manager providing
-                hands-on support, proactive communication, and on-site assistance
-                across North County Coastal.
+                Local Airbnb Host and Short-Term Rental Manager providing hands-on support,
+                proactive communication, and on-site assistance across North County Coastal.
               </p>
               <div className="property-host-links">
                 <a href="tel:+17604296633"><Phone size={16} /> 760-429-6633</a>
@@ -223,29 +241,13 @@ export default async function PropertyPage({
         </div>
 
         <aside className="property-booking-column">
-          <BookingCard name={property.name} price={property.price} guests={property.guests} />
+          <BookingCard name={property.name} guests={property.guests} airbnbUrl={property.airbnbUrl} />
           <div className="property-booking-help">
             <strong>Questions before booking?</strong>
             <p>Jami provides local guest support and can help with property-specific questions.</p>
             <a href="tel:+17604296633"><Phone size={15} /> Call Jami</a>
           </div>
         </aside>
-      </section>
-
-      <section className="property-next-stay">
-        <div className="property-shell property-next-grid">
-          <div>
-            <p className="property-eyebrow">Another Pacific Stay</p>
-            <h2>Keep exploring the coast.</h2>
-            <p>{otherProperty.summary}</p>
-            <Link href={`/properties/${otherProperty.slug}`}>
-              View {otherProperty.name}
-            </Link>
-          </div>
-          <Link href={`/properties/${otherProperty.slug}`} className="property-next-image">
-            <img src={otherProperty.heroImage} alt={otherProperty.name} />
-          </Link>
-        </div>
       </section>
 
       <footer className="property-footer">
