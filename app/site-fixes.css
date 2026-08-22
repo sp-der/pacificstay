@@ -1,4 +1,4 @@
-/* Final production layout fixes for portrait rendering and booking placement. */
+/* Final production layout fixes for portrait rendering, booking placement, and property map. */
 
 .jami-portrait-placeholder,
 .contact-photo-slot,
@@ -47,6 +47,68 @@
   margin: 0 auto;
 }
 
+.property-google-map {
+  margin-top: 28px;
+  border: 1px solid var(--line);
+  background: var(--foam);
+  overflow: hidden;
+}
+
+.property-google-map-frame {
+  position: relative;
+  width: 100%;
+  min-height: 420px;
+  background: var(--sand);
+}
+
+.property-google-map-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  filter: saturate(.82) contrast(.96);
+}
+
+.property-google-map-footer {
+  min-height: 92px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.property-google-map-footer > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.property-google-map-eyebrow {
+  color: var(--sage);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.property-google-map-footer strong {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.property-google-map-footer a {
+  flex: 0 0 auto;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+}
+
 @media (max-width: 760px) {
   .property-inline-booking {
     width: 100%;
@@ -56,5 +118,21 @@
   .property-inline-booking .property-booking-column {
     width: 100%;
     max-width: none;
+  }
+
+  .property-google-map-frame {
+    min-height: 340px;
+  }
+
+  .property-google-map-footer {
+    min-height: 0;
+    padding: 18px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .property-google-map-footer strong {
+    font-size: 21px;
   }
 }
