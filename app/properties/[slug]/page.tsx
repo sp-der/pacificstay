@@ -241,7 +241,7 @@ export default async function PropertyPage({
         </div>
 
         <aside className="property-booking-column">
-          <BookingCard name={property.name} guests={property.guests} airbnbUrl={property.airbnbUrl} />
+          <BookingCard slug={property.slug} name={property.name} guests={property.guests} airbnbUrl={property.airbnbUrl} />
           <div className="property-booking-help">
             <strong>Questions before booking?</strong>
             <p>Jami provides local guest support and can help with property-specific questions.</p>

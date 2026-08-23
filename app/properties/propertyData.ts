@@ -136,6 +136,7 @@ export const properties: Property[] = [
     access: "Self check-in with keypad",
     houseRules: [
       "Maximum of 6 guests",
+      "Minimum stay of 5 nights",
       "Check-in after 4:00 PM",
       "Checkout before 11:00 AM",
       "Cancellation terms are shown during booking based on the selected stay dates",
