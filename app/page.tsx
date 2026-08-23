@@ -306,9 +306,6 @@ export default function HomePage() {
                     <Link className="text-link" href={`/properties/${stay.slug}`}>
                       View property <ArrowRight size={16} />
                     </Link>
-                    <a className="pill-button" href={stay.airbnbUrl} target="_blank" rel="noreferrer">
-                      Current availability
-                    </a>
                   </div>
                 </div>
               </article>

@@ -1,10 +1,10 @@
 "use client";
 
-import { ArrowRight, CalendarDays, Check, ExternalLink, LoaderCircle, Users } from "lucide-react";
+import { ArrowRight, CalendarDays, Check, Clock3, LoaderCircle, ShieldCheck, Users } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import { SUPABASE_URL, supabaseHeaders } from "../../../lib/supabaseConfig";
 
-type BookingCardProps = { slug: string; name: string; guests: number; airbnbUrl: string };
+type BookingCardProps = { slug: string; name: string; guests: number };
 type FormState = { checkIn: string; checkOut: string; guests: string; fullName: string; email: string; phone: string; message: string; website: string };
 type PropertyConfig = { id: string; min_nights: number; max_nights: number };
 
@@ -27,7 +27,7 @@ function stayDates(checkIn: string, checkOut: string) {
   return dates;
 }
 
-export default function BookingCard({ slug, name, guests, airbnbUrl }: BookingCardProps) {
+export default function BookingCard({ slug, name, guests }: BookingCardProps) {
   const [form, setForm] = useState<FormState>({ checkIn: "", checkOut: "", guests: "2", fullName: "", email: "", phone: "", message: "", website: "" });
   const [status, setStatus] = useState<"idle" | "submitting" | "success" | "error">("idle");
   const [availabilityStatus, setAvailabilityStatus] = useState<"loading" | "ready" | "unavailable" | "error">("loading");
@@ -150,7 +150,7 @@ export default function BookingCard({ slug, name, guests, airbnbUrl }: BookingCa
       if (!response.ok) throw new Error("Request failed");
       setStatus("success");
     } catch {
-      setError("We couldn’t send your request. Check the dates and try again, or use the Airbnb link below.");
+      setError("We couldn’t send your request. Check the dates and contact details, then try again.");
       setStatus("error");
     }
   }
@@ -166,8 +166,16 @@ export default function BookingCard({ slug, name, guests, airbnbUrl }: BookingCa
   }
 
   return <form className="property-booking-card" onSubmit={submit}>
-    <p className="property-mini-label">Direct booking request</p>
-    <div className="property-rate-line current-booking-heading"><strong>Plan your stay</strong></div>
+    <div className="property-booking-intro">
+      <p className="property-mini-label">Book directly with Pacific Stay</p>
+      <div className="property-rate-line current-booking-heading"><strong>Plan your stay</strong></div>
+      <p>Choose your dates and send a request. Jami will personally confirm the details and final price before anything is reserved.</p>
+    </div>
+    <div className="property-booking-facts" aria-label="Booking details">
+      <span><Clock3 size={15} /><strong>{minNights}+ nights</strong><small>Minimum stay</small></span>
+      <span><Users size={15} /><strong>Up to {guests}</strong><small>Guests</small></span>
+      <span><ShieldCheck size={15} /><strong>No payment</strong><small>Until confirmed</small></span>
+    </div>
     <div className={`property-availability-status status-${availabilityStatus}`} aria-live="polite">
       {availabilityStatus === "loading" && <><LoaderCircle size={14} className="spin" /> Loading availability…</>}
       {availabilityStatus === "ready" && <><Check size={14} /> Availability connected</>}
@@ -179,7 +187,7 @@ export default function BookingCard({ slug, name, guests, airbnbUrl }: BookingCa
       <label><span><CalendarDays size={15} /> Check-out</span><input type="date" min={minCheckOut} value={form.checkOut} onChange={(e) => update("checkOut", e.target.value)} required /></label>
       <label className="property-guests-field"><span><Users size={15} /> Guests</span><select value={form.guests} onChange={(e) => update("guests", e.target.value)}>{Array.from({ length: guests }, (_, i) => i + 1).map((guest) => <option key={guest} value={guest}>{guest} guest{guest === 1 ? "" : "s"}</option>)}</select></label>
     </div>
-    <p className="property-minimum-note">Minimum {minNights} nights · No payment collected</p>
+    <div className="property-form-divider"><span>Your information</span></div>
     <div className="property-contact-fields">
       <label><span>Full name</span><input value={form.fullName} onChange={(e) => update("fullName", e.target.value)} autoComplete="name" maxLength={100} required /></label>
       <label><span>Email</span><input type="email" value={form.email} onChange={(e) => update("email", e.target.value)} autoComplete="email" maxLength={254} required /></label>
@@ -187,10 +195,13 @@ export default function BookingCard({ slug, name, guests, airbnbUrl }: BookingCa
       <label><span>Message <small>(optional)</small></span><textarea value={form.message} onChange={(e) => update("message", e.target.value)} maxLength={1500} rows={3} /></label>
       <label className="booking-honeypot" aria-hidden="true"><span>Website</span><input value={form.website} onChange={(e) => update("website", e.target.value)} tabIndex={-1} autoComplete="off" /></label>
     </div>
-    {nights > 0 && <p className="property-stay-summary">{nights} night{nights === 1 ? "" : "s"} · {form.guests} guest{form.guests === "1" ? "" : "s"}</p>}
+    {nights > 0 && <div className="property-stay-summary">
+      <div><span>Selected stay</span><strong>{nights} night{nights === 1 ? "" : "s"}</strong></div>
+      <div><span>Guests</span><strong>{form.guests}</strong></div>
+      <div><span>Price</span><strong>Confirmed by host</strong></div>
+    </div>}
     {error && <p className="property-booking-error" role="alert">{error}</p>}
     <button className="property-book-button" type="submit" disabled={status === "submitting" || availabilityStatus === "loading" || availabilityStatus === "error" || Boolean(conflictingDate)}>{status === "submitting" ? "Sending request…" : <>Request to book <ArrowRight size={17} /></>}</button>
-    <small>Pacific Stay confirms availability and pricing before a reservation is created.</small>
-    <a className="property-airbnb-fallback" href={airbnbUrl} target="_blank" rel="noreferrer">Prefer Airbnb? Check the live listing <ExternalLink size={14} /></a>
+    <small>This is a booking request, not an automatic reservation. Pacific Stay will confirm availability and pricing with you directly.</small>
   </form>;
 }
