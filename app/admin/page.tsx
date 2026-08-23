@@ -216,7 +216,6 @@ export default function BookingAdminPage() {
         <article><small>New requests</small><strong>{statusCounts.new ?? 0}</strong></article>
         <article><small>Upcoming blocked nights</small><strong>{blocks.length}</strong></article>
         <article><small>Rate overrides</small><strong>{rates.length}</strong></article>
-        <article><small>Minimum stay</small><strong>{properties[0]?.min_nights ?? 5} nights</strong></article>
       </section>
       <section className={styles.grid}>
         <div className={styles.panel}>
