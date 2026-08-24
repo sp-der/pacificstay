@@ -4,6 +4,7 @@ import { useEffect } from "react";
 
 const JAMI_SRC = "/jami-final.jpg?v=3";
 const PUBLIC_EMAIL = "info@pacificstayproperties.com";
+const DIRECT_BOOKING_URL = "/book/chestnut-by-the-sea";
 const CHESTNUT_MAP_EMBED =
   "https://www.google.com/maps?q=Carlsbad%20Village%2C%20Carlsbad%2C%20CA&z=15&output=embed";
 const CHESTNUT_MAP_LINK =
@@ -33,6 +34,23 @@ function updatePublicEmail() {
   document.querySelectorAll<HTMLAnchorElement>('a[href="mailto:Jami.jimenez718@gmail.com"]').forEach((link) => {
     link.href = `mailto:${PUBLIC_EMAIL}`;
     replaceText(link);
+  });
+}
+
+function ensureDirectBookingLinks() {
+  const sideCopy = document.querySelector<HTMLElement>(".stays-section .section-side-copy");
+  if (sideCopy?.textContent?.includes("Direct booking is the next system being connected")) {
+    sideCopy.textContent = "Explore Chestnut By the Sea, a real Pacific Stay-managed Carlsbad home just steps from the beach. Direct booking through Pacific Stay is now available on a dedicated booking page.";
+  }
+
+  document.querySelectorAll<HTMLElement>(".stay-card-actions").forEach((actions) => {
+    if (actions.querySelector('[data-direct-booking="true"]')) return;
+    const link = document.createElement("a");
+    link.href = DIRECT_BOOKING_URL;
+    link.className = "pill-button";
+    link.dataset.directBooking = "true";
+    link.textContent = "Book direct";
+    actions.appendChild(link);
   });
 }
 
@@ -91,6 +109,7 @@ function ensurePropertyMap(propertyPage: Element | null) {
 export default function SiteFixes() {
   useEffect(() => {
     updatePublicEmail();
+    ensureDirectBookingLinks();
     ensureJamiPhoto(document.querySelector(".jami-portrait-placeholder"), "Jami Jimenez");
     ensureJamiPhoto(document.querySelector(".contact-photo-slot"), "Jami Jimenez");
     ensureJamiPhoto(document.querySelector(".property-host-photo"), "Jami Jimenez");
