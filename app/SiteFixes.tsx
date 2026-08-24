@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 
 const JAMI_SRC = "/jami-final.jpg?v=3";
+const PUBLIC_EMAIL = "info@pacificstayproperties.com";
 const CHESTNUT_MAP_EMBED =
   "https://www.google.com/maps?q=Carlsbad%20Village%2C%20Carlsbad%2C%20CA&z=15&output=embed";
 const CHESTNUT_MAP_LINK =
@@ -18,6 +19,21 @@ function ensureJamiPhoto(container: Element | null, alt: string) {
   img.loading = "eager";
   img.decoding = "async";
   container.appendChild(img);
+}
+
+function replaceText(node: Node) {
+  if (node.nodeType === Node.TEXT_NODE && node.textContent?.includes("Jami.jimenez718@gmail.com")) {
+    node.textContent = node.textContent.replaceAll("Jami.jimenez718@gmail.com", PUBLIC_EMAIL);
+    return;
+  }
+  node.childNodes.forEach(replaceText);
+}
+
+function updatePublicEmail() {
+  document.querySelectorAll<HTMLAnchorElement>('a[href="mailto:Jami.jimenez718@gmail.com"]').forEach((link) => {
+    link.href = `mailto:${PUBLIC_EMAIL}`;
+    replaceText(link);
+  });
 }
 
 function ensurePropertyMap(propertyPage: Element | null) {
@@ -74,6 +90,7 @@ function ensurePropertyMap(propertyPage: Element | null) {
 
 export default function SiteFixes() {
   useEffect(() => {
+    updatePublicEmail();
     ensureJamiPhoto(document.querySelector(".jami-portrait-placeholder"), "Jami Jimenez");
     ensureJamiPhoto(document.querySelector(".contact-photo-slot"), "Jami Jimenez");
     ensureJamiPhoto(document.querySelector(".property-host-photo"), "Jami Jimenez");
