@@ -47,6 +47,29 @@
   margin: 0 auto;
 }
 
+/* Keep the homepage Book direct CTA centered within the property card actions. */
+.stay-card-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+}
+
+.stay-card-actions .text-link {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.stay-card-actions [data-direct-booking="true"] {
+  grid-column: 2;
+  justify-self: center;
+}
+
+/* Availability is still checked in the background, but the technical sync badge is not customer-facing. */
+form [class*="liveStatus"] {
+  display: none !important;
+}
+
 .property-google-map {
   margin-top: 28px;
   border: 1px solid var(--line);
@@ -176,5 +199,20 @@
 
   .property-nearby-strip span:nth-last-child(-n + 2) {
     border-bottom: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .stay-card-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .stay-card-actions .text-link,
+  .stay-card-actions [data-direct-booking="true"] {
+    grid-column: 1;
+  }
+
+  .stay-card-actions [data-direct-booking="true"] {
+    justify-self: center;
   }
 }
