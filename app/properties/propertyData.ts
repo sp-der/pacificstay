@@ -28,6 +28,7 @@ export type Property = {
   bedrooms: number;
   beds: number;
   baths: number;
+  minNights: number;
   propertyType: string;
   summary: string;
   description: string[];
@@ -62,6 +63,7 @@ export const properties: Property[] = [
     bedrooms: 3,
     beds: 3,
     baths: 2,
+    minNights: 5,
     propertyType: "Entire home",
     summary:
       "A luxury Bali-inspired Carlsbad escape just steps from the beach, with a private outdoor setup made for slow mornings, sunset drinks, and relaxed coastal evenings.",
