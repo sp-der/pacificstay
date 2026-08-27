@@ -1,0 +1,123 @@
+/* Official Pacific Stay Properties logo placement. The existing text wordmarks remain in the DOM for accessibility. */
+.intro-mark,
+.wordmark,
+.property-wordmark,
+.photo-tour-wordmark,
+[class*="wordmark"] {
+  position: relative;
+  flex: 0 0 auto;
+  background-image: url('/pacific-stay-logo.webp') !important;
+  background-repeat: no-repeat !important;
+  background-position: center center !important;
+  background-size: contain !important;
+}
+
+.intro-mark > span,
+.intro-mark > small,
+.wordmark > span,
+.wordmark > small,
+.property-wordmark > span,
+.property-wordmark > small,
+.photo-tour-wordmark > span,
+.photo-tour-wordmark > small,
+[class*="wordmark"] > span,
+[class*="wordmark"] > small {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* Opening brand reveal */
+.intro-mark {
+  width: min(320px, 72vw);
+  aspect-ratio: 480 / 473;
+}
+
+/* Homepage navigation. A soft glass plate keeps the dark logo readable over the hero video. */
+.site-header .wordmark {
+  width: 94px;
+  height: 90px;
+  padding: 3px 5px;
+  border-radius: 5px;
+  background-color: rgba(251, 250, 247, .9) !important;
+  box-shadow: 0 8px 30px rgba(8, 20, 20, .08);
+  backdrop-filter: blur(10px);
+}
+
+.mobile-menu-top .wordmark {
+  width: 126px;
+  height: 124px;
+  padding: 0;
+  background-color: transparent !important;
+  box-shadow: none;
+}
+
+/* Generic header fallback also catches the CSS-module direct-booking wordmark. */
+header [class*="wordmark"] {
+  width: 78px;
+  height: 77px;
+}
+
+.property-site-header .property-wordmark {
+  width: 82px;
+  height: 80px;
+}
+
+.photo-tour-header .photo-tour-wordmark {
+  width: 70px;
+  height: 69px;
+}
+
+/* Full brand mark in both dark footers. */
+.site-footer .footer-wordmark,
+.property-footer .footer-property-wordmark {
+  width: 164px;
+  height: 162px;
+  padding: 8px;
+  border-radius: 5px;
+  background-color: rgba(251, 250, 247, .96) !important;
+}
+
+@media (max-width: 760px) {
+  .intro-mark {
+    width: min(270px, 74vw);
+  }
+
+  .site-header .wordmark {
+    width: 76px;
+    height: 74px;
+    padding: 2px 4px;
+  }
+
+  .mobile-menu-top .wordmark {
+    width: 112px;
+    height: 110px;
+  }
+
+  header [class*="wordmark"] {
+    width: 68px;
+    height: 67px;
+  }
+
+  .property-site-header .property-wordmark {
+    width: 70px;
+    height: 69px;
+  }
+
+  .photo-tour-header .photo-tour-wordmark {
+    width: 62px;
+    height: 61px;
+  }
+
+  .site-footer .footer-wordmark,
+  .property-footer .footer-property-wordmark {
+    width: 142px;
+    height: 140px;
+  }
+}
