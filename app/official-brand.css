@@ -6,7 +6,7 @@
 [class*="wordmark"] {
   position: relative;
   flex: 0 0 auto;
-  background-image: url('/pacific-stay-logo.webp') !important;
+  background-image: url('/PSP.png') !important;
   background-repeat: no-repeat !important;
   background-position: center center !important;
   background-size: contain !important;
@@ -36,7 +36,7 @@
 /* Opening brand reveal */
 .intro-mark {
   width: min(320px, 72vw);
-  aspect-ratio: 480 / 473;
+  aspect-ratio: 1 / 1;
 }
 
 /* Homepage navigation. A soft glass plate keeps the dark logo readable over the hero video. */
