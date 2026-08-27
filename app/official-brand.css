@@ -41,10 +41,10 @@
 
 /* Homepage navigation uses the alternate transparent PSP2 header artwork. */
 .site-header .wordmark {
-  width: 540px;
-  height: 360px;
+  width: 270px;
+  height: 180px;
   padding: 0;
-  margin-top: 8px;
+  margin-top: 16px;
   align-self: start;
   border-radius: 0;
   background-image: url('/PSP2.png') !important;
@@ -69,8 +69,8 @@ header [class*="wordmark"] {
 
 /* The homepage logo intentionally overrides the generic header fallback above. */
 .site-header .wordmark {
-  width: 540px;
-  height: 360px;
+  width: 270px;
+  height: 180px;
 }
 
 .property-site-header .property-wordmark {
@@ -95,9 +95,9 @@ header [class*="wordmark"] {
 
 @media (max-width: 1050px) {
   .site-header .wordmark {
-    width: 380px;
-    height: 250px;
-    margin-top: 8px;
+    width: 210px;
+    height: 140px;
+    margin-top: 12px;
   }
 }
 
@@ -107,9 +107,9 @@ header [class*="wordmark"] {
   }
 
   .site-header .wordmark {
-    width: 260px;
-    height: 170px;
-    margin-top: 6px;
+    width: 166px;
+    height: 108px;
+    margin-top: 9px;
     padding: 0;
   }
 
@@ -124,8 +124,8 @@ header [class*="wordmark"] {
   }
 
   .site-header .wordmark {
-    width: 260px;
-    height: 170px;
+    width: 166px;
+    height: 108px;
   }
 
   .property-site-header .property-wordmark {
