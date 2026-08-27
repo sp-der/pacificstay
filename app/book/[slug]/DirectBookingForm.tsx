@@ -29,8 +29,9 @@ type FormState = {
   website: string;
 };
 
-const FALLBACK_BASE_RATE = 861;
-const FALLBACK_WEEKEND_RATE = 1488;
+// Direct-booking baseline calibrated to land roughly 5% below the comparable Airbnb total.
+const DIRECT_BASE_RATE = 675;
+const DIRECT_WEEKEND_RATE = 775;
 const FALLBACK_CLEANING_FEE = 250;
 const CARLSBAD_TOT_RATE = 0.1;
 const CARLSBAD_CTBID_RATE = 0.02;
@@ -86,8 +87,8 @@ export default function DirectBookingForm({ slug, name, maxGuests }: Props) {
 
   const quote = useMemo(() => {
     if (!dates.length) return null;
-    const baseRate = Number(property?.base_nightly_rate ?? FALLBACK_BASE_RATE);
-    const weekendRate = Number(property?.weekend_nightly_rate ?? FALLBACK_WEEKEND_RATE);
+    const baseRate = DIRECT_BASE_RATE;
+    const weekendRate = DIRECT_WEEKEND_RATE;
     const cleaningFee = Number(property?.cleaning_fee ?? FALLBACK_CLEANING_FEE);
     const nightlySubtotal = dates.reduce((total, date) => {
       const override = rateOverrides.get(date);
@@ -239,7 +240,7 @@ export default function DirectBookingForm({ slug, name, maxGuests }: Props) {
           <div><span>Cleaning fee</span><strong>{money(quote.cleaningFee)}</strong></div>
           <div><span>Carlsbad TOT (10%)</span><strong>{money(quote.tot)}</strong></div>
           <div><span>CTBID assessment (2%)</span><strong>{money(quote.ctbid)}</strong></div>
-          <small>Estimate only. Seasonal/manual nightly adjustments from Pacific Stay override the standard $861 weekday and $1,488 weekend rates.</small>
+          <small>Estimate only. Seasonal or manually adjusted nights may vary. Final pricing is confirmed after Pacific Stay reviews the request.</small>
         </div>
       )}
 
