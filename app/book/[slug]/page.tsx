@@ -66,13 +66,10 @@ export default async function DirectBookingPage({ params }: { params: Promise<{ 
         <div className={styles.bookingIntro}>
           <p className={styles.eyebrow}>Plan your stay</p>
           <h2>Book Chestnut direct.</h2>
-          <p>
-            Standard pricing starts at $861 per night, with a standard weekend rate of $1,488.
-            Individual nights may be adjusted for season and demand. A $250 cleaning fee applies.
-          </p>
+          <p>Select your dates to view the estimated direct-booking price for your stay.</p>
           <div className={styles.policyCards}>
-            <div><strong>12 months</strong><span>Booking window</span></div>
-            <div><strong>6 guests</strong><span>Maximum occupancy</span></div>
+            <div><strong>{property.minNights} nights</strong><span>Minimum stay</span></div>
+            <div><strong>{property.guests} guests</strong><span>Maximum occupancy</span></div>
             <div><strong>No pets</strong><span>House rule</span></div>
           </div>
           <p className={styles.rateNote}>
