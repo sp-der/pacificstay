@@ -39,7 +39,7 @@
   aspect-ratio: 1 / 1;
 }
 
-/* Homepage navigation. Keep the transparent PNG directly over the hero video. */
+/* Homepage navigation uses the alternate transparent PSP2 header artwork. */
 .site-header .wordmark {
   width: 270px;
   height: 180px;
@@ -47,6 +47,7 @@
   margin-top: 16px;
   align-self: start;
   border-radius: 0;
+  background-image: url('/PSP2.png') !important;
   background-color: transparent !important;
   box-shadow: none;
   backdrop-filter: none;
