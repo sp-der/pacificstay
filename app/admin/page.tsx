@@ -1,7 +1,7 @@
 "use client";
 
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
-import { CalendarDays, Check, LogOut, RefreshCw, ShieldCheck } from "lucide-react";
+import { CalendarDays, Check, CheckCircle2, Copy, CreditCard, ExternalLink, LogOut, Mail, RefreshCw, ShieldCheck } from "lucide-react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL, supabaseHeaders } from "../../lib/supabaseConfig";
 import styles from "./admin.module.css";
 
@@ -14,23 +14,40 @@ type BookingRequest = {
 type Property = { id: string; name: string; slug: string; min_nights: number; max_guests: number };
 type CalendarBlock = { id: number; property_id: string; stay_date: string; source: string };
 type NightlyRate = { id: number; property_id: string; stay_date: string; nightly_rate: number };
+type Reservation = {
+  id: string; confirmation_code: string; property_id: string; booking_request_id: string | null;
+  check_in: string; check_out: string; guests: number; guest_name: string; guest_email: string; guest_phone: string | null;
+  status: "hold" | "confirmed" | "cancelled" | "completed"; source: string;
+  subtotal: number | null; cleaning_fee: number | null; tax_amount: number | null; total_amount: number | null;
+  payment_status: "not_required" | "pending" | "paid" | "refunded" | "failed"; created_at: string;
+  properties: { name: string } | { name: string }[] | null;
+};
 
 const SESSION_KEY = "pacific-stay-admin-session";
 const requestSelect = "id,request_number,property_name,check_in,check_out,guests,full_name,email,phone,message,status,created_at";
+const reservationSelect = "id,confirmation_code,property_id,booking_request_id,check_in,check_out,guests,guest_name,guest_email,guest_phone,status,source,subtotal,cleaning_fee,tax_amount,total_amount,payment_status,created_at,properties(name)";
 
 function addDays(value: string, days: number) {
   const date = new Date(`${value}T12:00:00`);
   date.setDate(date.getDate() + days);
   return date.toISOString().slice(0, 10);
 }
-
 function today() { return new Date().toISOString().slice(0, 10); }
+function money(value: number | null) {
+  if (value == null) return "Pending quote";
+  return new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 2 }).format(value);
+}
+function propertyName(value: Reservation["properties"]) {
+  if (Array.isArray(value)) return value[0]?.name ?? "Pacific Stay property";
+  return value?.name ?? "Pacific Stay property";
+}
 
 export default function BookingAdminPage() {
   const [session, setSession] = useState<Session | null>(null);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [requests, setRequests] = useState<BookingRequest[]>([]);
+  const [reservations, setReservations] = useState<Reservation[]>([]);
   const [properties, setProperties] = useState<Property[]>([]);
   const [blocks, setBlocks] = useState<CalendarBlock[]>([]);
   const [rates, setRates] = useState<NightlyRate[]>([]);
@@ -45,17 +62,18 @@ export default function BookingAdminPage() {
     setLoading(true); setError("");
     const headers = supabaseHeaders(activeSession.access_token);
     try {
-      const [requestResponse, propertyResponse, blockResponse, rateResponse] = await Promise.all([
+      const [requestResponse, reservationResponse, propertyResponse, blockResponse, rateResponse] = await Promise.all([
         fetch(`${SUPABASE_URL}/rest/v1/booking_requests?select=${requestSelect}&order=created_at.desc`, { headers }),
+        fetch(`${SUPABASE_URL}/rest/v1/reservations?select=${reservationSelect}&source=eq.direct&order=created_at.desc`, { headers }),
         fetch(`${SUPABASE_URL}/rest/v1/properties?select=id,name,slug,min_nights,max_guests&order=name`, { headers }),
         fetch(`${SUPABASE_URL}/rest/v1/booking_calendar?select=id,property_id,stay_date,source&stay_date=gte.${today()}&order=stay_date&limit=500`, { headers }),
         fetch(`${SUPABASE_URL}/rest/v1/nightly_rates?select=id,property_id,stay_date,nightly_rate&stay_date=gte.${today()}&order=stay_date&limit=500`, { headers }),
       ]);
-      if ([requestResponse, propertyResponse, blockResponse, rateResponse].some((response) => !response.ok)) throw new Error("Admin data could not be loaded.");
-      const [requestRows, propertyRows, blockRows, rateRows] = await Promise.all([
-        requestResponse.json(), propertyResponse.json(), blockResponse.json(), rateResponse.json(),
+      if ([requestResponse, reservationResponse, propertyResponse, blockResponse, rateResponse].some((response) => !response.ok)) throw new Error("Admin data could not be loaded.");
+      const [requestRows, reservationRows, propertyRows, blockRows, rateRows] = await Promise.all([
+        requestResponse.json(), reservationResponse.json(), propertyResponse.json(), blockResponse.json(), rateResponse.json(),
       ]);
-      setRequests(requestRows); setProperties(propertyRows); setBlocks(blockRows); setRates(rateRows);
+      setRequests(requestRows); setReservations(reservationRows); setProperties(propertyRows); setBlocks(blockRows); setRates(rateRows);
       if (!blockForm.propertyId && propertyRows[0]) {
         setBlockForm((current) => ({ ...current, propertyId: propertyRows[0].id }));
         setRateForm((current) => ({ ...current, propertyId: propertyRows[0].id }));
@@ -78,8 +96,7 @@ export default function BookingAdminPage() {
     event.preventDefault(); setLoading(true); setError("");
     try {
       const response = await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=password`, {
-        method: "POST",
-        headers: { apikey: SUPABASE_PUBLISHABLE_KEY, "Content-Type": "application/json" },
+        method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
       });
       if (!response.ok) throw new Error("Email or password was not accepted.");
@@ -95,8 +112,7 @@ export default function BookingAdminPage() {
     event.preventDefault(); setLoading(true); setError(""); setNotice("");
     try {
       const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
-        method: "POST",
-        headers: { apikey: SUPABASE_PUBLISHABLE_KEY, "Content-Type": "application/json" },
+        method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, "Content-Type": "application/json" },
         body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
       });
       const result = await response.json() as { access_token?: string; user?: Session["user"]; msg?: string; error_description?: string };
@@ -104,16 +120,14 @@ export default function BookingAdminPage() {
       if (result.access_token && result.user?.app_metadata?.role === "admin") {
         const nextSession = result as Session;
         window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
-        setSession(nextSession); setPassword(""); await loadDashboard(nextSession);
-        return;
+        setSession(nextSession); setPassword(""); await loadDashboard(nextSession); return;
       }
-      setPassword(""); setFirstTimeSetup(false);
-      setNotice("Account created. Check your email to confirm it, then sign in here.");
+      setPassword(""); setFirstTimeSetup(false); setNotice("Account created. Check your email to confirm it, then sign in here.");
     } catch (setupError) { setError(setupError instanceof Error ? setupError.message : "Administrator setup failed."); }
     finally { setLoading(false); }
   }
 
-  function signOut() { window.sessionStorage.removeItem(SESSION_KEY); setSession(null); setRequests([]); setBlocks([]); setRates([]); }
+  function signOut() { window.sessionStorage.removeItem(SESSION_KEY); setSession(null); setRequests([]); setReservations([]); setBlocks([]); setRates([]); }
 
   async function updateRequest(id: string, status: BookingRequest["status"]) {
     if (!session) return;
@@ -131,12 +145,59 @@ export default function BookingAdminPage() {
     );
     if (!response.ok) {
       const details = await response.json().catch(() => null) as { message?: string } | null;
-      setError(details?.message ?? "The request status could not be changed.");
-      return;
+      setError(details?.message ?? "The request status could not be changed."); return;
     }
     setRequests((current) => current.map((request) => request.id === id ? { ...request, status } : request));
-    setNotice(status === "approved" ? "Request approved and stay dates safely blocked." : status === "cancelled" ? "Request cancelled and direct-booking dates released." : "Request status updated.");
+    setNotice(status === "approved"
+      ? "Request approved. Dates are blocked and a guest reservation has been created below."
+      : status === "cancelled" ? "Request cancelled and direct-booking dates released." : "Request status updated.");
     if (isReservationAction) await loadDashboard(session);
+  }
+
+  async function updateReservation(reservation: Reservation, updates: Partial<Pick<Reservation, "status" | "payment_status">>, successMessage: string) {
+    if (!session) return;
+    setError(""); setNotice("");
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/reservations?id=eq.${reservation.id}`, {
+      method: "PATCH",
+      headers: { ...supabaseHeaders(session.access_token), "Content-Type": "application/json", Prefer: "return=minimal" },
+      body: JSON.stringify({ ...updates, updated_at: new Date().toISOString() }),
+    });
+    if (!response.ok) { setError("Reservation could not be updated."); return; }
+    setNotice(successMessage); await loadDashboard(session);
+  }
+
+  async function cancelReservation(reservation: Reservation) {
+    if (!session || !reservation.booking_request_id) { setError("This reservation is not linked to a booking request."); return; }
+    setError(""); setNotice("");
+    const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cancel_booking_request`, {
+      method: "POST", headers: { ...supabaseHeaders(session.access_token), "Content-Type": "application/json" },
+      body: JSON.stringify({ p_request_id: reservation.booking_request_id }),
+    });
+    if (!response.ok) { setError("Reservation could not be cancelled."); return; }
+    setNotice("Reservation cancelled and its direct-booking dates were released."); await loadDashboard(session);
+  }
+
+  async function copyGuestLink(reservation: Reservation) {
+    const url = `${window.location.origin}/reservation/${reservation.id}`;
+    await navigator.clipboard.writeText(url);
+    setNotice(`Guest reservation link copied for ${reservation.guest_name}.`); setError("");
+  }
+
+  async function sendReservationEmail(reservation: Reservation, template: "approved" | "confirmed") {
+    if (!session) return;
+    setError(""); setNotice("");
+    const response = await fetch("/api/email/reservation", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${session.access_token}`, "Content-Type": "application/json" },
+      body: JSON.stringify({ reservationId: reservation.id, template }),
+    });
+    const result = await response.json().catch(() => ({})) as { error?: string };
+    if (!response.ok) {
+      if (response.status === 503) setNotice("Email template is ready. Connect Resend to activate delivery.");
+      else setError(result.error ?? "Reservation email could not be sent.");
+      return;
+    }
+    setNotice(template === "approved" ? "Approval email sent to the guest." : "Final confirmation email sent to the guest.");
   }
 
   async function addBlock(event: FormEvent) {
@@ -146,9 +207,7 @@ export default function BookingAdminPage() {
     const rows = [];
     for (let date = blockForm.start; date < blockForm.end; date = addDays(date, 1)) rows.push({ property_id: blockForm.propertyId, stay_date: date, source: blockForm.source });
     const response = await fetch(`${SUPABASE_URL}/rest/v1/booking_calendar?on_conflict=property_id,stay_date`, {
-      method: "POST",
-      headers: { ...supabaseHeaders(session.access_token), "Content-Type": "application/json", Prefer: "resolution=ignore-duplicates,return=minimal" },
-      body: JSON.stringify(rows),
+      method: "POST", headers: { ...supabaseHeaders(session.access_token), "Content-Type": "application/json", Prefer: "resolution=ignore-duplicates,return=minimal" }, body: JSON.stringify(rows),
     });
     if (!response.ok) { setError("Those dates could not be blocked."); return; }
     setBlockForm((current) => ({ ...current, start: "", end: "" })); setNotice("Calendar dates blocked."); await loadDashboard(session);
@@ -160,8 +219,7 @@ export default function BookingAdminPage() {
     const nightlyRate = Number(rateForm.rate);
     if (!rateForm.date || !Number.isFinite(nightlyRate) || nightlyRate < 0) { setError("Enter a valid date and nightly rate."); return; }
     const response = await fetch(`${SUPABASE_URL}/rest/v1/nightly_rates?on_conflict=property_id,stay_date`, {
-      method: "POST",
-      headers: { ...supabaseHeaders(session.access_token), "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" },
+      method: "POST", headers: { ...supabaseHeaders(session.access_token), "Content-Type": "application/json", Prefer: "resolution=merge-duplicates,return=minimal" },
       body: JSON.stringify({ property_id: rateForm.propertyId, stay_date: rateForm.date, nightly_rate: nightlyRate }),
     });
     if (!response.ok) { setError("The nightly rate could not be saved."); return; }
@@ -173,33 +231,29 @@ export default function BookingAdminPage() {
     setLoading(true); setError(""); setNotice("");
     try {
       const response = await fetch(`${SUPABASE_URL}/functions/v1/sync-airbnb-calendar`, {
-        method: "POST",
-        headers: { ...supabaseHeaders(session.access_token), "Content-Type": "application/json" },
+        method: "POST", headers: { ...supabaseHeaders(session.access_token), "Content-Type": "application/json" },
       });
       const result = await response.json() as { error?: string; blocked_nights?: number };
       if (!response.ok) throw new Error(result.error ?? "Airbnb calendar sync failed.");
-      setNotice(`Airbnb calendar synchronized. ${result.blocked_nights ?? 0} unavailable nights loaded.`);
-      await loadDashboard(session);
+      setNotice(`Airbnb calendar synchronized. ${result.blocked_nights ?? 0} unavailable nights loaded.`); await loadDashboard(session);
     } catch (syncError) { setError(syncError instanceof Error ? syncError.message : "Airbnb calendar sync failed."); }
     finally { setLoading(false); }
   }
 
   const statusCounts = useMemo(() => Object.fromEntries(["new", "contacted", "approved", "declined", "cancelled"].map((status) => [status, requests.filter((request) => request.status === status).length])), [requests]);
+  const activeReservations = reservations.filter((reservation) => !["cancelled", "completed"].includes(reservation.status));
+  const awaitingPayment = activeReservations.filter((reservation) => reservation.payment_status !== "paid").length;
 
   if (!session) return <main className={styles.loginPage}>
     <form className={styles.loginCard} onSubmit={firstTimeSetup ? createFirstAdmin : signIn}>
-      <div className={styles.brand}>PACIFIC STAY <small>BOOKING ADMIN</small></div>
-      <ShieldCheck size={30} />
+      <div className={styles.brand}>PACIFIC STAY <small>BOOKING ADMIN</small></div><ShieldCheck size={30} />
       <h1>{firstTimeSetup ? "Create first administrator" : "Administrator sign in"}</h1>
       <p>{firstTimeSetup ? "Use the approved Pacific Stay email and choose a secure password. Supabase will send an email confirmation." : "Booking information is private and available only to approved Pacific Stay administrators."}</p>
       <label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></label>
       <label>Password<input type="password" minLength={12} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete={firstTimeSetup ? "new-password" : "current-password"} required /></label>
-      {notice && <div className={styles.notice}>{notice}</div>}
-      {error && <div className={styles.error} role="alert">{error}</div>}
+      {notice && <div className={styles.notice}>{notice}</div>}{error && <div className={styles.error} role="alert">{error}</div>}
       <button disabled={loading}>{loading ? (firstTimeSetup ? "Creating…" : "Signing in…") : (firstTimeSetup ? "Create administrator" : "Sign in")}</button>
-      <button type="button" className={styles.secondaryButton} onClick={() => { setFirstTimeSetup(!firstTimeSetup); setError(""); setNotice(""); }}>
-        {firstTimeSetup ? "Back to sign in" : "First-time administrator setup"}
-      </button>
+      <button type="button" className={styles.secondaryButton} onClick={() => { setFirstTimeSetup(!firstTimeSetup); setError(""); setNotice(""); }}>{firstTimeSetup ? "Back to sign in" : "First-time administrator setup"}</button>
     </form>
   </main>;
 
@@ -210,13 +264,35 @@ export default function BookingAdminPage() {
     </header>
     <div className={styles.shell}>
       <section className={styles.heading}><div><p>Private workspace</p><h1>Booking dashboard</h1></div><span><ShieldCheck size={16} /> Protected by Supabase Auth + RLS</span></section>
-      {notice && <div className={styles.notice}><Check size={16} /> {notice}</div>}
-      {error && <div className={styles.error} role="alert">{error}</div>}
+      {notice && <div className={styles.notice}><Check size={16} /> {notice}</div>}{error && <div className={styles.error} role="alert">{error}</div>}
       <section className={styles.stats}>
         <article><small>New requests</small><strong>{statusCounts.new ?? 0}</strong></article>
-        <article><small>Upcoming blocked nights</small><strong>{blocks.length}</strong></article>
-        <article><small>Rate overrides</small><strong>{rates.length}</strong></article>
+        <article><small>Active reservations</small><strong>{activeReservations.length}</strong></article>
+        <article><small>Awaiting payment</small><strong>{awaitingPayment}</strong></article>
+        <article><small>Blocked nights</small><strong>{blocks.length}</strong></article>
       </section>
+
+      <section className={styles.reservationPanel}>
+        <div className={styles.panelTitle}><div><p>Post-approval</p><h2>Reservations</h2></div><span>{reservations.length} total</span></div>
+        <div className={styles.reservationList}>{reservations.length === 0 ? <div className={styles.empty}>Approved stays will appear here.</div> : reservations.map((reservation) => {
+          const paid = reservation.payment_status === "paid";
+          return <article className={styles.reservationCard} key={reservation.id}>
+            <div className={styles.reservationTop}>
+              <div><small>{reservation.confirmation_code}</small><h3>{reservation.guest_name}</h3><p>{propertyName(reservation.properties)}</p></div>
+              <div className={styles.reservationChips}><span className={styles[reservation.status]}>{reservation.status === "hold" ? "approved" : reservation.status}</span><span className={paid ? styles.paidChip : styles.pendingChip}>{paid ? "paid" : "awaiting payment"}</span></div>
+            </div>
+            <div className={styles.reservationMeta}><span><CalendarDays size={15} /> {reservation.check_in} → {reservation.check_out}</span><span>{reservation.guests} guests</span><span>{money(reservation.total_amount)}</span></div>
+            <div className={styles.reservationLinks}><button onClick={() => copyGuestLink(reservation)}><Copy size={14} /> Copy guest link</button><a href={`/reservation/${reservation.id}`} target="_blank" rel="noreferrer"><ExternalLink size={14} /> Open portal</a><a href={`mailto:${reservation.guest_email}`}><Mail size={14} /> Email guest</a></div>
+            <div className={styles.reservationActions}>
+              {!paid && reservation.status !== "cancelled" && <button className={styles.primarySmall} onClick={() => updateReservation(reservation, { payment_status: "paid", status: "confirmed" }, "Payment marked paid and reservation confirmed.")}><CreditCard size={14} /> Mark paid & confirm</button>}
+              {paid && reservation.status === "confirmed" && <button onClick={() => updateReservation(reservation, { status: "completed" }, "Reservation marked completed.")}><CheckCircle2 size={14} /> Complete stay</button>}
+              {reservation.status !== "cancelled" && <button onClick={() => sendReservationEmail(reservation, paid ? "confirmed" : "approved")}><Mail size={14} /> {paid ? "Send confirmation email" : "Send approval email"}</button>}
+              {reservation.status !== "cancelled" && reservation.status !== "completed" && <button className={styles.dangerButton} onClick={() => cancelReservation(reservation)}>Cancel reservation</button>}
+            </div>
+          </article>;
+        })}</div>
+      </section>
+
       <section className={styles.grid}>
         <div className={styles.panel}>
           <div className={styles.panelTitle}><div><p>Guest pipeline</p><h2>Booking requests</h2></div><span>{requests.length} total</span></div>
@@ -233,13 +309,12 @@ export default function BookingAdminPage() {
             <label>Property<select value={blockForm.propertyId} onChange={(event) => setBlockForm({ ...blockForm, propertyId: event.target.value })}>{properties.map((property) => <option value={property.id} key={property.id}>{property.name}</option>)}</select></label>
             <div className={styles.formRow}><label>First blocked night<input type="date" min={today()} value={blockForm.start} onChange={(event) => setBlockForm({ ...blockForm, start: event.target.value })} required /></label><label>Checkout / reopen date<input type="date" min={blockForm.start || today()} value={blockForm.end} onChange={(event) => setBlockForm({ ...blockForm, end: event.target.value })} required /></label></div>
             <label>Reason<select value={blockForm.source} onChange={(event) => setBlockForm({ ...blockForm, source: event.target.value })}><option value="manual">Manual hold</option><option value="maintenance">Maintenance</option></select></label>
-            <button className={styles.primaryButton}>Block selected nights</button>
-            <button className={styles.secondaryButton} type="button" onClick={syncAirbnb} disabled={loading}>Sync Airbnb calendar</button>
+            <button className={styles.primaryButton}>Block selected nights</button><button className={styles.secondaryButton} type="button" onClick={syncAirbnb} disabled={loading}>Sync Airbnb calendar</button>
             <small className={styles.helper}>This activates after Jami’s private Airbnb iCal URL is added to the protected function secret.</small>
           </form>
           <form className={styles.panel} onSubmit={saveRate}><div className={styles.panelTitle}><div><p>Pricing</p><h2>Nightly override</h2></div></div>
             <label>Property<select value={rateForm.propertyId} onChange={(event) => setRateForm({ ...rateForm, propertyId: event.target.value })}>{properties.map((property) => <option value={property.id} key={property.id}>{property.name}</option>)}</select></label>
-            <div className={styles.formRow}><label>Date<input type="date" min={today()} value={rateForm.date} onChange={(event) => setRateForm({ ...rateForm, date: event.target.value })} required /></label><label>Nightly rate<input type="number" min="0" step="0.01" placeholder="Pending client" value={rateForm.rate} onChange={(event) => setRateForm({ ...rateForm, rate: event.target.value })} required /></label></div>
+            <div className={styles.formRow}><label>Date<input type="date" min={today()} value={rateForm.date} onChange={(event) => setRateForm({ ...rateForm, date: event.target.value })} required /></label><label>Nightly rate<input type="number" min="0" step="0.01" placeholder="Nightly rate" value={rateForm.rate} onChange={(event) => setRateForm({ ...rateForm, rate: event.target.value })} required /></label></div>
             <button className={styles.primaryButton}>Save nightly rate</button>
           </form>
         </aside>
