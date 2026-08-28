@@ -53,6 +53,12 @@
   backdrop-filter: none;
 }
 
+/* Keep the desktop links and CTA visually clear of the header divider. */
+.site-header .desktop-nav,
+.site-header .nav-cta {
+  transform: translateY(-12px);
+}
+
 .mobile-menu-top .wordmark {
   width: 126px;
   height: 124px;
