@@ -6,21 +6,14 @@ import {
   BedDouble,
   Check,
   ChevronDown,
-  CircleDollarSign,
   Home,
-  KeyRound,
   Mail,
   MapPin,
   Menu,
-  MessageCircle,
-  PackageCheck,
   Phone,
-  ShieldCheck,
   Star,
-  UserRound,
   Users,
   Waves,
-  Wrench,
   X,
 } from "lucide-react";
 import { useState } from "react";
@@ -61,60 +54,31 @@ const stays: Stay[] = [
 
 const serviceAreas = ["Del Mar", "La Jolla", "Encinitas", "Carlsbad", "Oceanside"];
 
-const services = [
+const managementSteps = [
   {
-    icon: MessageCircle,
-    title: "Guest Communication",
+    title: "Let’s Get Started",
     copy:
-      "Prompt, professional 5-star guest communication and support from booking through the stay.",
+      "Schedule a consultation with Pacific Stay Properties to discuss your property, goals, and management needs.",
   },
   {
-    icon: KeyRound,
-    title: "Check-In & Check-Out",
+    title: "Property Strategy",
     copy:
-      "Seamless, secure, and on-time arrivals and departures for a smoother guest experience.",
+      "We evaluate your property and goals to create a personalized management strategy focused on performance and an exceptional guest experience.",
   },
   {
-    icon: PackageCheck,
-    title: "Supplies & Inventory",
+    title: "Your Management Plan",
     copy:
-      "Ordering and restocking household supplies and guest essentials so the property stays ready.",
+      "We’ll walk you through our services and create a clear management plan tailored specifically to your property.",
   },
   {
-    icon: CircleDollarSign,
-    title: "Calendar & Revenue Management",
+    title: "24/7 Support",
     copy:
-      "Monitor the calendar and adjust pricing strategies to optimize income and occupancy.",
+      "Your property never takes a day off, and neither do we. We provide 24/7 guest communication and support, with responsive assistance when your property needs attention.",
   },
   {
-    icon: Wrench,
-    title: "Maintenance & Vendor Coordination",
+    title: "Relax, We’ll Handle the Rest",
     copy:
-      "Coordinate repairs and trusted vendors for HVAC, plumbing, pool, landscaping, and more.",
-  },
-  {
-    icon: ShieldCheck,
-    title: "Safety & Compliance",
-    copy:
-      "Test smoke and CO detectors monthly and review insurance guidelines to help protect the property.",
-  },
-  {
-    icon: Star,
-    title: "5-Star Standards",
-    copy:
-      "Ensure every detail supports outstanding guest experiences and the kind of stays that earn strong reviews.",
-  },
-  {
-    icon: Home,
-    title: "On-Site Property Support",
-    copy:
-      "Available locally to respond to guest concerns, emergencies, and property needs when they arise.",
-  },
-  {
-    icon: UserRound,
-    title: "Owner Updates & Reporting",
-    copy:
-      "Regular communication and property updates so owners always know what is happening with their investment.",
+      "From reservations and pricing to property care and vendor coordination, we handle the day-to-day details so you can enjoy peace of mind.",
   },
 ];
 
@@ -128,6 +92,11 @@ const testimonials = [
     name: "Shirley Slee",
     quote:
       "Jami is a trusted property manager who keeps my Airbnb operating smoothly and efficiently. She manages guest communication, oversees inventory and restocking, monitors my Airbnb calendar, and consistently responds when property needs arise. Her professionalism, reliability, and attention to detail have contributed directly to maintaining Superhost standards and exceptional guest experiences.",
+  },
+  {
+    name: "Jayme Garst",
+    quote:
+      "Jami is incredibly reliable, trustworthy, and attentive. We’ve trusted her to oversee our Airbnb properties while we were away, and she consistently handled everything with professionalism and care. Knowing our properties are in her hands gives us complete peace of mind. I highly recommend her for short-term rental property management.",
   },
 ];
 
@@ -343,20 +312,20 @@ export default function HomePage() {
         <div className="shell">
           <div className="management-top">
             <div>
-              <p className="eyebrow">Property management services</p>
-              <h2 className="display-heading">The details are the service.</h2>
+              <p className="eyebrow">How it works</p>
+              <h2 className="display-heading">A clear path to hands-off management.</h2>
             </div>
             <p className="lead-copy compact-copy">
-              Pacific Stay provides hands-on support designed to help owners maximize revenue while delivering exceptional guest experiences.
+              From the first conversation to ongoing support, Pacific Stay keeps the process personal, straightforward, and tailored to your property.
             </p>
           </div>
 
           <div className="service-grid expanded-service-grid">
-            {services.map(({ icon: Icon, title, copy }, index) => (
+            {managementSteps.map(({ title, copy }, index) => (
               <div className="service-card" key={title}>
                 <div className="service-card-top">
                   <span>{String(index + 1).padStart(2, "0")}</span>
-                  <Icon size={24} strokeWidth={1.6} />
+                  <span>Step</span>
                 </div>
                 <h3>{title}</h3>
                 <p>{copy}</p>
@@ -440,7 +409,10 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="reviews-grid">
+          <div
+            className="reviews-grid"
+            style={{ gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 320px), 1fr))" }}
+          >
             {testimonials.map((testimonial) => (
               <article className="review-card" key={testimonial.name}>
                 <div className="review-stars" aria-label="5 out of 5 stars">
