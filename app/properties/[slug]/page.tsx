@@ -22,6 +22,12 @@ import {
 import BookingCard from "./BookingCard";
 import { getProperty, properties } from "../propertyData";
 
+const PUBLIC_EMAIL = "info@pacificstayproperties.com";
+const CHESTNUT_MAP_EMBED =
+  "https://www.google.com/maps?q=Carlsbad%20Village%2C%20Carlsbad%2C%20CA&z=15&output=embed";
+const CHESTNUT_MAP_LINK =
+  "https://www.google.com/maps/search/?api=1&query=Carlsbad+Village,+Carlsbad,+CA";
+
 export function generateStaticParams() {
   return properties.map((property) => ({ slug: property.slug }));
 }
@@ -66,7 +72,7 @@ export default async function PropertyPage({
           <Link href="/#story">About Jami</Link>
           <Link href="/#contact">Contact</Link>
         </nav>
-        <a className="property-header-cta" href="mailto:Jami.jimenez718@gmail.com">
+        <a className="property-header-cta" href={`mailto:${PUBLIC_EMAIL}`}>
           Ask Jami <Mail size={15} />
         </a>
       </header>
@@ -107,6 +113,15 @@ export default async function PropertyPage({
       </section>
 
       <section className="property-body property-shell">
+        <aside className="property-booking-column">
+          <BookingCard slug={property.slug} name={property.name} guests={property.guests} />
+          <div className="property-booking-help">
+            <strong>Questions before booking?</strong>
+            <p>Jami provides local guest support and can help with property-specific questions.</p>
+            <a href="tel:+17604296633"><Phone size={15} /> Call Jami</a>
+          </div>
+        </aside>
+
         <div className="property-content-column">
           <div className="property-quick-facts">
             <div><Users size={20} /><span><strong>{property.guests}</strong> guests</span></div>
@@ -180,7 +195,7 @@ export default async function PropertyPage({
           </section>
 
           <section className="property-copy-section">
-            <p className="property-eyebrow">Arrival & access</p>
+            <p className="property-eyebrow">Arrival &amp; access</p>
             <div className="arrival-grid">
               <div><Clock3 size={22} /><span><small>Check-in</small><strong>{property.checkIn}</strong></span></div>
               <div><Clock3 size={22} /><span><small>Check-out</small><strong>{property.checkOut}</strong></span></div>
@@ -199,7 +214,7 @@ export default async function PropertyPage({
               </ul>
             </div>
             <div>
-              <p className="property-eyebrow">Safety & property</p>
+              <p className="property-eyebrow">Safety &amp; property</p>
               <h2>Guest-ready basics.</h2>
               <ul className="property-rule-list">
                 {property.safety.map((item) => <li key={item}><ShieldCheck size={16} /> {item}</li>)}
@@ -217,14 +232,35 @@ export default async function PropertyPage({
                 <p>{property.locationCopy}</p>
               </div>
             </div>
+
+            <div className="property-google-map">
+              <div className="property-google-map-frame">
+                <iframe
+                  src={CHESTNUT_MAP_EMBED}
+                  title="Carlsbad Village area map"
+                  loading="lazy"
+                  referrerPolicy="no-referrer-when-downgrade"
+                  allowFullScreen
+                />
+              </div>
+              <div className="property-google-map-footer">
+                <div>
+                  <span className="property-google-map-eyebrow">Explore the area</span>
+                  <strong>Carlsbad Village &amp; Coast</strong>
+                </div>
+                <a href={CHESTNUT_MAP_LINK} target="_blank" rel="noreferrer">Open in Google Maps ↗</a>
+              </div>
+              <div className="property-nearby-strip">
+                <span>Beach access</span>
+                <span>Carlsbad Village</span>
+                <span>Restaurants &amp; cafés</span>
+                <span>Shopping &amp; galleries</span>
+              </div>
+            </div>
           </section>
 
           <section className="property-host-section">
-            <div
-              className="property-host-avatar property-host-photo"
-              style={{ backgroundImage: "url('/jami.webp')", backgroundSize: "cover", backgroundPosition: "center 18%" }}
-              aria-label="Jami Jimenez"
-            />
+            <div className="property-host-avatar property-host-photo" aria-label="Jami Jimenez" />
             <div>
               <p className="property-eyebrow">Managed locally</p>
               <h2>Meet Jami Jimenez.</h2>
@@ -234,20 +270,11 @@ export default async function PropertyPage({
               </p>
               <div className="property-host-links">
                 <a href="tel:+17604296633"><Phone size={16} /> 760-429-6633</a>
-                <a href="mailto:Jami.jimenez718@gmail.com"><Mail size={16} /> Email Jami</a>
+                <a href={`mailto:${PUBLIC_EMAIL}`}><Mail size={16} /> Email Jami</a>
               </div>
             </div>
           </section>
         </div>
-
-        <aside className="property-booking-column">
-          <BookingCard slug={property.slug} name={property.name} guests={property.guests} />
-          <div className="property-booking-help">
-            <strong>Questions before booking?</strong>
-            <p>Jami provides local guest support and can help with property-specific questions.</p>
-            <a href="tel:+17604296633"><Phone size={15} /> Call Jami</a>
-          </div>
-        </aside>
       </section>
 
       <footer className="property-footer">

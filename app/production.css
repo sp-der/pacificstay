@@ -1,4 +1,4 @@
-/* Production listing pass: replaces presentation/mock content with live property details. */
+/* Production listing and booking layout. */
 
 .single-stay-grid {
   grid-template-columns: minmax(0, 1fr);
@@ -24,6 +24,23 @@
   margin-top: 5px;
   font-size: 10px;
   color: rgba(23,34,31,.52);
+}
+
+.stay-card-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+  align-items: center;
+  gap: 16px;
+}
+
+.stay-card-actions .text-link {
+  grid-column: 1;
+  justify-self: start;
+}
+
+.stay-card-actions .direct-booking-link {
+  grid-column: 2;
+  justify-self: center;
 }
 
 .property-review-section {
@@ -152,6 +169,98 @@
   margin: 0 auto;
 }
 
+/* Availability is checked in the background; the technical sync badge is not customer-facing. */
+form [class*="liveStatus"] {
+  display: none !important;
+}
+
+.property-google-map {
+  margin-top: 28px;
+  border: 1px solid var(--line);
+  background: var(--foam);
+  overflow: hidden;
+}
+
+.property-google-map-frame {
+  position: relative;
+  width: 100%;
+  min-height: 460px;
+  background: var(--sand);
+}
+
+.property-google-map-frame iframe {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  display: block;
+  filter: saturate(.84) contrast(.97);
+}
+
+.property-google-map-footer {
+  min-height: 92px;
+  padding: 20px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  border-top: 1px solid var(--line);
+}
+
+.property-google-map-footer > div {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.property-google-map-eyebrow {
+  color: var(--sage);
+  font-size: 9px;
+  font-weight: 600;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+.property-google-map-footer strong {
+  font-family: var(--serif);
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.property-google-map-footer a {
+  flex: 0 0 auto;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--ink);
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.property-nearby-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  background: var(--sand);
+}
+
+.property-nearby-strip span {
+  min-height: 58px;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  border-right: 1px solid var(--line);
+  color: rgba(23,34,31,.7);
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .04em;
+}
+
+.property-nearby-strip span:last-child {
+  border-right: 0;
+}
+
 @media (max-width: 760px) {
   .single-stay-grid {
     max-width: none;
@@ -173,6 +282,54 @@
   .property-booking-column {
     width: 100%;
     margin-bottom: 24px;
+  }
+
+  .property-google-map-frame {
+    min-height: 360px;
+  }
+
+  .property-google-map-footer {
+    min-height: 0;
+    padding: 18px;
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .property-google-map-footer strong {
+    font-size: 21px;
+  }
+
+  .property-nearby-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .property-nearby-strip span {
+    min-height: 52px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .property-nearby-strip span:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .property-nearby-strip span:nth-last-child(-n + 2) {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 560px) {
+  .stay-card-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .stay-card-actions .text-link,
+  .stay-card-actions .direct-booking-link {
+    grid-column: 1;
+  }
+
+  .stay-card-actions .direct-booking-link {
+    justify-self: center;
   }
 }
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://jujenvaofyrwbyunqtya.supabase.co";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const AIRBNB_ICAL_URL = process.env.AIRBNB_ICAL_URL;
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -53,7 +53,7 @@ function authorized(request: NextRequest) {
 }
 
 async function runSync(request: NextRequest) {
-  if (!SERVICE_ROLE_KEY || !AIRBNB_ICAL_URL || !CRON_SECRET) {
+  if (!SUPABASE_URL || !SERVICE_ROLE_KEY || !AIRBNB_ICAL_URL || !CRON_SECRET) {
     return NextResponse.json({ error: "Calendar sync environment variables are not configured." }, { status: 503 });
   }
   if (!authorized(request)) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

@@ -30,8 +30,9 @@ type Stay = {
   reviews: number;
   tag: string;
   description: string;
-  airbnbUrl: string;
 };
+
+const PUBLIC_EMAIL = "info@pacificstayproperties.com";
 
 const stays: Stay[] = [
   {
@@ -48,7 +49,6 @@ const stays: Stay[] = [
     tag: "Steps from Carlsbad State Beach",
     description:
       "A luxury Bali-inspired coastal stay with a jacuzzi, fire pit, outdoor shower, BBQ patio, beach cruisers, and easy access to Carlsbad Village.",
-    airbnbUrl: "https://www.airbnb.com/h/chestnutbytheseav2",
   },
 ];
 
@@ -242,7 +242,7 @@ export default function HomePage() {
             </div>
             <p className="section-side-copy">
               Explore Chestnut By the Sea, a real Pacific Stay-managed Carlsbad home just steps from the beach.
-              Direct booking is the next system being connected to this property.
+              Direct booking through Pacific Stay is available on a dedicated booking page.
             </p>
           </div>
 
@@ -274,6 +274,9 @@ export default function HomePage() {
                   <div className="stay-card-actions">
                     <Link className="text-link" href={`/properties/${stay.slug}`}>
                       View property <ArrowRight size={16} />
+                    </Link>
+                    <Link className="pill-button direct-booking-link" href={`/book/${stay.slug}`}>
+                      Book direct
                     </Link>
                   </div>
                 </div>
@@ -445,7 +448,7 @@ export default function HomePage() {
 
           <div className="contact-detail-list">
             <a href="tel:+17604296633"><Phone size={19} /><span><small>Call Jami</small>760-429-6633</span></a>
-            <a href="mailto:Jami.jimenez718@gmail.com"><Mail size={19} /><span><small>Email</small>Jami.jimenez718@gmail.com</span></a>
+            <a href={`mailto:${PUBLIC_EMAIL}`}><Mail size={19} /><span><small>Email</small>{PUBLIC_EMAIL}</span></a>
             <div><MapPin size={19} /><span><small>Service area</small>North County Coastal</span></div>
             <button className="button button-light" onClick={() => scrollToId("stays")}>
               Find a stay <ArrowRight size={17} />
@@ -470,7 +473,7 @@ export default function HomePage() {
           <div>
             <span className="footer-label">Connect</span>
             <a href="tel:+17604296633">760-429-6633</a>
-            <a href="mailto:Jami.jimenez718@gmail.com">Email Jami</a>
+            <a href={`mailto:${PUBLIC_EMAIL}`}>Email Jami</a>
             <a href="#contact">Property inquiry</a>
           </div>
           <div className="footer-note">

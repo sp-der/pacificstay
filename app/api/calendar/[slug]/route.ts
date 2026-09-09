@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "https://jujenvaofyrwbyunqtya.supabase.co";
+const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
 function icsDate(value: string) {
@@ -13,7 +13,9 @@ function escapeIcs(value: string) {
 
 export async function GET(_request: NextRequest, { params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  if (!SERVICE_ROLE_KEY) return NextResponse.json({ error: "Calendar export is not configured." }, { status: 503 });
+  if (!SUPABASE_URL || !SERVICE_ROLE_KEY) {
+    return NextResponse.json({ error: "Calendar export is not configured." }, { status: 503 });
+  }
 
   const headers = { apikey: SERVICE_ROLE_KEY, Authorization: `Bearer ${SERVICE_ROLE_KEY}` };
   const propertyResponse = await fetch(
@@ -58,7 +60,7 @@ export async function GET(_request: NextRequest, { params }: { params: Promise<{
     status: 200,
     headers: {
       "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": `inline; filename=\"${slug}.ics\"`,
+      "Content-Disposition": `inline; filename="${slug}.ics"`,
       "Cache-Control": "public, max-age=300, stale-while-revalidate=300",
     },
   });
