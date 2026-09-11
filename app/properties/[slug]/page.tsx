@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+import { getManagedProperty } from "../../../lib/server/properties";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -20,7 +22,7 @@ import {
   Wifi,
 } from "lucide-react";
 import BookingCard from "./BookingCard";
-import { getProperty, properties } from "../propertyData";
+import { properties } from "../propertyData";
 
 const PUBLIC_EMAIL = "info@pacificstayproperties.com";
 const CHESTNUT_MAP_EMBED =
@@ -38,7 +40,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const property = getProperty(slug);
+  const property = await getManagedProperty(slug);
 
   if (!property) {
     return { title: "Property | Pacific Stay Properties" };
@@ -56,7 +58,7 @@ export default async function PropertyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const property = getProperty(slug);
+  const property = await getManagedProperty(slug);
   if (!property) notFound();
 
   return (
@@ -128,12 +130,12 @@ export default async function PropertyPage({
             <div><Home size={20} /><span><strong>{property.bedrooms}</strong> bedrooms</span></div>
             <div><BedDouble size={20} /><span><strong>{property.beds}</strong> beds</span></div>
             <div><Bath size={20} /><span><strong>{property.baths}</strong> baths</span></div>
-            <div><KeyRound size={20} /><span><strong>Entire</strong> home</span></div>
+            <div><KeyRound size={20} /><span><strong>{property.propertyType}</strong></span></div>
           </div>
 
           <section className="property-copy-section">
             <p className="property-eyebrow">The stay</p>
-            <h2>Bali-inspired calm, steps from the coast.</h2>
+            <h2>{property.tag}</h2>
             <p className="property-summary">{property.summary}</p>
             {property.description.map((paragraph) => <p key={paragraph}>{paragraph}</p>)}
           </section>
@@ -208,6 +210,7 @@ export default async function PropertyPage({
           <section className="property-copy-section property-two-column-details">
             <div>
               <p className="property-eyebrow">House rules</p>
+              {property.cancellationPolicy && <p>{property.cancellationPolicy}</p>}
               <h2>Good to know.</h2>
               <ul className="property-rule-list">
                 {property.houseRules.map((rule) => <li key={rule}><Check size={16} /> {rule}</li>)}

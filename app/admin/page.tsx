@@ -3,9 +3,10 @@
 import { FormEvent, useCallback, useEffect, useMemo, useState } from "react";
 import { CalendarDays, Check, CheckCircle2, Copy, CreditCard, ExternalLink, LogOut, Mail, RefreshCw, ShieldCheck } from "lucide-react";
 import { SUPABASE_PUBLISHABLE_KEY, SUPABASE_URL, supabaseHeaders } from "../../lib/supabaseConfig";
+import PropertyEditor from "./PropertyEditor";
 import styles from "./admin.module.css";
 
-type Session = { access_token: string; user: { email?: string; app_metadata?: { role?: string } } };
+type Session = { access_token: string; refresh_token?: string; user: { email?: string; app_metadata?: { role?: string } } };
 type BookingRequest = {
   id: string; request_number: number; property_name: string; check_in: string; check_out: string;
   guests: number; full_name: string; email: string; phone: string; message: string | null;
@@ -56,7 +57,7 @@ export default function BookingAdminPage() {
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
-  const [firstTimeSetup, setFirstTimeSetup] = useState(false);
+  const [recovery, setRecovery] = useState(false);
 
   const loadDashboard = useCallback(async (activeSession: Session) => {
     setLoading(true); setError("");
@@ -74,23 +75,46 @@ export default function BookingAdminPage() {
         requestResponse.json(), reservationResponse.json(), propertyResponse.json(), blockResponse.json(), rateResponse.json(),
       ]);
       setRequests(requestRows); setReservations(reservationRows); setProperties(propertyRows); setBlocks(blockRows); setRates(rateRows);
-      if (!blockForm.propertyId && propertyRows[0]) {
-        setBlockForm((current) => ({ ...current, propertyId: propertyRows[0].id }));
-        setRateForm((current) => ({ ...current, propertyId: propertyRows[0].id }));
+      if (propertyRows[0]) {
+        setBlockForm((current) => ({ ...current, propertyId: current.propertyId || propertyRows[0].id }));
+        setRateForm((current) => ({ ...current, propertyId: current.propertyId || propertyRows[0].id }));
       }
     } catch (loadError) {
       setError(loadError instanceof Error ? loadError.message : "Admin data could not be loaded.");
     } finally { setLoading(false); }
-  }, [blockForm.propertyId]);
+  }, []);
 
   useEffect(() => {
-    const saved = window.sessionStorage.getItem(SESSION_KEY);
-    if (!saved) return;
-    try {
-      const parsed = JSON.parse(saved) as Session;
-      if (parsed.user.app_metadata?.role === "admin") { setSession(parsed); loadDashboard(parsed); }
-    } catch { window.sessionStorage.removeItem(SESSION_KEY); }
+    let cancelled=false;
+    async function restore() {
+      try {
+        const hash=new URLSearchParams(window.location.hash.slice(1));
+        const access=hash.get('access_token');
+        const saved=window.sessionStorage.getItem(SESSION_KEY);
+        const parsed=access?{access_token:access,refresh_token:hash.get('refresh_token')}:saved?JSON.parse(saved):null;
+        if(access) window.history.replaceState(null,'','/admin');
+        if(!parsed?.access_token)return;
+        const response=await fetch(`${SUPABASE_URL}/auth/v1/user`,{headers:supabaseHeaders(parsed.access_token)});
+        if(!response.ok)throw Error();
+        const user=await response.json();
+        if(user.app_metadata?.role!=='admin')throw Error();
+        if(!cancelled){const verified={access_token:parsed.access_token,refresh_token:parsed.refresh_token,user};setSession(verified);window.sessionStorage.setItem(SESSION_KEY,JSON.stringify(verified));if(hash.get('type')==='recovery'||hash.get('type')==='invite')setRecovery(true);await loadDashboard(verified);}
+      }catch{window.sessionStorage.removeItem(SESSION_KEY);if(!cancelled)setSession(null);}
+    }
+    void restore();return()=>{cancelled=true;};
   }, [loadDashboard]);
+
+  useEffect(() => {
+    if(!session?.refresh_token)return;
+    const timer=setInterval(async()=>{
+      try {
+        const r=await fetch(`${SUPABASE_URL}/auth/v1/token?grant_type=refresh_token`,{method:'POST',headers:{apikey:SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({refresh_token:session.refresh_token})});
+        if(!r.ok)throw Error(); const next=await r.json() as Session;
+        if(next.user.app_metadata?.role!=='admin')throw Error();
+        window.sessionStorage.setItem(SESSION_KEY,JSON.stringify(next));setSession(next);
+      }catch {window.sessionStorage.removeItem(SESSION_KEY);setSession(null);setError('Your session expired. Please sign in again.');}
+    },45*60*1000);return()=>clearInterval(timer);
+  },[session?.refresh_token]);
 
   async function signIn(event: FormEvent) {
     event.preventDefault(); setLoading(true); setError("");
@@ -108,26 +132,24 @@ export default function BookingAdminPage() {
     finally { setLoading(false); }
   }
 
-  async function createFirstAdmin(event: FormEvent) {
-    event.preventDefault(); setLoading(true); setError(""); setNotice("");
+  async function resetPassword() {
+    setError(""); setNotice("");
+    if (!email.trim()) { setError("Enter your email first."); return; }
     try {
-      const response = await fetch(`${SUPABASE_URL}/auth/v1/signup`, {
-        method: "POST", headers: { apikey: SUPABASE_PUBLISHABLE_KEY, "Content-Type": "application/json" },
-        body: JSON.stringify({ email: email.trim().toLowerCase(), password }),
-      });
-      const result = await response.json() as { access_token?: string; user?: Session["user"]; msg?: string; error_description?: string };
-      if (!response.ok) throw new Error(result.msg ?? result.error_description ?? "The administrator account could not be created.");
-      if (result.access_token && result.user?.app_metadata?.role === "admin") {
-        const nextSession = result as Session;
-        window.sessionStorage.setItem(SESSION_KEY, JSON.stringify(nextSession));
-        setSession(nextSession); setPassword(""); await loadDashboard(nextSession); return;
-      }
-      setPassword(""); setFirstTimeSetup(false); setNotice("Account created. Check your email to confirm it, then sign in here.");
-    } catch (setupError) { setError(setupError instanceof Error ? setupError.message : "Administrator setup failed."); }
-    finally { setLoading(false); }
+      const r = await fetch(`${SUPABASE_URL}/auth/v1/recover?redirect_to=${encodeURIComponent(window.location.origin + '/admin')}`, {method:'POST',headers:{apikey:SUPABASE_PUBLISHABLE_KEY,'Content-Type':'application/json'},body:JSON.stringify({email:email.trim().toLowerCase()})});
+      if (!r.ok) throw Error();
+      setNotice("If your account exists, you will receive a password reset email. Check your inbox and spam folder.");
+    } catch { setError("The reset email could not be requested. Please try again."); }
+  }
+  async function changePassword(event: FormEvent) {
+    event.preventDefault(); if (!session) return;
+    setLoading(true); setError("");
+    try { const r=await fetch(`${SUPABASE_URL}/auth/v1/user`,{method:'PUT',headers:{...supabaseHeaders(session.access_token),'Content-Type':'application/json'},body:JSON.stringify({password})});
+      if(!r.ok)throw Error(); setPassword("");setRecovery(false);setNotice("Password updated.");
+    } catch {setError("Password could not be changed. Request a new reset link.");} finally {setLoading(false);}
   }
 
-  function signOut() { window.sessionStorage.removeItem(SESSION_KEY); setSession(null); setRequests([]); setReservations([]); setBlocks([]); setRates([]); }
+  function signOut() { if(session) void fetch(`${SUPABASE_URL}/auth/v1/logout`,{method:"POST",headers:supabaseHeaders(session.access_token)}); window.sessionStorage.removeItem(SESSION_KEY); setSession(null); setRequests([]); setReservations([]); setBlocks([]); setRates([]); }
 
   async function updateRequest(id: string, status: BookingRequest["status"]) {
     if (!session) return;
@@ -162,7 +184,7 @@ export default function BookingAdminPage() {
       headers: { ...supabaseHeaders(session.access_token), "Content-Type": "application/json", Prefer: "return=minimal" },
       body: JSON.stringify({ ...updates, updated_at: new Date().toISOString() }),
     });
-    if (!response.ok) { setError("Reservation could not be updated."); return; }
+    if (!response.ok) { const details = await response.json().catch(() => ({})); setError(details.message ?? "Reservation could not be updated."); return; }
     setNotice(successMessage); await loadDashboard(session);
   }
 
@@ -173,7 +195,7 @@ export default function BookingAdminPage() {
       method: "POST", headers: { ...supabaseHeaders(session.access_token), "Content-Type": "application/json" },
       body: JSON.stringify({ p_request_id: reservation.booking_request_id }),
     });
-    if (!response.ok) { setError("Reservation could not be cancelled."); return; }
+    if (!response.ok) { const details = await response.json().catch(() => ({})); setError(details.message ?? "Reservation could not be cancelled."); return; }
     setNotice("Reservation cancelled and its direct-booking dates were released."); await loadDashboard(session);
   }
 
@@ -244,27 +266,28 @@ export default function BookingAdminPage() {
   const activeReservations = reservations.filter((reservation) => !["cancelled", "completed"].includes(reservation.status));
   const awaitingPayment = activeReservations.filter((reservation) => reservation.payment_status !== "paid").length;
 
+    if (session && recovery) return <main className={styles.loginPage}><form className={styles.loginCard} onSubmit={changePassword}><h1>Choose your password</h1><label>New password<input type="password" required minLength={12} autoComplete="new-password" value={password} onChange={e=>setPassword(e.target.value)}/></label>{error&&<p role="alert">{error}</p>}<button disabled={loading}>Save password</button></form></main>;
   if (!session) return <main className={styles.loginPage}>
-    <form className={styles.loginCard} onSubmit={firstTimeSetup ? createFirstAdmin : signIn}>
-      <div className={styles.brand}>PACIFIC STAY <small>BOOKING ADMIN</small></div><ShieldCheck size={30} />
-      <h1>{firstTimeSetup ? "Create first administrator" : "Administrator sign in"}</h1>
-      <p>{firstTimeSetup ? "Use the approved Pacific Stay email and choose a secure password. Supabase will send an email confirmation." : "Booking information is private and available only to approved Pacific Stay administrators."}</p>
-      <label>Email<input type="email" value={email} onChange={(event) => setEmail(event.target.value)} autoComplete="email" required /></label>
-      <label>Password<input type="password" minLength={12} value={password} onChange={(event) => setPassword(event.target.value)} autoComplete={firstTimeSetup ? "new-password" : "current-password"} required /></label>
-      {notice && <div className={styles.notice}>{notice}</div>}{error && <div className={styles.error} role="alert">{error}</div>}
-      <button disabled={loading}>{loading ? (firstTimeSetup ? "Creating…" : "Signing in…") : (firstTimeSetup ? "Create administrator" : "Sign in")}</button>
-      <button type="button" className={styles.secondaryButton} onClick={() => { setFirstTimeSetup(!firstTimeSetup); setError(""); setNotice(""); }}>{firstTimeSetup ? "Back to sign in" : "First-time administrator setup"}</button>
-    </form>
-  </main>;
+    <form className={styles.loginCard} onSubmit={signIn}>
+      <div className={styles.brand}>PACIFIC STAY <small>OWNER DASHBOARD</small></div><ShieldCheck size={30} />
+      <h1>Owner sign in</h1><p>Manage your properties and guest reservations with your approved account.</p>
+      <label>Email<input type="email" value={email} onChange={e=>setEmail(e.target.value)} autoComplete="email" required /></label>
+      <label>Password<input type="password" value={password} onChange={e=>setPassword(e.target.value)} autoComplete="current-password" required /></label>
+      {notice&&<p role="status">{notice}</p>}{error&&<p role="alert">{error}</p>}
+      <button disabled={loading}>{loading?'Signing in…':'Sign in'}</button>
+      <button type="button" className={styles.secondaryButton} onClick={resetPassword}>Forgot password?</button>
+    </form></main>;
 
   return <main className={styles.adminPage}>
     <header className={styles.header}>
-      <div><span>PACIFIC STAY</span><small>Booking operations</small></div>
+      <div><span>PACIFIC STAY</span><small>Properties & bookings</small></div>
       <div className={styles.headerActions}><span>{session.user.email}</span><button onClick={() => loadDashboard(session)} disabled={loading}><RefreshCw size={15} /> Refresh</button><button onClick={signOut}><LogOut size={15} /> Sign out</button></div>
     </header>
     <div className={styles.shell}>
-      <section className={styles.heading}><div><p>Private workspace</p><h1>Booking dashboard</h1></div><span><ShieldCheck size={16} /> Protected by Supabase Auth + RLS</span></section>
+      <section className={styles.heading}><div><p>Private workspace</p><h1>Owner dashboard</h1></div><span><ShieldCheck size={16} /> Private owner access</span></section>
       {notice && <div className={styles.notice}><Check size={16} /> {notice}</div>}{error && <div className={styles.error} role="alert">{error}</div>}
+      <section className={styles.panel}><details><summary>Dashboard help</summary><p>Open a section in Your property, edit the details, then select Save changes. View public listing opens the updated page. Rates apply to new approvals; existing reservation totals stay unchanged.</p><p>Upload JPG, PNG, or WebP photos under 10 MB, select the cover and preview images, and save to publish. Update your house rules when changing occupancy or booking limits.</p><p>Your Stripe account remains yours. Your website manager will provide the separate activation instructions. Never enter payment keys or door codes in listing content. Stripe payments confirm automatically; cancelling a reservation does not refund a payment.</p></details></section>
+      <PropertyEditor token={session.access_token} />
       <section className={styles.stats}>
         <article><small>New requests</small><strong>{statusCounts.new ?? 0}</strong></article>
         <article><small>Active reservations</small><strong>{activeReservations.length}</strong></article>
@@ -310,7 +333,7 @@ export default function BookingAdminPage() {
             <div className={styles.formRow}><label>First blocked night<input type="date" min={today()} value={blockForm.start} onChange={(event) => setBlockForm({ ...blockForm, start: event.target.value })} required /></label><label>Checkout / reopen date<input type="date" min={blockForm.start || today()} value={blockForm.end} onChange={(event) => setBlockForm({ ...blockForm, end: event.target.value })} required /></label></div>
             <label>Reason<select value={blockForm.source} onChange={(event) => setBlockForm({ ...blockForm, source: event.target.value })}><option value="manual">Manual hold</option><option value="maintenance">Maintenance</option></select></label>
             <button className={styles.primaryButton}>Block selected nights</button><button className={styles.secondaryButton} type="button" onClick={syncAirbnb} disabled={loading}>Sync Airbnb calendar</button>
-            <small className={styles.helper}>This activates after Jami’s private Airbnb iCal URL is added to the protected function secret.</small>
+            <small className={styles.helper}>Calendar synchronization is managed by your website manager.</small>
           </form>
           <form className={styles.panel} onSubmit={saveRate}><div className={styles.panelTitle}><div><p>Pricing</p><h2>Nightly override</h2></div></div>
             <label>Property<select value={rateForm.propertyId} onChange={(event) => setRateForm({ ...rateForm, propertyId: event.target.value })}>{properties.map((property) => <option value={property.id} key={property.id}>{property.name}</option>)}</select></label>

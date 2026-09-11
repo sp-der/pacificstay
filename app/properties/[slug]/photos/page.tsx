@@ -1,9 +1,11 @@
+export const dynamic = "force-dynamic";
+import { getManagedProperty } from "../../../../lib/server/properties";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import PhotoTour from "./PhotoTour";
-import { getProperty, properties } from "../../propertyData";
+import { properties } from "../../propertyData";
 import { getPhotoTour } from "../../photoTourData";
 
 export function generateStaticParams() {
@@ -16,7 +18,7 @@ export async function generateMetadata({
   params: Promise<{ slug: string }>;
 }): Promise<Metadata> {
   const { slug } = await params;
-  const property = getProperty(slug);
+  const property = await getManagedProperty(slug);
   return {
     title: property
       ? `Photo Tour | ${property.name} | Pacific Stay Properties`
@@ -33,8 +35,8 @@ export default async function PropertyPhotosPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const property = getProperty(slug);
-  const sections = getPhotoTour(slug);
+  const property = await getManagedProperty(slug);
+  const sections = property?.photoTour ?? getPhotoTour(slug);
 
   if (!property || !sections) notFound();
 

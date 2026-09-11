@@ -29,13 +29,6 @@ type FormState = {
   website: string;
 };
 
-// Direct-booking baseline calibrated to land roughly 5% below the comparable Airbnb total.
-const DIRECT_BASE_RATE = 675;
-const DIRECT_WEEKEND_RATE = 775;
-const FALLBACK_CLEANING_FEE = 250;
-const CARLSBAD_TOT_RATE = 0.1;
-const CARLSBAD_CTBID_RATE = 0.02;
-
 function localDate(daysFromToday = 0) {
   const date = new Date();
   date.setHours(12, 0, 0, 0);
@@ -86,18 +79,18 @@ export default function DirectBookingForm({ slug, name, maxGuests }: Props) {
   const conflictingDate = dates.find((date) => blockedDates.has(date));
 
   const quote = useMemo(() => {
-    if (!dates.length) return null;
-    const baseRate = DIRECT_BASE_RATE;
-    const weekendRate = DIRECT_WEEKEND_RATE;
-    const cleaningFee = Number(property?.cleaning_fee ?? FALLBACK_CLEANING_FEE);
+    if (!dates.length || !property || property.base_nightly_rate == null) return null;
+    const baseRate = Number(property.base_nightly_rate);
+    const weekendRate = Number(property.weekend_nightly_rate ?? baseRate);
+    const cleaningFee = Number(property?.cleaning_fee ?? 0);
     const nightlySubtotal = dates.reduce((total, date) => {
       const override = rateOverrides.get(date);
       if (override) return total + Number(override.nightly_rate);
       return total + (isWeekendNight(date) ? weekendRate : baseRate);
     }, 0);
     const taxable = nightlySubtotal + cleaningFee;
-    const tot = Math.round(taxable * CARLSBAD_TOT_RATE * 100) / 100;
-    const ctbid = Math.round(taxable * CARLSBAD_CTBID_RATE * 100) / 100;
+    const tot = Math.round(taxable * Number(property.tax_rate ?? 0) * 100) / 100;
+    const ctbid = 0;
     return { nightlySubtotal, cleaningFee, tot, ctbid, total: taxable + tot + ctbid };
   }, [dates, property, rateOverrides]);
 
@@ -238,8 +231,7 @@ export default function DirectBookingForm({ slug, name, maxGuests }: Props) {
           <div className={styles.quoteTop}><span>Estimated direct price</span><strong>{money(quote.total)}</strong></div>
           <div><span>{nights} nights</span><strong>{money(quote.nightlySubtotal)}</strong></div>
           <div><span>Cleaning fee</span><strong>{money(quote.cleaningFee)}</strong></div>
-          <div><span>Carlsbad TOT (10%)</span><strong>{money(quote.tot)}</strong></div>
-          <div><span>CTBID assessment (2%)</span><strong>{money(quote.ctbid)}</strong></div>
+          <div><span>Lodging taxes & assessment</span><strong>{money(quote.tot)}</strong></div>
           <small>Estimate only. Seasonal or manually adjusted nights may vary. Final pricing is confirmed after Pacific Stay reviews the request.</small>
         </div>
       )}
@@ -254,7 +246,7 @@ export default function DirectBookingForm({ slug, name, maxGuests }: Props) {
       </div>
 
       <div className={styles.acknowledgements}>
-        <label><input type="checkbox" checked={form.noPets} onChange={(e) => update("noPets", e.target.checked)} /><span><ShieldCheck size={15} /> I understand that Chestnut By the Sea does not allow pets.</span></label>
+        <label><input type="checkbox" checked={form.noPets} onChange={(e) => update("noPets", e.target.checked)} /><span><ShieldCheck size={15} /> I have read and agree to the property house rules and cancellation policy.</span></label>
         <label><input type="checkbox" checked={form.requestAgreement} onChange={(e) => update("requestAgreement", e.target.checked)} /><span><ShieldCheck size={15} /> I understand this is a stay request. The reservation and final price are not confirmed until Pacific Stay approves the request.</span></label>
       </div>
 

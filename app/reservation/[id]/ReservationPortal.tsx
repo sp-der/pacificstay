@@ -24,7 +24,7 @@ type Reservation = {
   created_at: string;
 };
 
-type IntegrationStatus = { helcim: boolean; resend: boolean };
+type IntegrationStatus = { stripe: boolean; resend: boolean };
 
 function money(value: number | null) {
   if (value == null) return "Pending";
@@ -43,7 +43,7 @@ function nightsBetween(checkIn: string, checkOut: string) {
 
 export default function ReservationPortal({ reservationId }: { reservationId: string }) {
   const [reservation, setReservation] = useState<Reservation | null>(null);
-  const [integrations, setIntegrations] = useState<IntegrationStatus>({ helcim: false, resend: false });
+  const [integrations, setIntegrations] = useState<IntegrationStatus>({ stripe: false, resend: false });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
@@ -76,7 +76,9 @@ export default function ReservationPortal({ reservationId }: { reservationId: st
       }
     }
     load();
-    return () => { cancelled = true; };
+    const timer = window.location.search.includes("payment=success") ? setInterval(load, 3000) : undefined;
+    const stop = setTimeout(() => clearInterval(timer), 60000);
+    return () => { cancelled = true; clearInterval(timer); clearTimeout(stop); };
   }, [reservationId]);
 
   const nights = useMemo(() => reservation ? nightsBetween(reservation.check_in, reservation.check_out) : 0, [reservation]);
@@ -92,7 +94,7 @@ export default function ReservationPortal({ reservationId }: { reservationId: st
     ? "This reservation is no longer active. Contact Pacific Stay if you have questions."
     : isConfirmed
       ? "Payment is complete and your Pacific Stay reservation is confirmed."
-      : "Your dates are being held for you. Complete payment when secure checkout is available to finalize the reservation.";
+      : "Your dates are held. If you just paid, payment confirmation may take a moment; this page will refresh automatically. Otherwise, complete secure checkout to confirm your stay.";
 
   return (
     <main className={styles.page}>
@@ -154,12 +156,12 @@ export default function ReservationPortal({ reservationId }: { reservationId: st
 
           {!isCancelled && !isPaid && (
             <>
-              {integrations.helcim ? (
+              {integrations.stripe ? (
                 <Link className={styles.payButton} href={`/reservation/${reservation.reservation_id}/checkout`}>Continue to secure checkout</Link>
               ) : (
                 <button className={styles.payButton} disabled>Secure checkout coming online</button>
               )}
-              <p className={styles.providerNote}>Payments will be processed securely through Helcim. No card information is stored by Pacific Stay.</p>
+              <p className={styles.providerNote}>Payments will be processed securely through Stripe. No card information is stored by Pacific Stay.</p>
             </>
           )}
 

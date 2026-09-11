@@ -16,7 +16,7 @@ import {
   Waves,
   X,
 } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 type Stay = {
   slug: string;
@@ -34,7 +34,7 @@ type Stay = {
 
 const PUBLIC_EMAIL = "info@pacificstayproperties.com";
 
-const stays: Stay[] = [
+const initialStays: Stay[] = [
   {
     slug: "chestnut-by-the-sea",
     name: "Chestnut By the Sea",
@@ -105,6 +105,11 @@ function scrollToId(id: string) {
 }
 
 export default function HomePage() {
+  const [stays, setStays] = useState(initialStays);
+  useEffect(() => { fetch('/api/properties').then(r => r.ok ? r.json() : null).then(rows => {
+    if (Array.isArray(rows)) setStays(rows.map(p => ({slug:p.slug,name:p.name,location:p.location,image:p.heroImage,guests:p.guests,beds:p.beds,baths:p.baths,rating:p.rating,reviews:p.reviewCount,tag:p.tag,description:p.summary})));
+  }).catch(() => {}); }, []);
+
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (

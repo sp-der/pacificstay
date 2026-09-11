@@ -1,3 +1,4 @@
+import CheckoutButton from "./CheckoutButton";
 import Link from "next/link";
 import { CreditCard, LockKeyhole, ShieldCheck } from "lucide-react";
 import styles from "../reservation.module.css";
@@ -14,7 +15,7 @@ export default async function ReservationCheckoutPage({ params }: { params: Prom
         <div className={styles.checkoutIntro}>
           <p className={styles.eyebrow}>Secure checkout</p>
           <h1>Complete your reservation.</h1>
-          <p>Your stay is approved and held in the Pacific Stay calendar. Secure card payment will be processed here through Helcim once the merchant connection is activated.</p>
+          <p>Your stay is approved and held in the Pacific Stay calendar. Pay securely on Stripe to confirm your stay. If you cancelled checkout or your card was declined, you can try again.</p>
           <div className={styles.securityPoints}>
             <span><LockKeyhole size={17} /> Encrypted checkout</span>
             <span><ShieldCheck size={17} /> Pacific Stay never stores card details</span>
@@ -22,10 +23,10 @@ export default async function ReservationCheckoutPage({ params }: { params: Prom
         </div>
         <div className={styles.paymentPlaceholder}>
           <CreditCard size={30} />
-          <h2>Helcim checkout ready to connect</h2>
-          <p>The payment container, reservation handoff, and post-payment confirmation states are built. Connecting the Helcim merchant credentials is the final activation step.</p>
-          <button disabled>Secure payment form</button>
-          <small>No payment can be submitted until Helcim is connected.</small>
+          <h2>Secure card payment</h2>
+          <p>Your approved reservation total is verified before Stripe opens. Your reservation is confirmed only after Stripe verifies payment.</p>
+          <CheckoutButton reservationId={id} />
+          <small>Returning here without paying does not cancel your reservation request.</small>
         </div>
       </section>
     </main>

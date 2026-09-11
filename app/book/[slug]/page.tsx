@@ -1,8 +1,10 @@
+export const dynamic = "force-dynamic";
+import { getManagedProperty } from "../../../lib/server/properties";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Mail, MapPin, ShieldCheck, Star } from "lucide-react";
-import { getProperty, properties } from "../../properties/propertyData";
+import { properties } from "../../properties/propertyData";
 import DirectBookingForm from "./DirectBookingForm";
 import styles from "./book.module.css";
 
@@ -12,7 +14,7 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const property = getProperty(slug);
+  const property = await getManagedProperty(slug);
   if (!property) return { title: "Direct Booking | Pacific Stay Properties" };
   return {
     title: `Book ${property.name} Direct | Pacific Stay Properties`,
@@ -22,7 +24,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function DirectBookingPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const property = getProperty(slug);
+  const property = await getManagedProperty(slug);
   if (!property) notFound();
 
   return (
@@ -70,13 +72,14 @@ export default async function DirectBookingPage({ params }: { params: Promise<{ 
           <div className={styles.policyCards}>
             <div><strong>{property.minNights} nights</strong><span>Minimum stay</span></div>
             <div><strong>{property.guests} guests</strong><span>Maximum occupancy</span></div>
-            <div><strong>No pets</strong><span>House rule</span></div>
+
           </div>
           <p className={styles.rateNote}>
             Direct pricing can be adjusted independently from Airbnb, allowing Pacific Stay to offer a direct-booking advantage when desired.
           </p>
         </div>
 
+        <div>{property.cancellationPolicy && <p>{property.cancellationPolicy}</p>}{property.houseRules.map(rule => <p key={rule}>{rule}</p>)}</div>
         <DirectBookingForm slug={property.slug} name={property.name} maxGuests={property.guests} />
       </section>
 
