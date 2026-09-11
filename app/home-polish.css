@@ -11,15 +11,32 @@
   transition: opacity .2s ease, transform .28s cubic-bezier(.2,.7,.2,1), visibility 0s linear .28s;
 }
 
-/* Keep the Book direct label optically and mathematically centered in its pill. */
-.direct-booking-link {
-  display: inline-flex;
+/* Keep the featured stay focused on one clear action: view the full property. */
+.stay-card-actions {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 0 !important;
+}
+
+.stay-card-actions .direct-booking-link {
+  display: none !important;
+}
+
+.stay-card-actions .text-link {
+  display: inline-flex !important;
   align-items: center;
   justify-content: center;
+  gap: 9px;
   min-height: 42px;
-  padding: 0 18px;
+  padding: 0 18px !important;
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  color: var(--ink);
   line-height: 1;
-  text-align: center;
+  text-decoration: none;
+  grid-column: auto !important;
+  justify-self: auto !important;
 }
 
 .reviews-grid {
