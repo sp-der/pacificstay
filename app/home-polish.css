@@ -24,17 +24,17 @@
 
 /*
  * Keep the editorial serif for section headings, but use the loaded DM Sans
- * medium face for long testimonials. Italiana only ships as one regular weight,
- * so synthetic bold was not reliably visible in desktop browsers.
+ * semibold face for long testimonials. Italiana only ships as one regular
+ * weight, so synthetic bold was not reliably visible in desktop browsers.
  */
 .review-card blockquote {
   margin: 22px 0 28px !important;
   font-family: var(--sans) !important;
   font-size: clamp(17px, 1.2vw, 20px) !important;
-  font-weight: 500 !important;
-  line-height: 1.62 !important;
-  letter-spacing: -.012em !important;
-  color: #15201d !important;
+  font-weight: 600 !important;
+  line-height: 1.6 !important;
+  letter-spacing: -.014em !important;
+  color: #101b18 !important;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -108,7 +108,7 @@ html.motion-ready .motion-reveal.motion-in.motion-image {
 
   .review-card blockquote {
     font-size: 17px !important;
-    line-height: 1.6 !important;
+    line-height: 1.58 !important;
   }
 
   html.motion-ready .motion-reveal,
@@ -123,8 +123,23 @@ html.motion-ready .motion-reveal.motion-in.motion-image {
   }
 }
 
-/* Keep the hero header accessibility-safe without changing content reveals. */
+/*
+ * globals.css intentionally suppresses all transitions when the OS/browser
+ * reports reduced motion. Opera/Windows can inherit that flag even when the
+ * user still wants this restrained site reveal. Restore only this homepage
+ * fade-up while leaving the rest of the site's reduced-motion safeguards intact.
+ */
 @media (prefers-reduced-motion: reduce) {
+  html.motion-ready .motion-reveal,
+  html.motion-ready .motion-reveal.motion-heading,
+  html.motion-ready .motion-reveal.motion-card,
+  html.motion-ready .motion-reveal.motion-image {
+    transition-property: opacity, transform !important;
+    transition-duration: .36s, .48s !important;
+    transition-timing-function: ease-out, cubic-bezier(.22,.61,.36,1) !important;
+    transition-delay: var(--motion-delay), var(--motion-delay) !important;
+  }
+
   .site-header {
     transition: none !important;
   }
