@@ -41,81 +41,57 @@
   padding-top: 16px !important;
 }
 
-/* Premium scroll motion. Content stays visible until the client controller opts in. */
+/*
+ * Scroll motion: quick fade + pull-up.
+ * No blur, zoom, or clipping so the interaction reads as intentional motion
+ * rather than content waiting to load.
+ */
 .motion-reveal {
   --motion-delay: 0ms;
 }
 
 html.motion-ready .motion-reveal {
   opacity: 0;
-  transform: translate3d(0, 34px, 0);
-  filter: blur(3px);
+  transform: translate3d(0, 20px, 0);
   transition:
-    opacity .76s cubic-bezier(.2,.72,.2,1) var(--motion-delay),
-    transform .9s cubic-bezier(.16,.78,.2,1) var(--motion-delay),
-    filter .72s ease var(--motion-delay);
+    opacity .42s ease-out var(--motion-delay),
+    transform .54s cubic-bezier(.22,.61,.36,1) var(--motion-delay);
   will-change: opacity, transform;
 }
 
 html.motion-ready .motion-reveal.motion-heading {
-  transform: translate3d(0, 42px, 0);
-  clip-path: inset(0 0 18% 0);
-  transition:
-    opacity .8s cubic-bezier(.2,.72,.2,1) var(--motion-delay),
-    transform .98s cubic-bezier(.16,.78,.2,1) var(--motion-delay),
-    filter .76s ease var(--motion-delay),
-    clip-path .98s cubic-bezier(.2,.72,.2,1) var(--motion-delay);
+  transform: translate3d(0, 24px, 0);
 }
 
 html.motion-ready .motion-reveal.motion-card {
-  transform: translate3d(0, 38px, 0) scale(.975);
+  transform: translate3d(0, 18px, 0);
 }
 
 html.motion-ready .motion-reveal.motion-image {
-  overflow: hidden;
-  transform: translate3d(0, 32px, 0);
+  transform: translate3d(0, 20px, 0);
 }
 
-html.motion-ready .motion-reveal.motion-image img {
-  transform: scale(1.045);
-  transition: transform 1.2s cubic-bezier(.16,.78,.2,1) calc(var(--motion-delay) + 40ms);
-}
-
-html.motion-ready .motion-reveal.motion-in {
+html.motion-ready .motion-reveal.motion-in,
+html.motion-ready .motion-reveal.motion-in.motion-heading,
+html.motion-ready .motion-reveal.motion-in.motion-card,
+html.motion-ready .motion-reveal.motion-in.motion-image {
   opacity: 1;
-  transform: translate3d(0, 0, 0) scale(1);
-  filter: blur(0);
-  clip-path: inset(0 0 0 0);
+  transform: translate3d(0, 0, 0);
   will-change: auto;
 }
 
-html.motion-ready .motion-reveal.motion-in.motion-image img {
-  transform: scale(1);
-}
-
-html.motion-ready .quote-break-content .motion-reveal {
-  transition-duration: .95s;
-}
-
-/* Reduced-motion visitors still get a gentle opacity reveal without spatial movement. */
+/* Reduced-motion visitors get opacity only. */
 html.motion-ready.motion-reduced .motion-reveal,
 html.motion-ready.motion-reduced .motion-reveal.motion-heading,
 html.motion-ready.motion-reduced .motion-reveal.motion-card,
 html.motion-ready.motion-reduced .motion-reveal.motion-image {
   opacity: 0;
   transform: none;
-  filter: none;
-  clip-path: none;
-  transition: opacity .42s ease var(--motion-delay);
+  transition: opacity .24s ease-out var(--motion-delay);
 }
 
 html.motion-ready.motion-reduced .motion-reveal.motion-in {
   opacity: 1;
-}
-
-html.motion-ready.motion-reduced .motion-reveal.motion-image img {
-  transform: none;
-  transition: none;
 }
 
 @media (max-width: 980px) {
@@ -141,7 +117,11 @@ html.motion-ready.motion-reduced .motion-reveal.motion-image img {
   html.motion-ready:not(.motion-reduced) .motion-reveal.motion-heading,
   html.motion-ready:not(.motion-reduced) .motion-reveal.motion-card,
   html.motion-ready:not(.motion-reduced) .motion-reveal.motion-image {
-    transform: translate3d(0, 22px, 0);
+    transform: translate3d(0, 14px, 0);
+  }
+
+  html.motion-ready:not(.motion-reduced) .motion-reveal.motion-in {
+    transform: translate3d(0, 0, 0);
   }
 }
 
