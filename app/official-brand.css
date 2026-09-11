@@ -39,25 +39,21 @@
   aspect-ratio: 1 / 1;
 }
 
-/*
- * Homepage header
- * A compact dark-glass navigation shell keeps the brand and navigation legible
- * over every frame of the coastal hero video without competing with the hero.
- */
+/* Homepage header. Centering is inset-based so motion preferences can never break layout. */
 .site-header {
   position: fixed;
   z-index: 90;
   top: 18px;
-  left: 50%;
-  right: auto;
-  width: min(1420px, calc(100% - 48px));
+  left: max(24px, calc((100vw - 1420px) / 2));
+  right: max(24px, calc((100vw - 1420px) / 2));
+  width: auto;
   height: 74px;
   padding: 9px 12px 9px 20px;
   display: grid;
   grid-template-columns: minmax(190px, 1fr) auto minmax(220px, 1fr);
   align-items: center;
   gap: 18px;
-  transform: translateX(-50%);
+  transform: none;
   color: #fff;
   border: 1px solid rgba(255,255,255,.16);
   border-radius: 999px;
@@ -67,7 +63,6 @@
   -webkit-backdrop-filter: blur(18px) saturate(125%);
 }
 
-/* Homepage uses a restrained typographic wordmark instead of the oversized image lockup. */
 .site-header .wordmark {
   width: auto;
   height: auto;
@@ -163,7 +158,6 @@
   box-shadow: 0 12px 30px rgba(0,0,0,.14);
 }
 
-/* Extra top shading makes navigation readable over bright hero-video frames. */
 .hero-overlay {
   background:
     linear-gradient(180deg, rgba(7,18,19,.72) 0%, rgba(8,21,22,.42) 18%, rgba(8,21,22,.16) 42%, rgba(8,21,22,.08) 62%),
@@ -179,13 +173,11 @@
   box-shadow: none;
 }
 
-/* Generic header fallback also catches the CSS-module direct-booking wordmark. */
 header [class*="wordmark"] {
   width: 78px;
   height: 77px;
 }
 
-/* Preserve the compact typographic homepage brand after the generic fallback. */
 .site-header .wordmark {
   width: auto;
   height: auto;
@@ -201,7 +193,6 @@ header [class*="wordmark"] {
   height: 69px;
 }
 
-/* Full brand mark in both dark footers. */
 .site-footer .footer-wordmark,
 .property-footer .footer-property-wordmark {
   width: 164px;
@@ -214,7 +205,9 @@ header [class*="wordmark"] {
 @media (max-width: 1050px) {
   .site-header {
     top: 14px;
-    width: min(760px, calc(100% - 28px));
+    left: 14px;
+    right: 14px;
+    width: auto;
     height: 64px;
     padding: 8px 10px 8px 18px;
     grid-template-columns: 1fr auto;
@@ -249,7 +242,9 @@ header [class*="wordmark"] {
 
   .site-header {
     top: 10px;
-    width: calc(100% - 20px);
+    left: 10px;
+    right: 10px;
+    width: auto;
     height: 60px;
     padding-left: 16px;
     border-radius: 18px;
