@@ -39,24 +39,136 @@
   aspect-ratio: 1 / 1;
 }
 
-/* Homepage navigation uses the alternate transparent PSP2 header artwork. */
+/*
+ * Homepage header
+ * A compact dark-glass navigation shell keeps the brand and navigation legible
+ * over every frame of the coastal hero video without competing with the hero.
+ */
+.site-header {
+  position: fixed;
+  z-index: 90;
+  top: 18px;
+  left: 50%;
+  right: auto;
+  width: min(1420px, calc(100% - 48px));
+  height: 74px;
+  padding: 9px 12px 9px 20px;
+  display: grid;
+  grid-template-columns: minmax(190px, 1fr) auto minmax(220px, 1fr);
+  align-items: center;
+  gap: 18px;
+  transform: translateX(-50%);
+  color: #fff;
+  border: 1px solid rgba(255,255,255,.16);
+  border-radius: 999px;
+  background: rgba(12, 27, 28, .58);
+  box-shadow: 0 18px 50px rgba(4, 16, 17, .2);
+  backdrop-filter: blur(18px) saturate(125%);
+  -webkit-backdrop-filter: blur(18px) saturate(125%);
+}
+
+/* Homepage uses a restrained typographic wordmark instead of the oversized image lockup. */
 .site-header .wordmark {
-  width: 270px;
-  height: 180px;
+  width: auto;
+  height: auto;
+  min-width: 0;
+  margin: 0;
   padding: 0;
-  margin-top: 16px;
-  align-self: start;
+  align-self: center;
+  justify-self: start;
+  align-items: flex-start;
+  gap: 3px;
   border-radius: 0;
-  background-image: url('/PSP2.png') !important;
-  background-color: transparent !important;
+  background: none !important;
   box-shadow: none;
   backdrop-filter: none;
 }
 
-/* Keep the desktop links and CTA visually clear of the header divider. */
-.site-header .desktop-nav,
+.site-header .wordmark > span,
+.site-header .wordmark > small {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.site-header .wordmark > span {
+  font-family: var(--serif);
+  font-size: 20px;
+  line-height: 1;
+  letter-spacing: .11em;
+  text-shadow: 0 1px 12px rgba(0,0,0,.14);
+}
+
+.site-header .wordmark > small {
+  color: rgba(255,255,255,.66);
+  font-family: var(--sans);
+  font-size: 7px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: .34em;
+  padding-left: .34em !important;
+}
+
+.site-header .desktop-nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  padding: 5px;
+  border: 1px solid rgba(255,255,255,.11);
+  border-radius: 999px;
+  background: rgba(255,255,255,.065);
+  transform: none;
+}
+
+.site-header .desktop-nav button {
+  padding: 9px 13px;
+  border-radius: 999px;
+  color: rgba(255,255,255,.9);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .02em;
+  opacity: 1;
+  transition: background .2s ease, color .2s ease, transform .2s ease;
+}
+
+.site-header .desktop-nav button:hover {
+  background: rgba(255,255,255,.12);
+  color: #fff;
+  transform: translateY(-1px);
+}
+
 .site-header .nav-cta {
-  transform: translateY(-12px);
+  min-height: 48px;
+  padding: 0 19px;
+  justify-self: end;
+  border: 1px solid rgba(255,255,255,.78);
+  border-radius: 999px;
+  background: rgba(251,250,247,.96);
+  color: var(--ink);
+  box-shadow: 0 8px 22px rgba(0,0,0,.1);
+  transform: none;
+  backdrop-filter: blur(10px);
+  transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+}
+
+.site-header .nav-cta:hover {
+  background: #fff;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 30px rgba(0,0,0,.14);
+}
+
+/* Extra top shading makes navigation readable over bright hero-video frames. */
+.hero-overlay {
+  background:
+    linear-gradient(180deg, rgba(7,18,19,.72) 0%, rgba(8,21,22,.42) 18%, rgba(8,21,22,.16) 42%, rgba(8,21,22,.08) 62%),
+    linear-gradient(90deg, rgba(14,30,31,.58) 0%, rgba(17,35,36,.24) 54%, rgba(9,20,20,.2) 100%),
+    linear-gradient(0deg, rgba(8,20,20,.5) 0%, transparent 45%);
 }
 
 .mobile-menu-top .wordmark {
@@ -73,10 +185,10 @@ header [class*="wordmark"] {
   height: 77px;
 }
 
-/* The homepage logo intentionally overrides the generic header fallback above. */
+/* Preserve the compact typographic homepage brand after the generic fallback. */
 .site-header .wordmark {
-  width: 270px;
-  height: 180px;
+  width: auto;
+  height: auto;
 }
 
 .property-site-header .property-wordmark {
@@ -100,10 +212,33 @@ header [class*="wordmark"] {
 }
 
 @media (max-width: 1050px) {
-  .site-header .wordmark {
-    width: 210px;
-    height: 140px;
-    margin-top: 12px;
+  .site-header {
+    top: 14px;
+    width: min(760px, calc(100% - 28px));
+    height: 64px;
+    padding: 8px 10px 8px 18px;
+    grid-template-columns: 1fr auto;
+    border-radius: 22px;
+  }
+
+  .site-header .desktop-nav,
+  .site-header .desktop-only {
+    display: none;
+  }
+
+  .site-header .wordmark > span {
+    font-size: 18px;
+  }
+
+  .site-header .mobile-menu-button {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 1px solid rgba(255,255,255,.14);
+    border-radius: 50%;
+    background: rgba(255,255,255,.08);
   }
 }
 
@@ -112,11 +247,27 @@ header [class*="wordmark"] {
     width: min(270px, 74vw);
   }
 
+  .site-header {
+    top: 10px;
+    width: calc(100% - 20px);
+    height: 60px;
+    padding-left: 16px;
+    border-radius: 18px;
+  }
+
   .site-header .wordmark {
-    width: 166px;
-    height: 108px;
-    margin-top: 9px;
+    width: auto;
+    height: auto;
+    margin: 0;
     padding: 0;
+  }
+
+  .site-header .wordmark > span {
+    font-size: 16px;
+  }
+
+  .site-header .wordmark > small {
+    font-size: 6px;
   }
 
   .mobile-menu-top .wordmark {
@@ -130,8 +281,8 @@ header [class*="wordmark"] {
   }
 
   .site-header .wordmark {
-    width: 166px;
-    height: 108px;
+    width: auto;
+    height: auto;
   }
 
   .property-site-header .property-wordmark {
