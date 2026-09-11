@@ -26,7 +26,6 @@ export default function HomeMotion() {
 
     if (!header || !hero || !root) return;
 
-    const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
     const html = document.documentElement;
     const targets = new Set<HTMLElement>();
     let frame = 0;
@@ -65,8 +64,10 @@ export default function HomeMotion() {
       });
     });
 
+    // Use the same restrained fade-up reveal on desktop and mobile. Some desktop
+    // browsers inherit OS-level reduced-motion settings, which previously made the
+    // animation look disabled even though it worked on phones.
     html.classList.add("motion-ready");
-    html.classList.toggle("motion-reduced", reduceMotion.matches);
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -101,7 +102,7 @@ export default function HomeMotion() {
       window.removeEventListener("scroll", updateHeader);
       window.removeEventListener("resize", updateHeader);
       header.classList.remove("header-outside-hero");
-      html.classList.remove("motion-ready", "motion-reduced");
+      html.classList.remove("motion-ready");
 
       targets.forEach((element) => {
         element.classList.remove("motion-reveal", "motion-heading", "motion-card", "motion-image", "motion-in");
