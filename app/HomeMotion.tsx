@@ -27,7 +27,11 @@ export default function HomeMotion() {
     if (!header || !hero || !root) return;
 
     const reduceMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const html = document.documentElement;
+    const targets = new Set<HTMLElement>();
     let frame = 0;
+    let startFrame = 0;
+    let startFrameTwo = 0;
 
     const updateHeader = () => {
       window.cancelAnimationFrame(frame);
@@ -38,20 +42,14 @@ export default function HomeMotion() {
       });
     };
 
-    updateHeader();
-    window.addEventListener("scroll", updateHeader, { passive: true });
-    window.addEventListener("resize", updateHeader);
-
-    const targets = new Set<HTMLElement>();
-
     revealGroups.forEach((selector) => {
       const group = Array.from(root.querySelectorAll<HTMLElement>(selector));
 
       group.forEach((element, index) => {
         element.classList.add("motion-reveal");
-        element.style.setProperty("--motion-delay", `${Math.min(index, 4) * 70}ms`);
+        element.style.setProperty("--motion-delay", `${Math.min(index, 5) * 85}ms`);
 
-        if (element.matches(".display-heading, .review-card blockquote, h2, h3")) {
+        if (element.matches(".display-heading, h2, h3")) {
           element.classList.add("motion-heading");
         }
 
@@ -67,47 +65,46 @@ export default function HomeMotion() {
       });
     });
 
-    if (reduceMotion.matches) {
-      targets.forEach((element) => element.classList.add("motion-in"));
-    } else {
-      document.documentElement.classList.add("motion-ready");
+    html.classList.add("motion-ready");
+    html.classList.toggle("motion-reduced", reduceMotion.matches);
 
-      const observer = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (!entry.isIntersecting) return;
-            const element = entry.target as HTMLElement;
-            element.classList.add("motion-in");
-            observer.unobserve(element);
-          });
-        },
-        {
-          threshold: 0.12,
-          rootMargin: "0px 0px -8% 0px",
-        },
-      );
-
-      targets.forEach((element) => observer.observe(element));
-
-      return () => {
-        observer.disconnect();
-        window.cancelAnimationFrame(frame);
-        window.removeEventListener("scroll", updateHeader);
-        window.removeEventListener("resize", updateHeader);
-        header.classList.remove("header-outside-hero");
-        document.documentElement.classList.remove("motion-ready");
-        targets.forEach((element) => {
-          element.classList.remove("motion-reveal", "motion-heading", "motion-card", "motion-image", "motion-in");
-          element.style.removeProperty("--motion-delay");
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (!entry.isIntersecting) return;
+          const element = entry.target as HTMLElement;
+          element.classList.add("motion-in");
+          observer.unobserve(element);
         });
-      };
-    }
+      },
+      {
+        threshold: 0.14,
+        rootMargin: "0px 0px -7% 0px",
+      },
+    );
+
+    // Give the browser a paint with the initial reveal state before observing.
+    // This makes first-viewport content animate instead of instantly snapping in.
+    startFrame = window.requestAnimationFrame(() => {
+      startFrameTwo = window.requestAnimationFrame(() => {
+        targets.forEach((element) => observer.observe(element));
+      });
+    });
+
+    updateHeader();
+    window.addEventListener("scroll", updateHeader, { passive: true });
+    window.addEventListener("resize", updateHeader);
 
     return () => {
+      observer.disconnect();
       window.cancelAnimationFrame(frame);
+      window.cancelAnimationFrame(startFrame);
+      window.cancelAnimationFrame(startFrameTwo);
       window.removeEventListener("scroll", updateHeader);
       window.removeEventListener("resize", updateHeader);
       header.classList.remove("header-outside-hero");
+      html.classList.remove("motion-ready", "motion-reduced");
+
       targets.forEach((element) => {
         element.classList.remove("motion-reveal", "motion-heading", "motion-card", "motion-image", "motion-in");
         element.style.removeProperty("--motion-delay");
