@@ -47,7 +47,7 @@ export default function HomeMotion() {
 
       group.forEach((element, index) => {
         element.classList.add("motion-reveal");
-        element.style.setProperty("--motion-delay", `${Math.min(index, 5) * 85}ms`);
+        element.style.setProperty("--motion-delay", `${Math.min(index, 4) * 55}ms`);
 
         if (element.matches(".display-heading, h2, h3")) {
           element.classList.add("motion-heading");
@@ -78,13 +78,11 @@ export default function HomeMotion() {
         });
       },
       {
-        threshold: 0.14,
-        rootMargin: "0px 0px -7% 0px",
+        threshold: 0.08,
+        rootMargin: "0px 0px -4% 0px",
       },
     );
 
-    // Give the browser a paint with the initial reveal state before observing.
-    // This makes first-viewport content animate instead of instantly snapping in.
     startFrame = window.requestAnimationFrame(() => {
       startFrameTwo = window.requestAnimationFrame(() => {
         targets.forEach((element) => observer.observe(element));
