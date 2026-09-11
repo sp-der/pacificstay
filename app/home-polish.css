@@ -49,8 +49,8 @@
 
 /*
  * Scroll motion: quick fade + pull-up.
- * No blur, zoom, or clipping so the interaction reads as intentional motion
- * rather than content waiting to load.
+ * The movement is intentionally restrained so it feels editorial rather than
+ * like content waiting to load. Desktop and mobile share the same behavior.
  */
 .motion-reveal {
   --motion-delay: 0ms;
@@ -86,20 +86,6 @@ html.motion-ready .motion-reveal.motion-in.motion-image {
   will-change: auto;
 }
 
-/* Reduced-motion visitors get opacity only. */
-html.motion-ready.motion-reduced .motion-reveal,
-html.motion-ready.motion-reduced .motion-reveal.motion-heading,
-html.motion-ready.motion-reduced .motion-reveal.motion-card,
-html.motion-ready.motion-reduced .motion-reveal.motion-image {
-  opacity: 0;
-  transform: none;
-  transition: opacity .24s ease-out var(--motion-delay);
-}
-
-html.motion-ready.motion-reduced .motion-reveal.motion-in {
-  opacity: 1;
-}
-
 @media (max-width: 980px) {
   .reviews-grid {
     grid-template-columns: 1fr 1fr !important;
@@ -120,18 +106,19 @@ html.motion-ready.motion-reduced .motion-reveal.motion-in {
     line-height: 1.42 !important;
   }
 
-  html.motion-ready:not(.motion-reduced) .motion-reveal,
-  html.motion-ready:not(.motion-reduced) .motion-reveal.motion-heading,
-  html.motion-ready:not(.motion-reduced) .motion-reveal.motion-card,
-  html.motion-ready:not(.motion-reduced) .motion-reveal.motion-image {
+  html.motion-ready .motion-reveal,
+  html.motion-ready .motion-reveal.motion-heading,
+  html.motion-ready .motion-reveal.motion-card,
+  html.motion-ready .motion-reveal.motion-image {
     transform: translate3d(0, 14px, 0);
   }
 
-  html.motion-ready:not(.motion-reduced) .motion-reveal.motion-in {
+  html.motion-ready .motion-reveal.motion-in {
     transform: translate3d(0, 0, 0);
   }
 }
 
+/* Keep the hero header accessibility-safe without changing content reveal behavior. */
 @media (prefers-reduced-motion: reduce) {
   .site-header {
     transition: none !important;
