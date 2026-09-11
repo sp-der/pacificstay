@@ -7,7 +7,7 @@
   opacity: 0;
   visibility: hidden;
   pointer-events: none;
-  transform: translate(-50%, -125%);
+  transform: translateY(calc(-100% - 28px));
   transition: opacity .2s ease, transform .28s cubic-bezier(.2,.7,.2,1), visibility 0s linear .28s;
 }
 
@@ -41,48 +41,44 @@
   padding-top: 16px !important;
 }
 
-/*
- * Premium scroll motion
- * Motion is progressive enhancement: content remains fully visible unless the
- * client-side motion controller successfully initializes.
- */
+/* Premium scroll motion. Content stays visible until the client controller opts in. */
 .motion-reveal {
   --motion-delay: 0ms;
 }
 
 html.motion-ready .motion-reveal {
   opacity: 0;
-  transform: translate3d(0, 22px, 0);
-  filter: blur(2px);
+  transform: translate3d(0, 34px, 0);
+  filter: blur(3px);
   transition:
-    opacity .72s cubic-bezier(.2,.72,.2,1) var(--motion-delay),
-    transform .82s cubic-bezier(.2,.72,.2,1) var(--motion-delay),
+    opacity .76s cubic-bezier(.2,.72,.2,1) var(--motion-delay),
+    transform .9s cubic-bezier(.16,.78,.2,1) var(--motion-delay),
     filter .72s ease var(--motion-delay);
   will-change: opacity, transform;
 }
 
 html.motion-ready .motion-reveal.motion-heading {
-  transform: translate3d(0, 28px, 0);
-  clip-path: inset(0 0 14% 0);
+  transform: translate3d(0, 42px, 0);
+  clip-path: inset(0 0 18% 0);
   transition:
-    opacity .76s cubic-bezier(.2,.72,.2,1) var(--motion-delay),
-    transform .88s cubic-bezier(.16,.78,.2,1) var(--motion-delay),
-    filter .72s ease var(--motion-delay),
-    clip-path .9s cubic-bezier(.2,.72,.2,1) var(--motion-delay);
+    opacity .8s cubic-bezier(.2,.72,.2,1) var(--motion-delay),
+    transform .98s cubic-bezier(.16,.78,.2,1) var(--motion-delay),
+    filter .76s ease var(--motion-delay),
+    clip-path .98s cubic-bezier(.2,.72,.2,1) var(--motion-delay);
 }
 
 html.motion-ready .motion-reveal.motion-card {
-  transform: translate3d(0, 26px, 0) scale(.987);
+  transform: translate3d(0, 38px, 0) scale(.975);
 }
 
 html.motion-ready .motion-reveal.motion-image {
   overflow: hidden;
-  transform: translate3d(0, 24px, 0);
+  transform: translate3d(0, 32px, 0);
 }
 
 html.motion-ready .motion-reveal.motion-image img {
-  transform: scale(1.035);
-  transition: transform 1.15s cubic-bezier(.16,.78,.2,1) calc(var(--motion-delay) + 30ms);
+  transform: scale(1.045);
+  transition: transform 1.2s cubic-bezier(.16,.78,.2,1) calc(var(--motion-delay) + 40ms);
 }
 
 html.motion-ready .motion-reveal.motion-in {
@@ -97,9 +93,29 @@ html.motion-ready .motion-reveal.motion-in.motion-image img {
   transform: scale(1);
 }
 
-/* Slightly slower entrance for the large editorial break so it feels cinematic. */
 html.motion-ready .quote-break-content .motion-reveal {
-  transition-duration: .9s;
+  transition-duration: .95s;
+}
+
+/* Reduced-motion visitors still get a gentle opacity reveal without spatial movement. */
+html.motion-ready.motion-reduced .motion-reveal,
+html.motion-ready.motion-reduced .motion-reveal.motion-heading,
+html.motion-ready.motion-reduced .motion-reveal.motion-card,
+html.motion-ready.motion-reduced .motion-reveal.motion-image {
+  opacity: 0;
+  transform: none;
+  filter: none;
+  clip-path: none;
+  transition: opacity .42s ease var(--motion-delay);
+}
+
+html.motion-ready.motion-reduced .motion-reveal.motion-in {
+  opacity: 1;
+}
+
+html.motion-ready.motion-reduced .motion-reveal.motion-image img {
+  transform: none;
+  transition: none;
 }
 
 @media (max-width: 980px) {
@@ -121,28 +137,20 @@ html.motion-ready .quote-break-content .motion-reveal {
     font-size: 20px !important;
   }
 
-  html.motion-ready .motion-reveal,
-  html.motion-ready .motion-reveal.motion-heading,
-  html.motion-ready .motion-reveal.motion-card,
-  html.motion-ready .motion-reveal.motion-image {
-    transform: translate3d(0, 16px, 0);
+  html.motion-ready:not(.motion-reduced) .motion-reveal,
+  html.motion-ready:not(.motion-reduced) .motion-reveal.motion-heading,
+  html.motion-ready:not(.motion-reduced) .motion-reveal.motion-card,
+  html.motion-ready:not(.motion-reduced) .motion-reveal.motion-image {
+    transform: translate3d(0, 22px, 0);
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .site-header,
-  .site-header.header-outside-hero,
-  .motion-reveal,
-  .motion-reveal *,
-  html.motion-ready .motion-reveal,
-  html.motion-ready .motion-reveal.motion-heading,
-  html.motion-ready .motion-reveal.motion-card,
-  html.motion-ready .motion-reveal.motion-image,
-  html.motion-ready .motion-reveal.motion-image img {
-    animation: none !important;
+  .site-header {
     transition: none !important;
+  }
+
+  .site-header.header-outside-hero {
     transform: none !important;
-    filter: none !important;
-    clip-path: none !important;
   }
 }
