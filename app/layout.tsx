@@ -8,7 +8,9 @@ import "./production.css";
 import "./gallery-viewer.css";
 import "./photo-tour.css";
 import "./official-brand.css";
+import "./home-polish.css";
 import PropertyImageViewer from "./PropertyImageViewer";
+import HeroHeaderVisibility from "./HeroHeaderVisibility";
 
 export const metadata: Metadata = {
   title: "Pacific Stay Properties | North County Coastal Rentals & Management",
@@ -25,6 +27,7 @@ export default function RootLayout({
     <html lang="en">
       <body>
         <PropertyImageViewer />
+        <HeroHeaderVisibility />
         {children}
       </body>
     </html>
