@@ -22,14 +22,19 @@
   padding: 30px 30px 26px !important;
 }
 
+/*
+ * Keep the editorial serif for section headings, but use the loaded DM Sans
+ * medium face for long testimonials. Italiana only ships as one regular weight,
+ * so synthetic bold was not reliably visible in desktop browsers.
+ */
 .review-card blockquote {
-  margin: 24px 0 30px !important;
-  font-size: clamp(19px, 1.55vw, 24px) !important;
+  margin: 22px 0 28px !important;
+  font-family: var(--sans) !important;
+  font-size: clamp(17px, 1.2vw, 20px) !important;
   font-weight: 500 !important;
-  line-height: 1.4 !important;
-  letter-spacing: .003em;
-  color: #172320;
-  font-synthesis: weight;
+  line-height: 1.62 !important;
+  letter-spacing: -.012em !important;
+  color: #15201d !important;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
 }
@@ -48,9 +53,9 @@
 }
 
 /*
- * Scroll motion: quick fade + pull-up.
- * The movement is intentionally restrained so it feels editorial rather than
- * like content waiting to load. Desktop and mobile share the same behavior.
+ * Scroll motion: crisp fade + pull-up.
+ * No blur, zoom, or clipping. The JS controller decides when each element has
+ * crossed the viewport reveal line, so desktop and mobile use the same trigger.
  */
 .motion-reveal {
   --motion-delay: 0ms;
@@ -58,23 +63,23 @@
 
 html.motion-ready .motion-reveal {
   opacity: 0;
-  transform: translate3d(0, 20px, 0);
+  transform: translate3d(0, 22px, 0);
   transition:
-    opacity .42s ease-out var(--motion-delay),
-    transform .54s cubic-bezier(.22,.61,.36,1) var(--motion-delay);
+    opacity .36s ease-out var(--motion-delay),
+    transform .48s cubic-bezier(.22,.61,.36,1) var(--motion-delay);
   will-change: opacity, transform;
 }
 
 html.motion-ready .motion-reveal.motion-heading {
-  transform: translate3d(0, 24px, 0);
+  transform: translate3d(0, 26px, 0);
 }
 
 html.motion-ready .motion-reveal.motion-card {
-  transform: translate3d(0, 18px, 0);
+  transform: translate3d(0, 20px, 0);
 }
 
 html.motion-ready .motion-reveal.motion-image {
-  transform: translate3d(0, 20px, 0);
+  transform: translate3d(0, 22px, 0);
 }
 
 html.motion-ready .motion-reveal.motion-in,
@@ -102,15 +107,15 @@ html.motion-ready .motion-reveal.motion-in.motion-image {
   }
 
   .review-card blockquote {
-    font-size: 20px !important;
-    line-height: 1.42 !important;
+    font-size: 17px !important;
+    line-height: 1.6 !important;
   }
 
   html.motion-ready .motion-reveal,
   html.motion-ready .motion-reveal.motion-heading,
   html.motion-ready .motion-reveal.motion-card,
   html.motion-ready .motion-reveal.motion-image {
-    transform: translate3d(0, 14px, 0);
+    transform: translate3d(0, 16px, 0);
   }
 
   html.motion-ready .motion-reveal.motion-in {
@@ -118,7 +123,7 @@ html.motion-ready .motion-reveal.motion-in.motion-image {
   }
 }
 
-/* Keep the hero header accessibility-safe without changing content reveal behavior. */
+/* Keep the hero header accessibility-safe without changing content reveals. */
 @media (prefers-reduced-motion: reduce) {
   .site-header {
     transition: none !important;
