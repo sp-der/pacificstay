@@ -25,7 +25,13 @@
 .review-card blockquote {
   margin: 24px 0 30px !important;
   font-size: clamp(19px, 1.55vw, 24px) !important;
-  line-height: 1.45 !important;
+  font-weight: 500 !important;
+  line-height: 1.4 !important;
+  letter-spacing: .003em;
+  color: #172320;
+  font-synthesis: weight;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
 .review-stars {
@@ -111,6 +117,7 @@ html.motion-ready.motion-reduced .motion-reveal.motion-in {
 
   .review-card blockquote {
     font-size: 20px !important;
+    line-height: 1.42 !important;
   }
 
   html.motion-ready:not(.motion-reduced) .motion-reveal,
