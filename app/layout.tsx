@@ -9,6 +9,7 @@ import "./gallery-viewer.css";
 import "./photo-tour.css";
 import "./official-brand.css";
 import "./home-polish.css";
+import "./property-motion.css";
 import PropertyImageViewer from "./PropertyImageViewer";
 import HomeMotion from "./HomeMotion";
 
