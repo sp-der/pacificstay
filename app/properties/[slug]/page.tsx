@@ -22,6 +22,7 @@ import {
   Wifi,
 } from "lucide-react";
 import BookingCard from "./BookingCard";
+import PropertyMotion from "./PropertyMotion";
 import { properties } from "../propertyData";
 
 const PUBLIC_EMAIL = "info@pacificstayproperties.com";
@@ -63,6 +64,8 @@ export default async function PropertyPage({
 
   return (
     <main className="property-page">
+      <PropertyMotion />
+
       <header className="property-site-header">
         <Link href="/" className="property-wordmark" aria-label="Pacific Stay Properties home">
           <span>PACIFIC STAY</span>
