@@ -1,0 +1,50 @@
+/* Property-page scroll motion. Mirrors the homepage's crisp fade + pull-up language. */
+.property-motion-reveal {
+  --property-motion-delay: 0ms;
+}
+
+html.property-motion-ready .property-motion-reveal {
+  opacity: 0;
+  transform: translate3d(0, 22px, 0);
+  transition:
+    opacity .36s ease-out var(--property-motion-delay),
+    transform .48s cubic-bezier(.22,.61,.36,1) var(--property-motion-delay);
+  will-change: opacity, transform;
+}
+
+html.property-motion-ready .property-motion-reveal.property-motion-heading {
+  transform: translate3d(0, 26px, 0);
+}
+
+html.property-motion-ready .property-motion-reveal.property-motion-in,
+html.property-motion-ready .property-motion-reveal.property-motion-in.property-motion-heading {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
+}
+
+@media (max-width: 680px) {
+  html.property-motion-ready .property-motion-reveal,
+  html.property-motion-ready .property-motion-reveal.property-motion-heading {
+    transform: translate3d(0, 16px, 0);
+  }
+
+  html.property-motion-ready .property-motion-reveal.property-motion-in,
+  html.property-motion-ready .property-motion-reveal.property-motion-in.property-motion-heading {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+/*
+ * globals.css suppresses transitions when the OS/browser reports reduced motion.
+ * Keep this site's intentionally restrained fade-up consistent with the homepage.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html.property-motion-ready .property-motion-reveal,
+  html.property-motion-ready .property-motion-reveal.property-motion-heading {
+    transition-property: opacity, transform !important;
+    transition-duration: .36s, .48s !important;
+    transition-timing-function: ease-out, cubic-bezier(.22,.61,.36,1) !important;
+    transition-delay: var(--property-motion-delay), var(--property-motion-delay) !important;
+  }
+}
