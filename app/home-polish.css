@@ -11,6 +11,17 @@
   transition: opacity .2s ease, transform .28s cubic-bezier(.2,.7,.2,1), visibility 0s linear .28s;
 }
 
+/* Keep the Book direct label optically and mathematically centered in its pill. */
+.direct-booking-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 18px;
+  line-height: 1;
+  text-align: center;
+}
+
 .reviews-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
   gap: 18px !important;
