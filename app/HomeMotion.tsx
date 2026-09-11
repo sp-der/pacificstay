@@ -27,9 +27,11 @@ export default function HomeMotion() {
   useEffect(() => {
     const header = document.querySelector<HTMLElement>(".site-header");
     const hero = document.getElementById("top");
-    const story = document.getElementById("story");
-    const meetJamiButton = document.querySelector<HTMLButtonElement>(".hero-bottom button");
     const root = document.querySelector<HTMLElement>("main");
+    const heroActionButtons = Array.from(
+      document.querySelectorAll<HTMLButtonElement>(".hero-actions button"),
+    );
+    const meetJamiButton = document.querySelector<HTMLButtonElement>(".hero-bottom button");
 
     if (!header || !hero || !root) return;
 
@@ -38,7 +40,7 @@ export default function HomeMotion() {
     let frame = 0;
     let primingFrame = 0;
     let primingFrameTwo = 0;
-    let meetJamiScrollFrame = 0;
+    let cinematicScrollFrame = 0;
 
     revealGroups.forEach((selector) => {
       const group = Array.from(root.querySelectorAll<HTMLElement>(selector));
@@ -89,16 +91,17 @@ export default function HomeMotion() {
       frame = window.requestAnimationFrame(updatePageMotion);
     };
 
-    const scrollToJami = (event: MouseEvent) => {
-      if (!story) return;
+    const cinematicScrollTo = (targetId: string, event: MouseEvent) => {
+      const destination = document.getElementById(targetId);
+      if (!destination) return;
 
       event.preventDefault();
       event.stopPropagation();
 
-      window.cancelAnimationFrame(meetJamiScrollFrame);
+      window.cancelAnimationFrame(cinematicScrollFrame);
 
       const startY = window.scrollY;
-      const targetY = story.getBoundingClientRect().top + window.scrollY;
+      const targetY = destination.getBoundingClientRect().top + window.scrollY;
       const distance = targetY - startY;
       const duration = Math.min(1500, Math.max(1050, Math.abs(distance) * 0.22));
       const startTime = performance.now();
@@ -111,14 +114,21 @@ export default function HomeMotion() {
         window.scrollTo(0, startY + distance * eased);
 
         if (progress < 1) {
-          meetJamiScrollFrame = window.requestAnimationFrame(step);
+          cinematicScrollFrame = window.requestAnimationFrame(step);
         } else {
           window.scrollTo(0, targetY);
         }
       };
 
-      meetJamiScrollFrame = window.requestAnimationFrame(step);
+      cinematicScrollFrame = window.requestAnimationFrame(step);
     };
+
+    const exploreStaysButton = heroActionButtons[0];
+    const discussPropertyButton = heroActionButtons[1];
+
+    const handleExploreStays = (event: MouseEvent) => cinematicScrollTo("stays", event);
+    const handleDiscussProperty = (event: MouseEvent) => cinematicScrollTo("contact", event);
+    const handleMeetJami = (event: MouseEvent) => cinematicScrollTo("story", event);
 
     // Allow one paint with the initial hidden/offset state before revealing any
     // elements already near the viewport. This guarantees a visible transition
@@ -127,7 +137,9 @@ export default function HomeMotion() {
       primingFrameTwo = window.requestAnimationFrame(updatePageMotion);
     });
 
-    meetJamiButton?.addEventListener("click", scrollToJami);
+    exploreStaysButton?.addEventListener("click", handleExploreStays);
+    discussPropertyButton?.addEventListener("click", handleDiscussProperty);
+    meetJamiButton?.addEventListener("click", handleMeetJami);
     window.addEventListener("scroll", scheduleUpdate, { passive: true });
     window.addEventListener("resize", scheduleUpdate);
 
@@ -135,8 +147,10 @@ export default function HomeMotion() {
       window.cancelAnimationFrame(frame);
       window.cancelAnimationFrame(primingFrame);
       window.cancelAnimationFrame(primingFrameTwo);
-      window.cancelAnimationFrame(meetJamiScrollFrame);
-      meetJamiButton?.removeEventListener("click", scrollToJami);
+      window.cancelAnimationFrame(cinematicScrollFrame);
+      exploreStaysButton?.removeEventListener("click", handleExploreStays);
+      discussPropertyButton?.removeEventListener("click", handleDiscussProperty);
+      meetJamiButton?.removeEventListener("click", handleMeetJami);
       window.removeEventListener("scroll", scheduleUpdate);
       window.removeEventListener("resize", scheduleUpdate);
       header.classList.remove("header-outside-hero");
