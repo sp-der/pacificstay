@@ -44,7 +44,6 @@ Deno.serve(async (request) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const publishableKey = Deno.env.get("SUPABASE_ANON_KEY");
     const serviceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const icalUrl = Deno.env.get("PACIFIC_STAY_AIRBNB_ICAL_URL");
     const authorization = request.headers.get("Authorization");
     if (!supabaseUrl || !publishableKey || !serviceKey) throw new Error("Supabase function environment is incomplete");
     if (!authorization) return new Response(JSON.stringify({ error: "Unauthorized" }), { status: 401, headers: { ...corsHeaders, "Content-Type": "application/json" } });
@@ -53,12 +52,17 @@ Deno.serve(async (request) => {
     const token = authorization.replace(/^Bearer\s+/i, "");
     const { data: { user }, error: userError } = await userClient.auth.getUser(token);
     if (userError || user?.app_metadata?.role !== "admin") return new Response(JSON.stringify({ error: "Administrator access required" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
-    if (!icalUrl) return new Response(JSON.stringify({ error: "Airbnb calendar is not connected yet" }), { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
-    const calendarResponse = await fetch(icalUrl, { headers: { "User-Agent": "PacificStayCalendarSync/1.0" } });
+    const serviceClient = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
+    const { data: icalUrl, error: integrationError } = await serviceClient.rpc("get_private_integration", { p_name: "airbnb_ical_url" });
+    if (integrationError || !icalUrl) return new Response(JSON.stringify({ error: "Airbnb calendar is not connected yet" }), { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+
+    const parsedUrl = new URL(icalUrl);
+    if (parsedUrl.protocol !== "https:" || !/(^|\.)airbnb\.com$/i.test(parsedUrl.hostname)) throw new Error("Stored Airbnb calendar URL is invalid");
+
+    const calendarResponse = await fetch(parsedUrl, { headers: { "User-Agent": "PacificStayCalendarSync/1.0" } });
     if (!calendarResponse.ok) throw new Error(`Airbnb calendar returned HTTP ${calendarResponse.status}`);
     const entries = parseCalendar(await calendarResponse.text());
-    const serviceClient = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
     const { data: properties, error: propertyError } = await serviceClient.from("properties").select("id").eq("slug", "chestnut-by-the-sea").limit(1);
     if (propertyError || !properties?.[0]) throw new Error("Pacific Stay property configuration was not found");
     const { data: inserted, error: replaceError } = await serviceClient.rpc("replace_airbnb_calendar", { p_property_id: properties[0].id, p_entries: entries });
