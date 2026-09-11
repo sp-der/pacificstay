@@ -17,6 +17,11 @@ export const metadata: Metadata = {
   title: "Pacific Stay Properties | North County Coastal Rentals & Management",
   description:
     "Pacific Stay Properties provides short-term rental property management and coastal guest stays across Del Mar, La Jolla, Encinitas, Carlsbad, and Oceanside.",
+  icons: {
+    icon: "/PSP.png",
+    shortcut: "/PSP.png",
+    apple: "/PSP.png",
+  },
 };
 
 export default function RootLayout({
