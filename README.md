@@ -7,9 +7,10 @@ Next.js website and direct-booking system for Pacific Stay Properties.
 - Next.js 15
 - React 19
 - TypeScript
-- Supabase for booking data, authentication, reservations, and calendar state
-- Vercel for hosting
+- Supabase for booking data, authentication, reservations, property content, photos, and calendar state
+- Stripe Checkout for direct-booking payments
 - Resend for transactional reservation email delivery
+- Vercel for hosting
 
 ## Local development
 
@@ -29,19 +30,32 @@ npm start
 
 `npm run build` performs the production compilation and TypeScript validation used by Vercel.
 
+## Tests
+
+```bash
+npm test
+```
+
+The payment route test suite mocks Stripe network activity and checks webhook signatures, tamper resistance, server-derived totals, idempotency, redirect handling, and missing-configuration behavior.
+
 ## Main routes
 
 - `/` - marketing site
 - `/properties/chestnut-by-the-sea` - property detail page
 - `/book/chestnut-by-the-sea` - direct booking request flow
 - `/reservation/[id]` - guest reservation portal
-- `/reservation/[id]/checkout` - payment handoff
-- `/admin` - reservation operations dashboard
+- `/reservation/[id]/checkout` - Stripe payment handoff
+- `/admin` - owner property and reservation dashboard
 
 ## Integrations
 
-The codebase supports Supabase, Airbnb iCal synchronization, reservation calendar export, Resend email delivery, and a payment-provider checkout handoff. Integration credentials belong in deployment environment variables rather than source control.
+- **Supabase** handles authentication, content, reservations, availability, and private integration storage.
+- **Airbnb iCal** is synchronized through the authenticated Supabase edge function. The private feed URL is stored server-side in the Supabase private integration store.
+- **Stripe Checkout** handles direct-booking payment sessions and signed webhook events.
+- **Resend** handles reservation email delivery.
+
+Deployment credentials belong in secure hosting or backend configuration, never source control.
 
 ## Repository hygiene
 
-Generated Next.js output (`.next`), local environment files, Vercel metadata, logs, editor files, and local build artifacts are intentionally ignored and should not be committed.
+Generated Next.js output (`.next`), local environment files, Vercel metadata, logs, editor files, and local build artifacts are intentionally ignored and should not be committed. Homepage animation is implemented as progressive enhancement and respects `prefers-reduced-motion`.
