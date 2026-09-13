@@ -4,13 +4,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Mail, MapPin, ShieldCheck, Star } from "lucide-react";
-import { properties } from "../../properties/propertyData";
 import DirectBookingForm from "./DirectBookingForm";
 import styles from "./book.module.css";
-
-export function generateStaticParams() {
-  return properties.map((property) => ({ slug: property.slug }));
-}
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -18,7 +13,7 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
   if (!property) return { title: "Direct Booking | Pacific Stay Properties" };
   return {
     title: `Book ${property.name} Direct | Pacific Stay Properties`,
-    description: `Plan a direct stay at ${property.name} in ${property.location} with Pacific Stay Properties.`,
+    description: `Plan a direct stay at ${property.name}${property.location ? ` in ${property.location}` : ""} with Pacific Stay Properties.`,
   };
 }
 
@@ -42,12 +37,12 @@ export default async function DirectBookingPage({ params }: { params: Promise<{ 
 
       <section className={styles.hero}>
         <div className={styles.heroImage}>
-          <img src={property.heroImage} alt={`${property.name} exterior`} />
+          <img src={property.heroImage || "/PSP.png"} alt={`${property.name} exterior`} />
           <div className={styles.heroShade} />
           <div className={styles.heroCopy}>
             <p>Direct booking · Pacific Stay Properties</p>
             <h1>{property.name}</h1>
-            <span><MapPin size={16} /> {property.location}</span>
+            {property.location && <span><MapPin size={16} /> {property.location}</span>}
           </div>
         </div>
         <div className={styles.heroDetails}>
@@ -58,7 +53,9 @@ export default async function DirectBookingPage({ params }: { params: Promise<{ 
             Availability is checked against the connected property calendar before your request is submitted.
           </p>
           <div className={styles.trustGrid}>
-            <div><Star size={18} fill="currentColor" /><strong>{property.rating}</strong><span>{property.reviewCount} Airbnb reviews</span></div>
+            {property.rating && property.reviewCount > 0
+              ? <div><Star size={18} fill="currentColor" /><strong>{property.rating}</strong><span>{property.reviewCount} Airbnb reviews</span></div>
+              : <div><Star size={18} /><strong>Guest-ready</strong><span>Professionally managed stay</span></div>}
             <div><ShieldCheck size={18} /><strong>Local support</strong><span>Managed by Jami Jimenez</span></div>
           </div>
         </div>
@@ -67,12 +64,11 @@ export default async function DirectBookingPage({ params }: { params: Promise<{ 
       <section className={styles.bookingSection}>
         <div className={styles.bookingIntro}>
           <p className={styles.eyebrow}>Plan your stay</p>
-          <h2>Book Chestnut direct.</h2>
+          <h2>Book {property.name} direct.</h2>
           <p>Select your dates to view the estimated direct-booking price for your stay.</p>
           <div className={styles.policyCards}>
             <div><strong>{property.minNights} nights</strong><span>Minimum stay</span></div>
             <div><strong>{property.guests} guests</strong><span>Maximum occupancy</span></div>
-
           </div>
           <p className={styles.rateNote}>
             Direct pricing can be adjusted independently from Airbnb, allowing Pacific Stay to offer a direct-booking advantage when desired.
