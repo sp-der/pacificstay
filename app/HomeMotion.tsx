@@ -123,21 +123,15 @@ export default function HomeMotion() {
       cinematicScrollFrame = window.requestAnimationFrame(step);
     };
 
-    const exploreStaysButton = heroActionButtons[0];
     const discussPropertyButton = heroActionButtons[1];
 
-    const handleExploreStays = (event: MouseEvent) => cinematicScrollTo("stays", event);
     const handleDiscussProperty = (event: MouseEvent) => cinematicScrollTo("contact", event);
     const handleMeetJami = (event: MouseEvent) => cinematicScrollTo("story", event);
 
-    // Allow one paint with the initial hidden/offset state before revealing any
-    // elements already near the viewport. This guarantees a visible transition
-    // instead of the classes being applied and resolved in the same paint.
     primingFrame = window.requestAnimationFrame(() => {
       primingFrameTwo = window.requestAnimationFrame(updatePageMotion);
     });
 
-    exploreStaysButton?.addEventListener("click", handleExploreStays);
     discussPropertyButton?.addEventListener("click", handleDiscussProperty);
     meetJamiButton?.addEventListener("click", handleMeetJami);
     window.addEventListener("scroll", scheduleUpdate, { passive: true });
@@ -148,7 +142,6 @@ export default function HomeMotion() {
       window.cancelAnimationFrame(primingFrame);
       window.cancelAnimationFrame(primingFrameTwo);
       window.cancelAnimationFrame(cinematicScrollFrame);
-      exploreStaysButton?.removeEventListener("click", handleExploreStays);
       discussPropertyButton?.removeEventListener("click", handleDiscussProperty);
       meetJamiButton?.removeEventListener("click", handleMeetJami);
       window.removeEventListener("scroll", scheduleUpdate);
