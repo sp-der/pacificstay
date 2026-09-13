@@ -1,56 +1,20 @@
 "use client";
 
-import Link from "next/link";
 import {
   ArrowRight,
-  BedDouble,
   Check,
   ChevronDown,
-  Home,
   Mail,
   MapPin,
   Menu,
   Phone,
   Star,
-  Users,
   Waves,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
-
-type Stay = {
-  slug: string;
-  name: string;
-  location: string;
-  image: string;
-  guests: number;
-  beds: number;
-  baths: number;
-  rating: string;
-  reviews: number;
-  tag: string;
-  description: string;
-};
+import { useState } from "react";
 
 const PUBLIC_EMAIL = "info@pacificstayproperties.com";
-
-const initialStays: Stay[] = [
-  {
-    slug: "chestnut-by-the-sea",
-    name: "Chestnut By the Sea",
-    location: "Carlsbad, California",
-    image:
-      "https://a0.muscache.com/im/pictures/hosting/Hosting-1553757930360534380/original/5c5954bb-afdb-4cdc-aa69-11f27d3d1f0e.jpeg?im_w=720",
-    guests: 6,
-    beds: 3,
-    baths: 2,
-    rating: "4.88",
-    reviews: 24,
-    tag: "Steps from Carlsbad State Beach",
-    description:
-      "A luxury Bali-inspired coastal stay with a jacuzzi, fire pit, outdoor shower, BBQ patio, beach cruisers, and easy access to Carlsbad Village.",
-  },
-];
 
 const serviceAreas = ["Del Mar", "La Jolla", "Encinitas", "Carlsbad", "Oceanside"];
 
@@ -104,12 +68,11 @@ function scrollToId(id: string) {
   document.getElementById(id)?.scrollIntoView({ behavior: "smooth" });
 }
 
-export default function HomePage() {
-  const [stays, setStays] = useState(initialStays);
-  useEffect(() => { fetch('/api/properties').then(r => r.ok ? r.json() : null).then(rows => {
-    if (Array.isArray(rows)) setStays(rows.map(p => ({slug:p.slug,name:p.name,location:p.location,image:p.heroImage,guests:p.guests,beds:p.beds,baths:p.baths,rating:p.rating,reviews:p.reviewCount,tag:p.tag,description:p.summary})));
-  }).catch(() => {}); }, []);
+function goToStays() {
+  window.location.assign("/stays");
+}
 
+export default function HomePage() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   return (
@@ -128,7 +91,7 @@ export default function HomePage() {
         </button>
 
         <nav className="desktop-nav" aria-label="Main navigation">
-          <button onClick={() => scrollToId("stays")}>Stays</button>
+          <button onClick={goToStays}>Stays</button>
           <button onClick={() => scrollToId("management")}>Management</button>
           <button onClick={() => scrollToId("story")}>About Jami</button>
           <button onClick={() => scrollToId("reviews")}>Reviews</button>
@@ -156,8 +119,8 @@ export default function HomePage() {
             </button>
           </div>
           <div className="mobile-menu-links">
+            <button onClick={() => { setMenuOpen(false); goToStays(); }}>Stays <ArrowRight size={20} /></button>
             {[
-              ["stays", "Stays"],
               ["management", "Management"],
               ["story", "About Jami"],
               ["reviews", "Reviews"],
@@ -207,7 +170,7 @@ export default function HomePage() {
             helping owners protect their homes, create 5-star experiences, and maximize returns.
           </p>
           <div className="hero-actions">
-            <button className="button button-light" onClick={() => scrollToId("stays")}>
+            <button className="button button-light" onClick={goToStays}>
               Explore our stays <ArrowRight size={17} />
             </button>
             <button className="button button-ghost" onClick={() => scrollToId("contact")}>
@@ -238,59 +201,6 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section className="stays-section section-pad" id="stays">
-        <div className="shell">
-          <div className="section-heading-row">
-            <div>
-              <p className="eyebrow">Featured stay</p>
-              <h2 className="display-heading">Your coast is calling.</h2>
-            </div>
-            <p className="section-side-copy">
-              Explore Chestnut By the Sea, a real Pacific Stay-managed Carlsbad home just steps from the beach.
-              Direct booking through Pacific Stay is available on a dedicated booking page.
-            </p>
-          </div>
-
-          <div className="stay-grid single-stay-grid">
-            {stays.map((stay, index) => (
-              <article className="stay-card" key={stay.name}>
-                <div className="stay-image-wrap">
-                  <img src={stay.image} alt={`${stay.name} coastal rental`} />
-                  <span className="stay-number">0{index + 1}</span>
-                  <span className="stay-tag">{stay.tag}</span>
-                </div>
-                <div className="stay-card-content">
-                  <div className="stay-title-row">
-                    <div>
-                      <p className="location-line"><MapPin size={15} /> {stay.location}</p>
-                      <h3>{stay.name}</h3>
-                    </div>
-                    <div className="mock-rate listing-rating">
-                      <strong>{stay.rating} ★</strong>
-                      <span>{stay.reviews} reviews</span>
-                    </div>
-                  </div>
-                  <div className="stay-meta">
-                    <span><Users size={17} /> {stay.guests} guests</span>
-                    <span><BedDouble size={17} /> {stay.beds} beds</span>
-                    <span><Home size={17} /> {stay.baths} baths</span>
-                  </div>
-                  <p>{stay.description}</p>
-                  <div className="stay-card-actions">
-                    <Link className="text-link" href={`/properties/${stay.slug}`}>
-                      View property <ArrowRight size={16} />
-                    </Link>
-                    <Link className="pill-button direct-booking-link" href={`/book/${stay.slug}`}>
-                      Book direct
-                    </Link>
-                  </div>
-                </div>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
-
       <section className="split-path-section">
         <div className="path-card guest-path">
           <div className="path-shade" />
@@ -298,7 +208,7 @@ export default function HomePage() {
             <p className="eyebrow light-eyebrow">For guests</p>
             <h2>5-star standards from arrival to checkout.</h2>
             <p>Prompt communication, seamless check-in and check-out, well-stocked essentials, and local support when a guest needs it.</p>
-            <button className="button button-light" onClick={() => scrollToId("stays")}>
+            <button className="button button-light" onClick={goToStays}>
               Browse stays <ArrowRight size={17} />
             </button>
           </div>
@@ -455,7 +365,7 @@ export default function HomePage() {
             <a href="tel:+17604296633"><Phone size={19} /><span><small>Call Jami</small>760-429-6633</span></a>
             <a href={`mailto:${PUBLIC_EMAIL}`}><Mail size={19} /><span><small>Email</small>{PUBLIC_EMAIL}</span></a>
             <div><MapPin size={19} /><span><small>Service area</small>North County Coastal</span></div>
-            <button className="button button-light" onClick={() => scrollToId("stays")}>
+            <button className="button button-light" onClick={goToStays}>
               Find a stay <ArrowRight size={17} />
             </button>
           </div>
@@ -470,7 +380,7 @@ export default function HomePage() {
           </div>
           <div>
             <span className="footer-label">Explore</span>
-            <button onClick={() => scrollToId("stays")}>Stays</button>
+            <button onClick={goToStays}>Stays</button>
             <button onClick={() => scrollToId("management")}>Management</button>
             <button onClick={() => scrollToId("story")}>About Jami</button>
             <button onClick={() => scrollToId("reviews")}>Reviews</button>
