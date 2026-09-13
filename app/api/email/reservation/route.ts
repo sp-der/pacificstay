@@ -35,7 +35,7 @@ export async function POST(request: NextRequest) {
     const [reservation] = await reservationResponse.json() as ReservationRow[];
     if (!reservation) return NextResponse.json({ error: "Reservation not found." }, { status: 404 });
 
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://pacificstayproperties.com";
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? "https://www.pacificstayproperties.com";
     const input = {
       guestName: reservation.guest_name,
       propertyName: propertyName(reservation.properties),
