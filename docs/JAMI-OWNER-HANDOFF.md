@@ -1,6 +1,6 @@
 # Jami’s Pacific Stay dashboard
 
-Dashboard: https://pacificstayproperties.com/admin
+Dashboard: https://www.pacificstayproperties.com/admin
 
 ## Login
 Approved owner email: **info@pacificstayproperties.com**. There is no public owner signup. Once the Supabase Auth user is created, use that email and the owner password at the dashboard. “Forgot password?” sends a reset link to the approved address. Use a unique password of at least 12 characters. Passwords are never included in this guide.
@@ -23,8 +23,8 @@ You keep ownership of your Stripe account. No Stripe password or Administrator i
 
 1. In your own Stripe Dashboard, complete business verification and payout-bank setup.
 2. Start in a Stripe sandbox/test mode. In **Developers → API keys**, copy the secret API key. In Vercel → **pacificstay-6zc9 → Settings → Environment Variables**, add it as **STRIPE_SECRET_KEY**. It must never start with `NEXT_PUBLIC_`. Keep test and live keys in separate deployment environments.
-3. In Stripe **Workbench → Webhooks**, add an event destination for your account pointing to **https://pacificstayproperties.com/api/payments/webhook**. Select `checkout.session.completed`, `checkout.session.expired`, `checkout.session.async_payment_succeeded`, and `checkout.session.async_payment_failed`. Copy that destination’s signing secret into Vercel as **STRIPE_WEBHOOK_SECRET**.
-4. Your website manager must configure the server-only **SUPABASE_SERVICE_ROLE_KEY** and set **NEXT_PUBLIC_SITE_URL** to **https://pacificstayproperties.com**. You do not need Supabase credentials from Stripe. Do not create Stripe Products or Payment Links; the server uses approved reservation totals.
+3. In Stripe **Workbench → Webhooks**, add an event destination for your account pointing to **https://www.pacificstayproperties.com/api/payments/webhook**. Select `checkout.session.completed`, `checkout.session.expired`, `checkout.session.async_payment_succeeded`, and `checkout.session.async_payment_failed`. Copy that destination’s signing secret into Vercel as **STRIPE_WEBHOOK_SECRET**.
+4. Your website manager must configure the server-only **SUPABASE_SERVICE_ROLE_KEY** and set **NEXT_PUBLIC_SITE_URL** to **https://www.pacificstayproperties.com**. You do not need Supabase credentials from Stripe. Do not create Stripe Products or Payment Links; the server uses approved reservation totals.
 5. Redeploy after changing environment variables. Complete an approved test booking in test mode, confirm the webhook delivery returns HTTP 200, and check that the reservation becomes **Paid / Confirmed**. A cancelled checkout must remain unpaid. Do not use real cards in test mode.
 6. When the test passes, repeat steps 2–3 in Stripe live mode, select Vercel’s **Production** environment for both live secrets, and redeploy. Live and test signing secrets are different. Do not mix them.
 
@@ -32,7 +32,7 @@ You keep ownership of your Stripe account. No Stripe password or Administrator i
 Do not change Supabase keys, account roles, database rules, hosting/deployment configuration, webhook URL/events, or secret-variable names during routine site editing. Change taxes only after confirming the correct rate. Listing text is public: never enter door codes, passwords, guest data, or payment keys in property content.
 
 ## Activation status
-The production domain is **https://pacificstayproperties.com**. Jami’s owner email is approved in the database admin-auth rule while the existing OTR admin remains approved. The final Supabase Auth user/password record still must be created through the supported Auth user-management flow. Stripe credentials and a live end-to-end Stripe transaction have not been supplied or completed.
+The public custom domain is **pacificstayproperties.com** and currently redirects to the canonical production host **https://www.pacificstayproperties.com**. Jami’s owner email is approved in the database admin-auth rule while the existing OTR admin remains approved. The final Supabase Auth user/password record still must be created through the supported Auth user-management flow. Stripe credentials and a live end-to-end Stripe transaction have not been supplied or completed.
 
 ## Website manager: provision the owner
-In the existing Supabase project, open **Authentication → Users → Add user** for **info@pacificstayproperties.com**. The database trigger automatically grants this approved address the existing `admin` app-metadata role while preserving the OTR admin account. Do not grant roles from a public signup form. Ensure the Supabase redirect allowlist includes **https://pacificstayproperties.com/admin** so password-reset links return to the production owner dashboard.
+In the existing Supabase project, open **Authentication → Users → Add user** for **info@pacificstayproperties.com**. The database trigger automatically grants this approved address the existing `admin` app-metadata role while preserving the OTR admin account. Do not grant roles from a public signup form. Ensure the Supabase redirect allowlist includes **https://www.pacificstayproperties.com/admin** so password-reset links return to the production owner dashboard.
