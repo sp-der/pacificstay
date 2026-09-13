@@ -153,6 +153,10 @@ export default function BookingAdminPage() {
 
   async function updateRequest(id: string, status: BookingRequest["status"]) {
     if (!session) return;
+    if (status === "cancelled") {
+      const linkedReservation = reservations.find((reservation) => reservation.booking_request_id === id && reservation.status !== "cancelled");
+      if (linkedReservation) { await cancelReservation(linkedReservation); return; }
+    }
     setError(""); setNotice("");
     const isReservationAction = status === "approved" || status === "cancelled";
     const response = await fetch(
@@ -189,14 +193,28 @@ export default function BookingAdminPage() {
   }
 
   async function cancelReservation(reservation: Reservation) {
-    if (!session || !reservation.booking_request_id) { setError("This reservation is not linked to a booking request."); return; }
-    setError(""); setNotice("");
-    const response = await fetch(`${SUPABASE_URL}/rest/v1/rpc/cancel_booking_request`, {
-      method: "POST", headers: { ...supabaseHeaders(session.access_token), "Content-Type": "application/json" },
-      body: JSON.stringify({ p_request_id: reservation.booking_request_id }),
-    });
-    if (!response.ok) { const details = await response.json().catch(() => ({})); setError(details.message ?? "Reservation could not be cancelled."); return; }
-    setNotice("Reservation cancelled and its direct-booking dates were released."); await loadDashboard(session);
+    if (!session) return;
+    const paid = reservation.payment_status === "paid";
+    const warning = paid
+      ? `Cancel ${reservation.guest_name}'s reservation and release the dates? This will NOT refund the Stripe payment. Any refund must be issued separately in Stripe.`
+      : `Cancel ${reservation.guest_name}'s reservation and release the dates?`;
+    if (!window.confirm(warning)) return;
+    setLoading(true); setError(""); setNotice("");
+    try {
+      const response = await fetch("/api/admin/reservations/cancel", {
+        method: "POST",
+        headers: { Authorization: `Bearer ${session.access_token}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ reservationId: reservation.id }),
+      });
+      const result = await response.json().catch(() => ({})) as { error?: string; refundRequired?: boolean };
+      if (!response.ok) throw new Error(result.error ?? "Reservation could not be cancelled.");
+      setNotice(result.refundRequired
+        ? "Reservation cancelled and dates released. The Stripe payment was not refunded; issue any refund separately in Stripe."
+        : "Reservation cancelled and its direct-booking dates were released.");
+      await loadDashboard(session);
+    } catch (cancelError) {
+      setError(cancelError instanceof Error ? cancelError.message : "Reservation could not be cancelled.");
+    } finally { setLoading(false); }
   }
 
   async function copyGuestLink(reservation: Reservation) {
@@ -310,7 +328,7 @@ export default function BookingAdminPage() {
               {!paid && reservation.status !== "cancelled" && <button className={styles.primarySmall} onClick={() => updateReservation(reservation, { payment_status: "paid", status: "confirmed" }, "Payment marked paid and reservation confirmed.")}><CreditCard size={14} /> Mark paid & confirm</button>}
               {paid && reservation.status === "confirmed" && <button onClick={() => updateReservation(reservation, { status: "completed" }, "Reservation marked completed.")}><CheckCircle2 size={14} /> Complete stay</button>}
               {reservation.status !== "cancelled" && <button onClick={() => sendReservationEmail(reservation, paid ? "confirmed" : "approved")}><Mail size={14} /> {paid ? "Send confirmation email" : "Send approval email"}</button>}
-              {reservation.status !== "cancelled" && reservation.status !== "completed" && <button className={styles.dangerButton} onClick={() => cancelReservation(reservation)}>Cancel reservation</button>}
+              {reservation.status !== "cancelled" && reservation.status !== "completed" && <button className={styles.dangerButton} disabled={loading} onClick={() => cancelReservation(reservation)}>Cancel reservation</button>}
             </div>
           </article>;
         })}</div>
