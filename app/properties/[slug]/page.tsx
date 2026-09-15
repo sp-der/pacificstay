@@ -23,6 +23,7 @@ import {
 } from "lucide-react";
 import BookingCard from "./BookingCard";
 import PropertyMotion from "./PropertyMotion";
+import { getPhotoTour } from "../photoTourData";
 
 const PUBLIC_EMAIL = "info@pacificstayproperties.com";
 
@@ -54,6 +55,7 @@ export default async function PropertyPage({
   if (!property) notFound();
 
   const hasReviews = Boolean(property.rating && property.reviewCount > 0);
+  const photoCount = (property.photoTour ?? getPhotoTour(slug) ?? []).reduce((count, section) => count + section.images.length, 0);
   const mapQuery = encodeURIComponent(property.location || property.area || property.name);
   const mapEmbed = `https://www.google.com/maps?q=${mapQuery}&z=15&output=embed`;
   const mapLink = `https://www.google.com/maps/search/?api=1&query=${mapQuery}`;
@@ -103,7 +105,7 @@ export default async function PropertyPage({
 
       <section className="property-gallery property-shell" aria-label={`${property.name} gallery`}>
         <div className="property-gallery-main">
-          <img src={property.heroImage || "/PSP.png"} alt={`${property.name} exterior`} />
+          <img src={property.heroImage || "/PSP.png"} alt={`${property.name} featured photo`} />
         </div>
         <div className="property-gallery-side">
           {property.gallery.map((image, index) => (
@@ -112,6 +114,7 @@ export default async function PropertyPage({
             </div>
           ))}
         </div>
+        {photoCount > 0 && <Link className="property-gallery-tour-link" href={`/properties/${slug}/photos`}>View all {photoCount} photos</Link>}
       </section>
 
       <section className="property-body property-shell">

@@ -5,12 +5,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft } from "lucide-react";
 import PhotoTour from "./PhotoTour";
-import { properties } from "../../propertyData";
 import { getPhotoTour } from "../../photoTourData";
-
-export function generateStaticParams() {
-  return properties.map((property) => ({ slug: property.slug }));
-}
 
 export async function generateMetadata({
   params,

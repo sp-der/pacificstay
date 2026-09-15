@@ -142,11 +142,30 @@
 }
 
 .property-gallery {
+  position: relative;
   display: grid;
   grid-template-columns: 1.35fr .65fr;
   gap: 8px;
   height: 660px;
   overflow: hidden;
+}
+
+.property-gallery-tour-link {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  padding: 12px 18px;
+  border-radius: 999px;
+  background: #fff;
+  color: #172b33;
+  font-size: 14px;
+  font-weight: 600;
+  box-shadow: 0 2px 12px #0003;
+}
+
+.property-gallery-tour-link:focus-visible {
+  outline: 3px solid #172b33;
+  outline-offset: 3px;
 }
 
 .property-gallery img {

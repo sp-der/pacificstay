@@ -65,7 +65,7 @@ export default function PhotoTour({ propertyName, sections }: PhotoTourProps) {
   return (
     <>
       <section className="photo-tour-category-section" aria-label="Photo categories">
-        <p className="photo-tour-kicker">Chestnut By the Sea</p>
+        <p className="photo-tour-kicker">{propertyName}</p>
         <h1>Photo tour</h1>
         <p className="photo-tour-intro">
           Jump to a room or keep scrolling to explore the entire property.

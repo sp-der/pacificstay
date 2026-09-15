@@ -1,0 +1,171 @@
+{
+  "slug": "beach-baby-oceanfront-escape",
+  "name": "Beach Baby, Oceanfront Escape",
+  "max_guests": 8,
+  "min_nights": 3,
+  "max_nights": 60,
+  "base_nightly_rate": null,
+  "weekend_nightly_rate": null,
+  "cleaning_fee": null,
+  "tax_rate": null,
+  "active": false,
+  "airbnb_listing_id": "1763283615794372898",
+  "content": {
+    "location": "Oceanside, California",
+    "area": "Oceanside \u2022 North County Coastal",
+    "tag": "Oceanfront escape with direct beach access",
+    "heroImage": "/beach-baby/beach-baby-01.webp",
+    "gallery": [
+      "/beach-baby/beach-baby-02.webp",
+      "/beach-baby/beach-baby-03.webp",
+      "/beach-baby/beach-baby-04.webp"
+    ],
+    "bedrooms": 3,
+    "beds": 4,
+    "baths": 3,
+    "propertyType": "Entire home",
+    "summary": "An oceanfront Oceanside escape with panoramic views, direct beach access, a private patio, and an upgraded kitchen. Room for eight guests across three bedrooms and three bathrooms.",
+    "description": [
+      "Beach Baby is a private escape by the sea, with panoramic views and direct beach access. The upgraded interior features custom cabinetry, quartz counters, Thermador appliances, bar seating for six, lava stone floors, and wood ceilings.",
+      "Step onto the deck to watch surfers and dolphins. The downstairs bedroom opens to a private patio and beach area, while the primary bathroom offers a spa-style setting. The home includes an attached two-car garage and is one of only four units in the complex. Weekly rentals are permitted."
+    ],
+    "highlights": [
+      "Panoramic ocean views and direct beach access",
+      "Deck overlooking the surf",
+      "Thermador kitchen appliances, quartz counters, and bar seating for six",
+      "Downstairs bedroom opening to a private patio and beach area",
+      "Spa-style primary bathroom",
+      "Attached two-car garage"
+    ],
+    "amenities": [
+      {
+        "title": "Bathroom",
+        "items": [
+          "Hair dryer",
+          "Shampoo"
+        ]
+      },
+      {
+        "title": "Bedroom and laundry",
+        "items": [
+          "Washer",
+          "Essentials: towels, bed sheets, soap, and toilet paper",
+          "Bed linens"
+        ]
+      },
+      {
+        "title": "Entertainment",
+        "items": [
+          "Ethernet connection",
+          "TV"
+        ]
+      },
+      {
+        "title": "Heating and cooling",
+        "items": [
+          "Air conditioning",
+          "Indoor fireplace",
+          "Heating"
+        ]
+      },
+      {
+        "title": "Home safety",
+        "items": [
+          "Smoke alarm",
+          "Carbon monoxide alarm",
+          "Fire extinguisher",
+          "First aid kit"
+        ]
+      },
+      {
+        "title": "Internet and office",
+        "items": [
+          "Wifi",
+          "Dedicated workspace"
+        ]
+      },
+      {
+        "title": "Kitchen and dining",
+        "items": [
+          "Kitchen"
+        ]
+      },
+      {
+        "title": "Location features",
+        "items": [
+          "Beach access",
+          "Private entrance"
+        ]
+      },
+      {
+        "title": "Outdoor",
+        "items": [
+          "Outdoor dining area",
+          "BBQ grill"
+        ]
+      },
+      {
+        "title": "Parking and facilities",
+        "items": [
+          "Free parking on premises"
+        ]
+      }
+    ],
+    "sleeping": [],
+    "checkIn": "After 4:00 PM",
+    "checkOut": "Before 11:00 AM",
+    "parking": "Free parking on premises; attached two-car garage",
+    "wifi": "Wifi and Ethernet connection",
+    "access": "Private entrance",
+    "houseRules": [
+      "Maximum of 8 guests",
+      "No pets",
+      "No parties or events",
+      "No smoking",
+      "Check-in after 4:00 PM",
+      "Checkout before 11:00 AM"
+    ],
+    "safety": [
+      "Carbon monoxide alarm",
+      "Smoke alarm",
+      "Fire extinguisher",
+      "First aid kit"
+    ],
+    "locationCopy": "An oceanfront home in Oceanside, California, with direct beach access and views of the surf.",
+    "airbnbUrl": "https://www.airbnb.com/rooms/1763283615794372898",
+    "rating": "",
+    "reviewCount": 0,
+    "guestFavorite": false,
+    "reviewScores": [],
+    "photoTour": [
+      {
+        "id": "property-tour",
+        "label": "Beach Baby",
+        "thumbnail": "/beach-baby/beach-baby-01.webp",
+        "images": [
+          "/beach-baby/beach-baby-01.webp",
+          "/beach-baby/beach-baby-02.webp",
+          "/beach-baby/beach-baby-03.webp",
+          "/beach-baby/beach-baby-04.webp",
+          "/beach-baby/beach-baby-05.webp",
+          "/beach-baby/beach-baby-06.webp",
+          "/beach-baby/beach-baby-07.webp",
+          "/beach-baby/beach-baby-08.webp",
+          "/beach-baby/beach-baby-09.webp",
+          "/beach-baby/beach-baby-10.webp",
+          "/beach-baby/beach-baby-11.webp",
+          "/beach-baby/beach-baby-12.webp",
+          "/beach-baby/beach-baby-13.webp",
+          "/beach-baby/beach-baby-14.webp",
+          "/beach-baby/beach-baby-15.webp",
+          "/beach-baby/beach-baby-16.webp",
+          "/beach-baby/beach-baby-17.webp",
+          "/beach-baby/beach-baby-18.webp",
+          "/beach-baby/beach-baby-19.webp",
+          "/beach-baby/beach-baby-20.webp"
+        ]
+      }
+    ],
+    "cancellationPolicy": ""
+  }
+}
