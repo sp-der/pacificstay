@@ -45,6 +45,7 @@ function fallbackLabel(image: HTMLImageElement) {
 export default function PropertyImageViewer() {
   const [images, setImages] = useState<ViewerImage[]>([]);
   const [activeIndex, setActiveIndex] = useState<number | null>(null);
+  const [propertyName, setPropertyName] = useState("Property photos");
 
   const isOpen = activeIndex !== null;
 
@@ -74,6 +75,7 @@ export default function PropertyImageViewer() {
       ) as HTMLImageElement | null;
 
       if (!clickedImage) return;
+      setPropertyName(document.querySelector(".property-title-grid h1, .photo-tour-kicker")?.textContent?.trim() || "Property photos");
 
       const isChestnutProperty = window.location.pathname.includes(
         "/properties/chestnut-by-the-sea",
@@ -144,7 +146,7 @@ export default function PropertyImageViewer() {
     <div className="property-lightbox" role="dialog" aria-modal="true" aria-label="Property photo viewer">
       <div className="property-lightbox-topbar">
         <div>
-          <strong>Chestnut By the Sea</strong>
+          <strong>{propertyName}</strong>
           <span>{activeIndex + 1} / {images.length}</span>
         </div>
 
