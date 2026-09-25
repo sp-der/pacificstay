@@ -1,52 +1,50 @@
 "use client";
 
-import Script from "next/script";
-import { useCallback, useEffect, useState } from "react";
-import { Check, LoaderCircle, ShieldCheck } from "lucide-react";
+import { FormEvent, useMemo, useState } from "react";
+import { CalendarDays, Check, Search, ShieldCheck, Users } from "lucide-react";
 import { HOSTAWAY_BOOKING_BASE_URL } from "../../../lib/hostaway";
 import styles from "./book.module.css";
 
-type HostawaySearchOptions = {
-  baseUrl: string;
-  showLocation: boolean;
-  color: string;
-  rounded: boolean;
-  openInNewTab: boolean;
-  font: string;
-};
-
-declare global {
-  interface Window {
-    searchBar?: (options: HostawaySearchOptions) => void;
-  }
-}
-
 type Props = {
   propertyName: string;
+  maxGuests: number;
 };
 
-export default function HostawaySearch({ propertyName }: Props) {
-  const [ready, setReady] = useState(false);
+function localDate(daysFromToday = 0) {
+  const date = new Date();
+  date.setHours(12, 0, 0, 0);
+  date.setDate(date.getDate() + daysFromToday);
+  return date.toISOString().slice(0, 10);
+}
 
-  const initialize = useCallback(() => {
-    const container = document.getElementById("hostaway-booking-widget");
-    if (!container || !window.searchBar) return;
+export default function HostawaySearch({ propertyName, maxGuests }: Props) {
+  const [checkIn, setCheckIn] = useState("");
+  const [checkOut, setCheckOut] = useState("");
+  const [guests, setGuests] = useState("2");
+  const [error, setError] = useState("");
 
-    container.innerHTML = "";
-    window.searchBar({
-      baseUrl: HOSTAWAY_BOOKING_BASE_URL,
-      showLocation: false,
-      color: "#315b5e",
-      rounded: true,
-      openInNewTab: false,
-      font: "Open Sans",
-    });
-    setReady(true);
-  }, []);
+  const today = useMemo(() => localDate(), []);
+  const minimumCheckout = checkIn || today;
 
-  useEffect(() => {
-    if (window.searchBar) initialize();
-  }, [initialize]);
+  function submit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    setError("");
+
+    if (!checkIn || !checkOut) {
+      setError("Choose both check-in and check-out dates.");
+      return;
+    }
+    if (checkOut <= checkIn) {
+      setError("Check-out must be after check-in.");
+      return;
+    }
+
+    const url = new URL("listings", HOSTAWAY_BOOKING_BASE_URL);
+    url.searchParams.set("start", checkIn);
+    url.searchParams.set("end", checkOut);
+    url.searchParams.set("numberOfGuests", guests);
+    window.location.assign(url.toString());
+  }
 
   return (
     <div className={styles.hostawayCard}>
@@ -56,30 +54,63 @@ export default function HostawaySearch({ propertyName }: Props) {
           <h3>Choose your dates</h3>
         </div>
         <span className={styles.hostawayLiveTag}>
-          {ready ? <Check size={13} /> : <LoaderCircle size={13} className={styles.spin} />}
-          {ready ? "Connected" : "Loading"}
+          <Check size={13} /> Connected
         </span>
       </div>
 
       <p className={styles.hostawayIntro}>
-        Search live availability for {propertyName}. Beach Baby is currently the property connected to Pacific Stay&apos;s Hostaway booking site.
+        Search live availability for {propertyName}. Your dates and guest count will carry into Pacific Stay&apos;s Hostaway booking site.
       </p>
 
-      <div className={styles.hostawaySearchShell}>
-        {!ready && <div className={styles.hostawaySearchLoading}>Connecting to Hostaway…</div>}
-        <div id="hostaway-booking-widget" />
-      </div>
+      <form className={styles.hostawayDirectSearch} onSubmit={submit}>
+        <label>
+          <span><CalendarDays size={16} /> Check-in</span>
+          <input
+            type="date"
+            name="start"
+            min={today}
+            value={checkIn}
+            onChange={(event) => {
+              setCheckIn(event.target.value);
+              if (checkOut && checkOut <= event.target.value) setCheckOut("");
+            }}
+            required
+          />
+        </label>
+
+        <label>
+          <span><CalendarDays size={16} /> Check-out</span>
+          <input
+            type="date"
+            name="end"
+            min={minimumCheckout}
+            value={checkOut}
+            onChange={(event) => setCheckOut(event.target.value)}
+            required
+          />
+        </label>
+
+        <label>
+          <span><Users size={16} /> Guests</span>
+          <select name="numberOfGuests" value={guests} onChange={(event) => setGuests(event.target.value)}>
+            {Array.from({ length: Math.max(1, maxGuests) }, (_, index) => index + 1).map((count) => (
+              <option key={count} value={count}>{count} guest{count === 1 ? "" : "s"}</option>
+            ))}
+          </select>
+        </label>
+
+        <button type="submit">
+          <Search size={17} />
+          Search availability
+        </button>
+      </form>
+
+      {error && <p className={styles.hostawayDirectError} role="alert">{error}</p>}
 
       <div className={styles.hostawaySecurity}>
         <ShieldCheck size={16} />
-        <span>Dates and guest details are checked through Pacific Stay&apos;s published Hostaway booking engine before checkout.</span>
+        <span>Hostaway handles live availability, pricing, reservation details, and secure checkout.</span>
       </div>
-
-      <Script
-        src="https://d2q3n06xhbi0am.cloudfront.net/widget.js?1640277196"
-        strategy="afterInteractive"
-        onReady={initialize}
-      />
     </div>
   );
 }

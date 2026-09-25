@@ -630,3 +630,113 @@
     align-items: flex-start;
   }
 }
+
+
+.hostawayDirectSearch {
+  display: grid;
+  grid-template-columns: 1fr 1fr .72fr auto;
+  align-items: stretch;
+  border: 1px solid rgba(23,34,31,.12);
+  border-radius: 12px;
+  overflow: hidden;
+  background: #fbfaf7;
+}
+
+.hostawayDirectSearch label {
+  min-width: 0;
+  padding: 15px 16px;
+  display: grid;
+  gap: 8px;
+  border-right: 1px solid rgba(23,34,31,.11);
+}
+
+.hostawayDirectSearch label > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: rgba(23,34,31,.58);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.hostawayDirectSearch input,
+.hostawayDirectSearch select {
+  width: 100%;
+  min-width: 0;
+  min-height: 32px;
+  border: 0;
+  outline: 0;
+  background: transparent;
+  color: #17221f;
+  font: inherit;
+  font-size: 12px;
+}
+
+.hostawayDirectSearch button {
+  min-width: 166px;
+  padding: 0 22px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  background: #315b5e;
+  color: #fff;
+  font: inherit;
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.hostawayDirectSearch button:hover {
+  background: #173b3e;
+}
+
+.hostawayDirectError {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  background: #f8e7e3;
+  color: #8b332b;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+@media (max-width: 900px) {
+  .hostawayDirectSearch {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .hostawayDirectSearch label:nth-of-type(2) {
+    border-right: 0;
+  }
+
+  .hostawayDirectSearch label:nth-of-type(3) {
+    border-top: 1px solid rgba(23,34,31,.11);
+  }
+
+  .hostawayDirectSearch button {
+    min-height: 64px;
+    border-top: 1px solid rgba(23,34,31,.11);
+  }
+}
+
+@media (max-width: 560px) {
+  .hostawayDirectSearch {
+    grid-template-columns: 1fr;
+  }
+
+  .hostawayDirectSearch label,
+  .hostawayDirectSearch label:nth-of-type(2),
+  .hostawayDirectSearch label:nth-of-type(3) {
+    border-right: 0;
+    border-top: 0;
+    border-bottom: 1px solid rgba(23,34,31,.11);
+  }
+
+  .hostawayDirectSearch button {
+    min-height: 56px;
+    border-top: 0;
+  }
+}
