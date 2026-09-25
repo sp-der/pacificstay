@@ -39,7 +39,7 @@ export default function HostawaySearch({ propertyName, maxGuests }: Props) {
       return;
     }
 
-    const url = new URL("listings", HOSTAWAY_BOOKING_BASE_URL);
+    const url = new URL(HOSTAWAY_BOOKING_BASE_URL);
     url.searchParams.set("start", checkIn);
     url.searchParams.set("end", checkOut);
     url.searchParams.set("numberOfGuests", guests);
@@ -59,7 +59,7 @@ export default function HostawaySearch({ propertyName, maxGuests }: Props) {
       </div>
 
       <p className={styles.hostawayIntro}>
-        Search live availability for {propertyName}. Your dates and guest count will carry into Pacific Stay&apos;s Hostaway booking site.
+        Continue to Pacific Stay&apos;s published Hostaway booking site for live availability for {propertyName}. Your selected dates and guest count are included in the handoff.
       </p>
 
       <form className={styles.hostawayDirectSearch} onSubmit={submit}>
@@ -101,7 +101,7 @@ export default function HostawaySearch({ propertyName, maxGuests }: Props) {
 
         <button type="submit">
           <Search size={17} />
-          Search availability
+          Continue to Hostaway
         </button>
       </form>
 
