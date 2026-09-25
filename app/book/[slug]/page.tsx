@@ -5,7 +5,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ArrowLeft, Mail, MapPin, ShieldCheck, Star } from "lucide-react";
 import DirectBookingForm from "./DirectBookingForm";
+import HostawayCalendar from "./HostawayCalendar";
 import styles from "./book.module.css";
+import { getHostawayListingId } from "../../../lib/hostaway";
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
@@ -21,6 +23,7 @@ export default async function DirectBookingPage({ params }: { params: Promise<{ 
   const { slug } = await params;
   const property = await getManagedProperty(slug);
   if (!property) notFound();
+  const hostawayListingId = getHostawayListingId(property.slug);
 
   return (
     <main className={styles.page}>
@@ -49,8 +52,9 @@ export default async function DirectBookingPage({ params }: { params: Promise<{ 
           <p className={styles.eyebrow}>Book with the local host</p>
           <h2>A simpler way to stay by the coast.</h2>
           <p>
-            Choose your dates, review an estimated direct price, and send your stay request to Pacific Stay.
-            Availability is checked against the connected property calendar before your request is submitted.
+            {hostawayListingId
+              ? "Choose your dates below to see live availability and continue securely to checkout through Pacific Stay’s Hostaway booking system."
+              : "Choose your dates, review an estimated direct price, and send your stay request to Pacific Stay. Availability is checked against the connected property calendar before your request is submitted."}
           </p>
           <div className={styles.trustGrid}>
             {property.rating && property.reviewCount > 0
@@ -65,18 +69,30 @@ export default async function DirectBookingPage({ params }: { params: Promise<{ 
         <div className={styles.bookingIntro}>
           <p className={styles.eyebrow}>Plan your stay</p>
           <h2>Book {property.name} direct.</h2>
-          <p>Select your dates to view the estimated direct-booking price for your stay.</p>
+          <p>
+            {hostawayListingId
+              ? "Select your dates to view live availability and continue to secure checkout."
+              : "Select your dates to view the estimated direct-booking price for your stay."}
+          </p>
           <div className={styles.policyCards}>
             <div><strong>{property.minNights} nights</strong><span>Minimum stay</span></div>
             <div><strong>{property.guests} guests</strong><span>Maximum occupancy</span></div>
           </div>
           <p className={styles.rateNote}>
-            Direct pricing can be adjusted independently from Airbnb, allowing Pacific Stay to offer a direct-booking advantage when desired.
+            {hostawayListingId
+              ? "Availability, pricing, taxes, fees, and checkout are supplied directly by Hostaway for this property."
+              : "Direct pricing can be adjusted independently from Airbnb, allowing Pacific Stay to offer a direct-booking advantage when desired."}
           </p>
         </div>
 
-        <div>{property.cancellationPolicy && <p>{property.cancellationPolicy}</p>}{property.houseRules.map(rule => <p key={rule}>{rule}</p>)}</div>
-        <DirectBookingForm slug={property.slug} name={property.name} maxGuests={property.guests} />
+        {hostawayListingId ? (
+          <HostawayCalendar listingId={hostawayListingId} propertyName={property.name} />
+        ) : (
+          <div>
+            <div>{property.cancellationPolicy && <p>{property.cancellationPolicy}</p>}{property.houseRules.map(rule => <p key={rule}>{rule}</p>)}</div>
+            <DirectBookingForm slug={property.slug} name={property.name} maxGuests={property.guests} />
+          </div>
+        )}
       </section>
 
       <footer className={styles.footer}>
