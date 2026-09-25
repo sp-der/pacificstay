@@ -740,3 +740,16 @@
     border-top: 0;
   }
 }
+
+
+.hostawayFallbackLink {
+  margin-top: 14px;
+  display: inline-flex;
+  align-items: center;
+  color: #315b5e;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .04em;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
