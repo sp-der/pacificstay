@@ -593,3 +593,40 @@
   .hostawayWidgetShell { min-height: 430px; padding: 8px; }
   .hostawayWidgetShell > div[id="hostaway-calendar-widget"] { min-height: 410px; }
 }
+
+
+.hostawaySearchShell {
+  position: relative;
+  min-height: 138px;
+  padding: 28px 20px;
+  display: flex;
+  align-items: center;
+  overflow: visible;
+  border: 1px solid rgba(23,34,31,.11);
+  border-radius: 10px;
+  background: #fbfaf7;
+}
+
+.hostawaySearchShell > div[id="hostaway-booking-widget"] {
+  width: 100%;
+  position: relative;
+  z-index: 2;
+}
+
+.hostawaySearchLoading {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  color: rgba(23,34,31,.52);
+  font-size: 10px;
+}
+
+@media (max-width: 680px) {
+  .hostawaySearchShell {
+    min-height: 250px;
+    padding: 18px 10px;
+    align-items: flex-start;
+  }
+}

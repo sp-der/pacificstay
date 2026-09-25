@@ -2,12 +2,12 @@
 
 import Link from "next/link";
 import { ArrowRight, CalendarDays, ShieldCheck, Users } from "lucide-react";
-import { getHostawayListingId } from "../../../lib/hostaway";
+import { isHostawayProperty } from "../../../lib/hostaway";
 
 type BookingCardProps = { slug: string; name: string; guests: number };
 
 export default function BookingCard({ slug, name, guests }: BookingCardProps) {
-  const hostawayEnabled = Boolean(getHostawayListingId(slug));
+  const hostawayEnabled = isHostawayProperty(slug);
 
   return (
     <div className="property-booking-card current-booking-card">
