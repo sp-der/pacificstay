@@ -24,7 +24,7 @@ export default function BookingCard({ slug, name, guests }: BookingCardProps) {
 
       <p className="current-booking-copy">
         {hostawayEnabled
-          ? `Check live dates for ${name} and continue through Pacific Stay&apos;s secure Hostaway booking flow.`
+          ? `Check live dates for ${name} and continue through Pacific Stay's secure Hostaway booking flow.`
           : `View dates, estimated pricing, taxes, house rules, and guest details on Pacific Stay&apos;s dedicated direct-booking page for ${name}.`}
       </p>
 

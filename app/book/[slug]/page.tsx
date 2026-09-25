@@ -88,10 +88,10 @@ export default async function DirectBookingPage({ params }: { params: Promise<{ 
         {hostawayListingId ? (
           <HostawayCalendar listingId={hostawayListingId} propertyName={property.name} />
         ) : (
-          <div>
+          <>
             <div>{property.cancellationPolicy && <p>{property.cancellationPolicy}</p>}{property.houseRules.map(rule => <p key={rule}>{rule}</p>)}</div>
             <DirectBookingForm slug={property.slug} name={property.name} maxGuests={property.guests} />
-          </div>
+          </>
         )}
       </section>
 
