@@ -1,4 +1,4 @@
-export const HOSTAWAY_BOOKING_BASE_URL = "https://pacificstayproperties.holidayfuture.com/";
+export const HOSTAWAY_BOOKING_BASE_URL = "https://pacficstayproperties.holidayfuture.com/";
 
 export const HOSTAWAY_LISTINGS = {
   "beach-baby-oceanfront-escape": 591608,
