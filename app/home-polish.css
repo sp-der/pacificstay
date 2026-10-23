@@ -176,3 +176,101 @@ html.motion-ready .motion-reveal.motion-in.motion-image {
     transform: none !important;
   }
 }
+
+
+/* North County management content: inherit the existing type, color and spacing system. */
+.hero .management-hero-title {
+  max-width: 1100px;
+  font-size: clamp(56px, 6.2vw, 88px);
+  line-height: .98;
+}
+.hero .management-hero-title span {
+  margin-left: 0;
+}
+.hero-region-subtitle {
+  margin: 18px 0 0;
+  font-family: var(--sans);
+  font-size: clamp(12px, 1.25vw, 15px);
+  font-weight: 600;
+  letter-spacing: .15em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, .9);
+}
+.hero-region-subtitle + .hero-copy {
+  margin-top: 22px;
+}
+.management-solutions {
+  margin-top: 112px;
+}
+.management-solutions-heading {
+  margin-bottom: 48px;
+}
+.management-solutions-heading .display-heading {
+  font-size: clamp(42px, 4.5vw, 67px);
+  max-width: 780px;
+}
+.management-solutions-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+  border-left: 1px solid var(--line);
+}
+.management-solution-card {
+  display: flex;
+  flex-direction: column;
+  min-height: 260px;
+  padding: 28px 25px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+.management-solution-number {
+  color: var(--sage);
+  font-size: 11px;
+  letter-spacing: .12em;
+}
+.management-solution-card h3 {
+  margin: auto 0 17px;
+  font-family: var(--serif);
+  font-size: clamp(25px, 2.1vw, 30px);
+  font-weight: 400;
+  line-height: 1.2;
+}
+.management-solution-card p {
+  margin: 0;
+  color: rgba(23, 34, 31, .68);
+  font-size: 13px;
+  line-height: 1.65;
+}
+@media (max-width: 980px) {
+  .management-solutions-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+@media (max-width: 820px) {
+  .hero .management-hero-title {
+    font-size: clamp(43px, 7vw, 62px);
+  }
+  .management-solutions {
+    margin-top: 78px;
+  }
+}
+@media (max-width: 560px) {
+  .hero .management-hero-title {
+    font-size: clamp(35px, 9.3vw, 46px);
+    line-height: 1.04;
+    overflow-wrap: normal;
+  }
+  .hero-region-subtitle {
+    font-size: 11px;
+    letter-spacing: .1em;
+  }
+  .management-solutions-grid {
+    grid-template-columns: 1fr;
+  }
+  .management-solution-card {
+    min-height: 205px;
+  }
+  .management-solutions-heading .display-heading {
+    font-size: 43px;
+  }
+}

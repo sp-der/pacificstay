@@ -42,6 +42,7 @@ export async function generateMetadata({
   return {
     title: `${property.name} | Pacific Stay Properties`,
     description: property.summary || `Explore ${property.name}, managed by Pacific Stay Properties.`,
+    alternates: { canonical: `/properties/${property.slug}` },
   };
 }
 

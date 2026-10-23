@@ -1,6 +1,13 @@
 export const dynamic = 'force-dynamic';
 
+import type { Metadata } from 'next';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Coastal Vacation Rentals | Pacific Stay Properties',
+  description: 'Explore Pacific Stay Properties vacation rentals along the North County San Diego coast, including Carlsbad and Oceanside. View stay details and booking options.',
+  alternates: { canonical: '/stays' },
+};
 import { ArrowLeft, ArrowRight, BedDouble, Home, Mail, MapPin, Users } from 'lucide-react';
 import { listManagedProperties } from '../../lib/server/properties';
 

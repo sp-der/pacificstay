@@ -14,9 +14,18 @@ import PropertyImageViewer from "./PropertyImageViewer";
 import HomeMotion from "./HomeMotion";
 
 export const metadata: Metadata = {
-  title: "Pacific Stay Properties | North County Coastal Rentals & Management",
+  metadataBase: new URL("https://pacificstayproperties.com"),
+  title: "Short-Term Rental Property Management | Pacific Stay Properties",
   description:
-    "Pacific Stay Properties provides short-term rental property management and coastal guest stays across Del Mar, La Jolla, Encinitas, Carlsbad, and Oceanside.",
+    "Pacific Stay Properties offers full-service short-term rental, Airbnb and vacation rental management in North County San Diego, from staging to guest care.",
+  openGraph: {
+    type: "website",
+    siteName: "Pacific Stay Properties",
+    title: "Short-Term Rental Property Management | Pacific Stay Properties",
+    description: "Full-service Airbnb and vacation rental management in North County San Diego, including setup, pricing, guest support, cleaning and upkeep.",
+    url: "https://pacificstayproperties.com",
+    locale: "en_US",
+  },
   icons: {
     icon: "/PSP.png",
     shortcut: "/PSP.png",

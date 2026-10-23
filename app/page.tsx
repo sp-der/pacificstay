@@ -46,6 +46,41 @@ const managementSteps = [
   },
 ];
 
+const managementSolutions = [
+  {
+    title: "Full-Service Property Management",
+    copy: "Complete oversight of short-term rental properties and daily operations.",
+  },
+  {
+    title: "Property Staging & Setup",
+    copy: "Property preparation, staging, and design recommendations.",
+  },
+  {
+    title: "Revenue Management",
+    copy: "Dynamic pricing, market analysis, and occupancy optimization.",
+  },
+  {
+    title: "24/7 Guest Communication",
+    copy: "Reservation coordination, check-in assistance, and guest support.",
+  },
+  {
+    title: "Professional Cleaning & Turnovers",
+    copy: "Services provided by our dedicated Pacific Stay Properties cleaning team.",
+  },
+  {
+    title: "Maintenance Coordination",
+    copy: "Property upkeep, inspections, repairs, and vendor coordination.",
+  },
+  {
+    title: "Five-Star Guest Experience",
+    copy: "Personalized hospitality and exceptional guest care.",
+  },
+  {
+    title: "Listing Management",
+    copy: "Creation, updates, and management of property listings across booking platforms.",
+  },
+];
+
 const testimonials = [
   {
     name: "Stephanie Mende",
@@ -161,10 +196,11 @@ export default function HomePage() {
           <p className="eyebrow light-eyebrow">
             <Waves size={17} /> North County Coastal short-term rental management
           </p>
-          <h1>
-            Local. Reliable.
-            <span>Detail oriented.</span>
+          <h1 className="management-hero-title">
+            Short-Term Rental
+            <span>Property Management</span>
           </h1>
+          <p className="hero-region-subtitle">Serving North County San Diego</p>
           <p className="hero-copy">
             Pacific Stay Properties pairs hands-on local property care with professional guest support,
             helping owners protect their homes, create 5-star experiences, and maximize returns.
@@ -250,6 +286,27 @@ export default function HomePage() {
               </div>
             ))}
           </div>
+
+          <section className="management-solutions" aria-labelledby="management-solutions-title">
+            <div className="management-top management-solutions-heading">
+              <div>
+                <p className="eyebrow">Our Services</p>
+                <h2 className="display-heading" id="management-solutions-title">Our Full-Service Property Management Solutions</h2>
+              </div>
+              <p className="lead-copy compact-copy">
+                One connected service, from staging and setup through ongoing management, cleaning, and guest care.
+              </p>
+            </div>
+            <div className="management-solutions-grid">
+              {managementSolutions.map(({ title, copy }, index) => (
+                <article className="management-solution-card" key={title}>
+                  <span className="management-solution-number">{String(index + 1).padStart(2, "0")}</span>
+                  <h3>{title}</h3>
+                  <p>{copy}</p>
+                </article>
+              ))}
+            </div>
+          </section>
 
           <div className="management-feature">
             <div className="management-feature-image">
