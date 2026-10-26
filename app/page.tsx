@@ -64,8 +64,8 @@ const managementSolutions = [
     copy: "Reservation coordination, check-in assistance, and guest support.",
   },
   {
-    title: "In-House Cleaning & Property Care",
-    copy: "Professional cleaning, linen care, and seamless guest turnovers handled by our dedicated in-house team.",
+    title: "Professional Cleaning & Turnovers",
+    copy: "Services provided by our dedicated Pacific Stay Properties cleaning team.",
   },
   {
     title: "Maintenance Coordination",
@@ -253,8 +253,8 @@ export default function HomePage() {
           <div className="path-shade" />
           <div className="path-content">
             <p className="eyebrow light-eyebrow">For homeowners</p>
-            <h2>Your investment, locally supported.</h2>
-            <p>Hands-on short-term rental management focused on maximizing rental revenue, with calendar oversight, strategic pricing, vendor coordination, property support, and regular owner updates.</p>
+            <h2>In-House Cleaning &amp; Property Care</h2>
+            <p>Professional cleaning, linen care, and seamless guest turnovers handled by our dedicated in-house team.</p>
             <button className="button button-light" onClick={() => scrollToId("management")}>
               Explore management <ArrowRight size={17} />
             </button>
