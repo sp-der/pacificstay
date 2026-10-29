@@ -19,6 +19,7 @@ export default function PropertyEditor({token}:{token:string}) {
  const [rows,setRows]=useState<ManagedProperty[]>([]),[draft,setDraft]=useState<ManagedProperty|null>(null),[message,setMessage]=useState(''),[busy,setBusy]=useState(false),[dirty,setDirty]=useState(false);
  const [dragPhoto,setDragPhoto]=useState<DragPhoto>(null),[dragOver,setDragOver]=useState<string>('');
  const [creating,setCreating]=useState(false),[newStay,setNewStay]=useState({name:'',slug:''});
+ const [casaIcalUrl,setCasaIcalUrl]=useState('');
 
  useEffect(()=>{if(loaded.current)return;let cancelled=false;fetch(`${SUPABASE_URL}/rest/v1/properties?select=${propertySelect}&order=name`,{headers:supabaseHeaders(token)}).then(async r=>{if(!r.ok)throw Error('Property editor unavailable. Please contact your website manager.');return r.json();}).then(data=>{if(!cancelled){loaded.current=true;setRows(data);if(data[0])select(data[0]);}}).catch(e=>{if(!cancelled)setMessage(e.message);});return()=>{cancelled=true;};},[token]);
  useEffect(()=>{if(!dirty)return;const prevent=(e:BeforeUnloadEvent)=>e.preventDefault();window.addEventListener('beforeunload',prevent);return()=>window.removeEventListener('beforeunload',prevent);},[dirty]);
@@ -60,6 +61,31 @@ export default function PropertyEditor({token}:{token:string}) {
   const url=`${SUPABASE_URL}/storage/v1/object/public/property-photos/${path}`;
   const sections=(draft.content.photoTour??[]).map((section,index)=>index===sectionIndex?{...section,images:[...section.images,url],thumbnail:section.thumbnail||url}:section);content('photoTour',sections);setMessage('Photo uploaded. Drag it into position, then select Save changes.');
  }catch(e){setMessage(e instanceof Error?e.message:'Upload failed.');}finally{setBusy(false);}}
+
+ async function syncCasaCalendar(configure:boolean){
+  if(!draft||draft.slug!=='casa-del-cactus')return;
+  if(configure&&!casaIcalUrl.trim()){setMessage('Paste the private Airbnb iCal export URL before connecting the calendar.');return;}
+  setBusy(true);setMessage('');
+  try{
+   if(configure){
+    const configureResponse=await fetch(`${SUPABASE_URL}/rest/v1/rpc/configure_airbnb_calendar`,{
+     method:'POST',
+     headers:{...supabaseHeaders(token),'Content-Type':'application/json'},
+     body:JSON.stringify({p_slug:'casa-del-cactus',p_ical_url:casaIcalUrl.trim()}),
+    });
+    if(!configureResponse.ok)throw Error('Could not connect the calendar. Confirm the Pacific Stay Supabase calendar migration is installed and the link is the private Airbnb iCal export URL.');
+   }
+   const syncResponse=await fetch(`${SUPABASE_URL}/functions/v1/sync-airbnb-calendar`,{
+    method:'POST',headers:{...supabaseHeaders(token),'Content-Type':'application/json'},
+    body:JSON.stringify({property_slug:'casa-del-cactus'}),
+   });
+   const result=await syncResponse.json().catch(()=>null) as {blocked_nights?:number;error?:string}|null;
+   if(!syncResponse.ok||!result||result.error)throw Error('Casa calendar sync failed. Ensure the updated Airbnb calendar Edge Function is deployed and the iCal export is valid.');
+   setCasaIcalUrl('');
+   setMessage('Casa Del Cactus calendar synchronized ('+(result.blocked_nights??0)+' blocked nights). Verify the calendar, review rates and rules, then enable direct booking requests and save.');
+  }catch(error){setMessage(error instanceof Error?error.message:'Could not synchronize the Casa calendar.');}
+  finally{setBusy(false);}
+ }
 
  if(!draft)return <section className={styles.panel}><h2>Property editor</h2><p role="status">{message||'Loading properties…'}</p></section>;
  return <form className={styles.panel} onSubmit={save}>
