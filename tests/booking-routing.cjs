@@ -67,15 +67,21 @@ test("Casa defers to Hostaway when it is explicitly migrated", () => {
   assert.equal(d.getExternalBookingUrl("casa-del-cactus", false), null);
 });
 
-async function readiness(rows, ok = true) {
+async function readiness(rows, ok = true, calendarReady = true, serviceKey = "test-server-key") {
   const mod = loadTs("lib/server/bookingReadiness.ts", {
+    env: serviceKey ? { SUPABASE_SERVICE_ROLE_KEY: serviceKey } : {},
     require: (id) => {
       if (id === "server-only") return {};
       if (id === "../supabaseConfig") return { SUPABASE_URL: "https://example.supabase.co", supabaseHeaders: () => ({ apikey: "test-publishable" }) };
       throw Error(id);
     },
-    fetch: async (url) => {
-      assert.match(url, /slug=eq\.casa-del-cactus/);
+    fetch: async (url, options = {}) => {
+      if (url.includes("/rest/v1/rpc/booking_calendar_source_ready")) {
+        assert.equal(options.method, "POST");
+        assert.equal(JSON.parse(options.body).p_slug, "casa-del-cactus");
+        return { ok: true, json: async () => calendarReady };
+      }
+      assert.match(url, /slug=eq\\.casa-del-cactus/);
       return { ok, json: async () => rows };
     },
   });
@@ -99,7 +105,12 @@ test("Casa booking readiness requires a positive rate and verified owner approva
   assert.equal((await readiness([{ ...valid, max_nights: 1 }])).ready, false);
 });
 
-test("Casa booking readiness becomes ready only with full owner setup", async () => {
+test("Casa booking readiness never enables when sync is unverified", async () => {
+  assert.equal((await readiness([valid], true, false)).ready, false);
+  assert.equal((await readiness([valid], true, true, "")).ready, false);
+});
+
+test("Casa booking readiness becomes ready only with full owner setup and calendar sync", async () => {
   const result = await readiness([valid]);
   assert.equal(result.ready, true);
   assert.equal(result.reason, "ready");
