@@ -4,6 +4,7 @@ import { GripVertical, Images, ImagePlus, Plus, Star, Trash2 } from 'lucide-reac
 import { getProperty } from '../properties/propertyData';
 import { getPhotoTour } from '../properties/photoTourData';
 import { ManagedProperty, propertySelect } from '../../lib/propertyContent';
+import { refreshLegacyBeachBabyGallery } from '../../lib/beachBabyGallery';
 import { SUPABASE_URL, supabaseHeaders } from '../../lib/supabaseConfig';
 import styles from './admin.module.css';
 
@@ -22,7 +23,7 @@ export default function PropertyEditor({token}:{token:string}) {
  useEffect(()=>{if(loaded.current)return;let cancelled=false;fetch(`${SUPABASE_URL}/rest/v1/properties?select=${propertySelect}&order=name`,{headers:supabaseHeaders(token)}).then(async r=>{if(!r.ok)throw Error('Property editor unavailable. Please contact your website manager.');return r.json();}).then(data=>{if(!cancelled){loaded.current=true;setRows(data);if(data[0])select(data[0]);}}).catch(e=>{if(!cancelled)setMessage(e.message);});return()=>{cancelled=true;};},[token]);
  useEffect(()=>{if(!dirty)return;const prevent=(e:BeforeUnloadEvent)=>e.preventDefault();window.addEventListener('beforeunload',prevent);return()=>window.removeEventListener('beforeunload',prevent);},[dirty]);
 
- function select(row:ManagedProperty){const base=getProperty(row.slug);setDraft({...row,content:{...(base??{}),photoTour:getPhotoTour(row.slug)??[],...row.content}});setDirty(false);setMessage('');}
+ function select(row:ManagedProperty){const base=getProperty(row.slug);const mergedContent={...(base??{}),photoTour:getPhotoTour(row.slug)??[],...row.content};setDraft({...row,content:refreshLegacyBeachBabyGallery(row.slug,mergedContent)});setDirty(false);setMessage('');}
  function content(key:string,value:unknown){setDraft(d=>d?{...d,content:{...d.content,[key]:value}}:d);setDirty(true);}
  function togglePreview(url:string){if(!draft)return;const gallery=draft.content.gallery??[];content('gallery',gallery.includes(url)?gallery.filter(item=>item!==url):[...gallery,url].slice(-3));}
  function removePhoto(sectionIndex:number,url:string){if(!draft||url===draft.content.heroImage)return;const sections=(draft.content.photoTour??[]).map((section,index)=>index===sectionIndex?{...section,images:section.images.filter(item=>item!==url)}:section).map(section=>({...section,thumbnail:section.images[0]??''}));setDraft({...draft,content:{...draft.content,gallery:(draft.content.gallery??[]).filter(item=>item!==url),photoTour:sections}});setDirty(true);setMessage('Photo removed from the listing. Select Save changes to publish.');}
