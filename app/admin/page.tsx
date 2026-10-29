@@ -275,7 +275,7 @@ export default function BookingAdminPage() {
       });
       const result = await response.json() as { error?: string; blocked_nights?: number };
       if (!response.ok) throw new Error(result.error ?? "Airbnb calendar sync failed.");
-      setNotice(`Airbnb calendar synchronized. ${result.blocked_nights ?? 0} unavailable nights loaded.`); await loadDashboard(session);
+      setNotice(`Chestnut Airbnb calendar synchronized. ${result.blocked_nights ?? 0} unavailable nights loaded.`); await loadDashboard(session);
     } catch (syncError) { setError(syncError instanceof Error ? syncError.message : "Airbnb calendar sync failed."); }
     finally { setLoading(false); }
   }
@@ -350,7 +350,7 @@ export default function BookingAdminPage() {
             <label>Property<select value={blockForm.propertyId} onChange={(event) => setBlockForm({ ...blockForm, propertyId: event.target.value })}>{properties.map((property) => <option value={property.id} key={property.id}>{property.name}</option>)}</select></label>
             <div className={styles.formRow}><label>First blocked night<input type="date" min={today()} value={blockForm.start} onChange={(event) => setBlockForm({ ...blockForm, start: event.target.value })} required /></label><label>Checkout / reopen date<input type="date" min={blockForm.start || today()} value={blockForm.end} onChange={(event) => setBlockForm({ ...blockForm, end: event.target.value })} required /></label></div>
             <label>Reason<select value={blockForm.source} onChange={(event) => setBlockForm({ ...blockForm, source: event.target.value })}><option value="manual">Manual hold</option><option value="maintenance">Maintenance</option></select></label>
-            <button className={styles.primaryButton}>Block selected nights</button><button className={styles.secondaryButton} type="button" onClick={syncAirbnb} disabled={loading}>Sync Airbnb calendar</button>
+            <button className={styles.primaryButton}>Block selected nights</button><button className={styles.secondaryButton} type="button" onClick={syncAirbnb} disabled={loading}>Sync Chestnut Airbnb calendar</button>
             <small className={styles.helper}>Calendar synchronization is managed by your website manager.</small>
           </form>
           <form className={styles.panel} onSubmit={saveRate}><div className={styles.panelTitle}><div><p>Pricing</p><h2>Nightly override</h2></div></div>
