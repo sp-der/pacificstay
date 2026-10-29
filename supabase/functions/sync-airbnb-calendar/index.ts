@@ -53,8 +53,17 @@ Deno.serve(async (request) => {
     const { data: { user }, error: userError } = await userClient.auth.getUser(token);
     if (userError || user?.app_metadata?.role !== "admin") return new Response(JSON.stringify({ error: "Administrator access required" }), { status: 403, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
+    const body = await request.json().catch(() => ({})) as { property_slug?: string };
+    const propertySlug = body.property_slug ?? "chestnut-by-the-sea";
+    if (propertySlug !== "chestnut-by-the-sea" && propertySlug !== "casa-del-cactus") {
+      return new Response(JSON.stringify({ error: "Unsupported calendar source" }), { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    }
+    const integrationName = propertySlug === "casa-del-cactus"
+      ? "airbnb_ical_url_casa_del_cactus"
+      : "airbnb_ical_url";
+
     const serviceClient = createClient(supabaseUrl, serviceKey, { auth: { persistSession: false, autoRefreshToken: false } });
-    const { data: icalUrl, error: integrationError } = await serviceClient.rpc("get_private_integration", { p_name: "airbnb_ical_url" });
+    const { data: icalUrl, error: integrationError } = await serviceClient.rpc("get_private_integration", { p_name: integrationName });
     if (integrationError || !icalUrl) return new Response(JSON.stringify({ error: "Airbnb calendar is not connected yet" }), { status: 503, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
     const parsedUrl = new URL(icalUrl);
@@ -62,13 +71,17 @@ Deno.serve(async (request) => {
 
     const calendarResponse = await fetch(parsedUrl, { headers: { "User-Agent": "PacificStayCalendarSync/1.0" } });
     if (!calendarResponse.ok) throw new Error(`Airbnb calendar returned HTTP ${calendarResponse.status}`);
-    const entries = parseCalendar(await calendarResponse.text());
-    const { data: properties, error: propertyError } = await serviceClient.from("properties").select("id").eq("slug", "chestnut-by-the-sea").limit(1);
+    const icalContent = await calendarResponse.text();
+    if (!/BEGIN:VCALENDAR/i.test(icalContent) || !/END:VCALENDAR/i.test(icalContent) || icalContent.length > 3_000_000) {
+      throw new Error("Airbnb returned an invalid calendar export");
+    }
+    const entries = parseCalendar(icalContent);
+    const { data: properties, error: propertyError } = await serviceClient.from("properties").select("id").eq("slug", propertySlug).limit(1);
     if (propertyError || !properties?.[0]) throw new Error("Pacific Stay property configuration was not found");
     const { data: inserted, error: replaceError } = await serviceClient.rpc("replace_airbnb_calendar", { p_property_id: properties[0].id, p_entries: entries });
     if (replaceError) throw replaceError;
 
-    return new Response(JSON.stringify({ ok: true, blocked_nights: inserted, events_parsed: entries.length }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
+    return new Response(JSON.stringify({ ok: true, property_slug: propertySlug, blocked_nights: inserted, events_parsed: entries.length }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });
   } catch (error) {
     return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Calendar sync failed" }), { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } });
   }
