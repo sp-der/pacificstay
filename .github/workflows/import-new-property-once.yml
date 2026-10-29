@@ -1,5 +1,8 @@
 name: Import Pacific Stay Airbnb listing public gallery
 on:
+  pull_request:
+    branches:
+      - main
   push:
     branches:
       - import-airbnb-1798660872755121079-20261028
@@ -17,6 +20,7 @@ jobs:
       - uses: actions/checkout@v4
         with:
           persist-credentials: true
+          ref: ${{ github.head_ref || github.ref_name }}
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
