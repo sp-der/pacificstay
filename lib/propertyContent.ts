@@ -1,5 +1,6 @@
 import { Property } from '../app/properties/propertyData';
 import { PhotoTourSection } from '../app/properties/photoTourData';
+import { refreshLegacyBeachBabyGallery } from './beachBabyGallery';
 export type ManagedProperty = {
   id: string; slug: string; name: string; active: boolean; max_guests: number; min_nights: number; max_nights: number;
   base_nightly_rate: number | null; weekend_nightly_rate: number | null; cleaning_fee: number | null;
@@ -44,5 +45,5 @@ function propertyDefaults(row: ManagedProperty): Property {
 }
 
 export function mergeProperty(base: Property | undefined, row: ManagedProperty): Property & { photoTour?: PhotoTourSection[]; cancellationPolicy?: string } {
-  return { ...propertyDefaults(row), ...(base ?? {}), ...row.content, slug: row.slug, name: row.name, guests: row.max_guests, minNights: row.min_nights };
+  return refreshLegacyBeachBabyGallery(row.slug, { ...propertyDefaults(row), ...(base ?? {}), ...row.content, slug: row.slug, name: row.name, guests: row.max_guests, minNights: row.min_nights });
 }
