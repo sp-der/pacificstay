@@ -19,5 +19,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+      - name: Run existing payment tests and new booking routing tests
+        run: npm test
       - name: Check provider URLs and public property configuration
         run: node tools/booking_diagnostics.mjs
