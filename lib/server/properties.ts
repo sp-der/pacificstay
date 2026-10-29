@@ -14,7 +14,7 @@ const NEW_STAY_AIRBNB_ID = '1798660872755121079';
 function newStayFallback(slug: string) {
   if (slug !== NEW_STAY_SLUG) return undefined;
   const property = getProperty(slug);
-  return property ? { ...property, photoTour: getPhotoTour(slug) ?? [] } : undefined;
+  return property ? { ...property, photoTour: getPhotoTour(slug) ?? [], cancellationPolicy: '' } : undefined;
 }
 
 export async function getManagedProperty(slug: string) {
