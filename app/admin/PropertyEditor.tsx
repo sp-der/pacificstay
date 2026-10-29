@@ -109,13 +109,20 @@ export default function PropertyEditor({token}:{token:string}) {
     <label>Lodging tax & assessment (%)<input type="number" required min={0} max={100} step="0.001" value={Number(((draft.tax_rate??0)*100).toFixed(3))} onChange={e=>{setDraft({...draft,tax_rate:Number(e.target.value)/100});setDirty(true);}}/></label>
     {draft.slug==='casa-del-cactus'&&<div style={{padding:'16px',marginTop:'14px',background:'rgba(49,91,94,.07)',borderRadius:'12px'}}>
      <strong>Casa Del Cactus · Direct booking readiness</strong>
+     <p><strong>1. Connect and sync the Airbnb calendar.</strong> Obtain Casa's private Airbnb iCal export from Jami's Airbnb calendar settings. It is kept in the protected Supabase integration store, never saved in public listing content.</p>
+     <label>Private Airbnb iCal export URL<input type="url" value={casaIcalUrl} autoComplete="off" placeholder="https://www.airbnb.com/calendar/ical/..." onChange={e=>setCasaIcalUrl(e.target.value)}/></label>
+     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:14}}>
+      <button type="button" className={styles.secondaryButton} onClick={()=>void syncCasaCalendar(true)}>Connect & sync Casa calendar</button>
+      <button type="button" className={styles.secondaryButton} onClick={()=>void syncCasaCalendar(false)}>Re-sync Casa calendar</button>
+     </div>
+     <p><strong>2. Review all rates and booking rules.</strong> The direct-booking form stays disabled until this property has a recently synchronized calendar, a positive default nightly rate, and your explicit activation below.</p>
      <p>Before enabling direct requests: confirm nightly rates, taxes, cleaning fee, minimum stay, guest capacity, and that Airbnb's booking calendar is connected and synced in Pacific Stay. Guests must not see unsynced dates as available.</p>
      <label style={{display:'flex',flexDirection:'row',alignItems:'flex-start',gap:10}}>
       <input type="checkbox" style={{width:20,height:20,flexShrink:0}} checked={Boolean(draft.content.directBookingEnabled)} onChange={e=>{
        if(e.target.checked&&!(Number(draft.base_nightly_rate)>0)){setMessage('Set a valid default nightly rate before enabling Casa Del Cactus direct bookings.');return;}
        content('directBookingEnabled',e.target.checked);
       }}/>
-      <span>I have verified the pricing, calendar sync, house rules, and policies for Casa Del Cactus. Enable Pacific Stay direct booking requests.</span>
+      <span>I have confirmed Casa's Airbnb calendar successfully synced, reviewed all direct rates, fees, house rules, and cancellation terms. Enable direct booking requests.</span>
      </label>
      <p>Save changes to apply. If this is off, guests stay on Airbnb. Bookings are requests reviewed by Pacific Stay, not automatic confirmations.</p>
     </div>}
