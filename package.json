@@ -7,8 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "test": "npm run test:payments",
-    "test:payments": "node tests/payment-routes.cjs"
+    "test": "npm run test:payments && npm run test:booking",
+    "test:payments": "node tests/payment-routes.cjs",
+    "test:booking": "node --test tests/booking-routing.cjs"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

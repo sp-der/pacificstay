@@ -11,11 +11,12 @@ export const metadata: Metadata = {
 import { ArrowLeft, ArrowRight, BedDouble, Home, Mail, MapPin, Users } from 'lucide-react';
 import { listManagedProperties } from '../../lib/server/properties';
 import { getExternalBookingUrl } from '../../lib/bookingDestinations';
+import { getCasaBookingReadiness } from '../../lib/server/bookingReadiness';
 
 const PUBLIC_EMAIL = 'info@pacificstayproperties.com';
 
 export default async function StaysPage() {
-  const stays = await listManagedProperties();
+  const [stays, casaBooking] = await Promise.all([listManagedProperties(), getCasaBookingReadiness()]);
 
   return (
     <main className="property-page">
@@ -88,9 +89,9 @@ export default async function StaysPage() {
                       <Link className="text-link" href={`/properties/${stay.slug}`}>
                         View property <ArrowRight size={16} />
                       </Link>
-                      {getExternalBookingUrl(stay.slug) ? (
+                      {getExternalBookingUrl(stay.slug, casaBooking.ready) ? (
                         <a className="pill-button direct-booking-link"
-                          href={getExternalBookingUrl(stay.slug)!}
+                          href={getExternalBookingUrl(stay.slug, casaBooking.ready)!}
                           target="_blank" rel="noopener noreferrer">
                           View on Airbnb
                         </a>

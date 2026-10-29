@@ -5,11 +5,11 @@ import { ArrowRight, CalendarDays, ShieldCheck, Users } from "lucide-react";
 import { getHostawayListingId } from "../../../lib/hostaway";
 import { getExternalBookingUrl } from "../../../lib/bookingDestinations";
 
-type BookingCardProps = { slug: string; name: string; guests: number };
+type BookingCardProps = { slug: string; name: string; guests: number; casaDirectReady?: boolean };
 
-export default function BookingCard({ slug, name, guests }: BookingCardProps) {
+export default function BookingCard({ slug, name, guests, casaDirectReady = false }: BookingCardProps) {
   const hostawayEnabled = Boolean(getHostawayListingId(slug));
-  const airbnbBookingUrl = getExternalBookingUrl(slug);
+  const airbnbBookingUrl = getExternalBookingUrl(slug, casaDirectReady);
 
   if (airbnbBookingUrl) {
     return (

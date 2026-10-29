@@ -19,11 +19,12 @@ export default function PropertyEditor({token}:{token:string}) {
  const [rows,setRows]=useState<ManagedProperty[]>([]),[draft,setDraft]=useState<ManagedProperty|null>(null),[message,setMessage]=useState(''),[busy,setBusy]=useState(false),[dirty,setDirty]=useState(false);
  const [dragPhoto,setDragPhoto]=useState<DragPhoto>(null),[dragOver,setDragOver]=useState<string>('');
  const [creating,setCreating]=useState(false),[newStay,setNewStay]=useState({name:'',slug:''});
+ const [casaIcalUrl,setCasaIcalUrl]=useState('');
 
  useEffect(()=>{if(loaded.current)return;let cancelled=false;fetch(`${SUPABASE_URL}/rest/v1/properties?select=${propertySelect}&order=name`,{headers:supabaseHeaders(token)}).then(async r=>{if(!r.ok)throw Error('Property editor unavailable. Please contact your website manager.');return r.json();}).then(data=>{if(!cancelled){loaded.current=true;setRows(data);if(data[0])select(data[0]);}}).catch(e=>{if(!cancelled)setMessage(e.message);});return()=>{cancelled=true;};},[token]);
  useEffect(()=>{if(!dirty)return;const prevent=(e:BeforeUnloadEvent)=>e.preventDefault();window.addEventListener('beforeunload',prevent);return()=>window.removeEventListener('beforeunload',prevent);},[dirty]);
 
- function select(row:ManagedProperty){const base=getProperty(row.slug);const mergedContent={...(base??{}),photoTour:getPhotoTour(row.slug)??[],...row.content};setDraft({...row,content:refreshLegacyBeachBabyGallery(row.slug,mergedContent)});setDirty(false);setMessage('');}
+ function select(row:ManagedProperty){setCasaIcalUrl('');const base=getProperty(row.slug);const mergedContent={...(base??{}),photoTour:getPhotoTour(row.slug)??[],...row.content};setDraft({...row,content:refreshLegacyBeachBabyGallery(row.slug,mergedContent)});setDirty(false);setMessage('');}
  function content(key:string,value:unknown){setDraft(d=>d?{...d,content:{...d.content,[key]:value}}:d);setDirty(true);}
  function togglePreview(url:string){if(!draft)return;const gallery=draft.content.gallery??[];content('gallery',gallery.includes(url)?gallery.filter(item=>item!==url):[...gallery,url].slice(-3));}
  function removePhoto(sectionIndex:number,url:string){if(!draft||url===draft.content.heroImage)return;const sections=(draft.content.photoTour??[]).map((section,index)=>index===sectionIndex?{...section,images:section.images.filter(item=>item!==url)}:section).map(section=>({...section,thumbnail:section.images[0]??''}));setDraft({...draft,content:{...draft.content,gallery:(draft.content.gallery??[]).filter(item=>item!==url),photoTour:sections}});setDirty(true);setMessage('Photo removed from the listing. Select Save changes to publish.');}
@@ -61,6 +62,31 @@ export default function PropertyEditor({token}:{token:string}) {
   const sections=(draft.content.photoTour??[]).map((section,index)=>index===sectionIndex?{...section,images:[...section.images,url],thumbnail:section.thumbnail||url}:section);content('photoTour',sections);setMessage('Photo uploaded. Drag it into position, then select Save changes.');
  }catch(e){setMessage(e instanceof Error?e.message:'Upload failed.');}finally{setBusy(false);}}
 
+ async function syncCasaCalendar(configure:boolean){
+  if(!draft||draft.slug!=='casa-del-cactus')return;
+  if(configure&&!casaIcalUrl.trim()){setMessage('Paste the private Airbnb iCal export URL before connecting the calendar.');return;}
+  setBusy(true);setMessage('');
+  try{
+   if(configure){
+    const configureResponse=await fetch(`${SUPABASE_URL}/rest/v1/rpc/configure_airbnb_calendar`,{
+     method:'POST',
+     headers:{...supabaseHeaders(token),'Content-Type':'application/json'},
+     body:JSON.stringify({p_slug:'casa-del-cactus',p_ical_url:casaIcalUrl.trim()}),
+    });
+    if(!configureResponse.ok)throw Error('Could not connect the calendar. Confirm the Pacific Stay Supabase calendar migration is installed and the link is the private Airbnb iCal export URL.');
+   }
+   const syncResponse=await fetch(`${SUPABASE_URL}/functions/v1/sync-airbnb-calendar`,{
+    method:'POST',headers:{...supabaseHeaders(token),'Content-Type':'application/json'},
+    body:JSON.stringify({property_slug:'casa-del-cactus'}),
+   });
+   const result=await syncResponse.json().catch(()=>null) as {blocked_nights?:number;error?:string}|null;
+   if(!syncResponse.ok||!result||result.error)throw Error('Casa calendar sync failed. Ensure the updated Airbnb calendar Edge Function is deployed and the iCal export is valid.');
+   setCasaIcalUrl('');
+   setMessage('Casa Del Cactus calendar synchronized ('+(result.blocked_nights??0)+' blocked nights). Verify the calendar, review rates and rules, then enable direct booking requests and save.');
+  }catch(error){setMessage(error instanceof Error?error.message:'Could not synchronize the Casa calendar.');}
+  finally{setBusy(false);}
+ }
+
  if(!draft)return <section className={styles.panel}><h2>Property editor</h2><p role="status">{message||'Loading properties…'}</p></section>;
  return <form className={styles.panel} onSubmit={save}>
   <div className={styles.panelTitle}><div><h2>Your property</h2><p>Edit the details below, then save. Existing approved reservation prices stay unchanged.</p></div><button type="button" className={styles.secondaryButton} onClick={()=>setCreating(value=>!value)}><Plus size={15}/> Add new stay</button>{!rows.some(r=>r.slug==='casa-del-cactus')&&<button type="button" className={styles.secondaryButton} onClick={()=>{setCreating(true);setNewStay({name:'Casa Del Cactus, Charming Hideaway',slug:'casa-del-cactus'});}}>Import Casa Del Cactus</button>}</div>
@@ -81,6 +107,25 @@ export default function PropertyEditor({token}:{token:string}) {
    <details><summary>Rates & booking limits</summary><p>USD. Nightly overrides below take priority. Confirm tax rates with your tax adviser before changing them.</p>
     {Object.entries({base_nightly_rate:'Default nightly rate ($)',weekend_nightly_rate:'Friday / Saturday nightly rate ($)',cleaning_fee:'Cleaning fee ($)',min_nights:'Minimum nights',max_nights:'Maximum nights',max_guests:'Maximum guests'}).map(([key,label])=><label key={key}>{label}<input required type="number" min={key.includes('nights')||key==='max_guests'?1:0} step={key.includes('rate')||key==='cleaning_fee'?'0.01':1} max={key==='max_guests'?30:key.includes('nights')?365:999999} value={draft[key as keyof ManagedProperty] as number??''} onChange={e=>{setDraft({...draft,[key]:Number(e.target.value)});setDirty(true);}}/></label>)}
     <label>Lodging tax & assessment (%)<input type="number" required min={0} max={100} step="0.001" value={Number(((draft.tax_rate??0)*100).toFixed(3))} onChange={e=>{setDraft({...draft,tax_rate:Number(e.target.value)/100});setDirty(true);}}/></label>
+    {draft.slug==='casa-del-cactus'&&<div style={{padding:'16px',marginTop:'14px',background:'rgba(49,91,94,.07)',borderRadius:'12px'}}>
+     <strong>Casa Del Cactus · Direct booking readiness</strong>
+     <p><strong>1. Connect and sync the Airbnb calendar.</strong> Obtain Casa's private Airbnb iCal export from Jami's Airbnb calendar settings. It is kept in the protected Supabase integration store, never saved in public listing content.</p>
+     <label>Private Airbnb iCal export URL<input type="url" value={casaIcalUrl} autoComplete="off" placeholder="https://www.airbnb.com/calendar/ical/..." onChange={e=>setCasaIcalUrl(e.target.value)}/></label>
+     <div style={{display:'flex',gap:10,flexWrap:'wrap',marginBottom:14}}>
+      <button type="button" className={styles.secondaryButton} onClick={()=>void syncCasaCalendar(true)}>Connect & sync Casa calendar</button>
+      <button type="button" className={styles.secondaryButton} onClick={()=>void syncCasaCalendar(false)}>Re-sync Casa calendar</button>
+     </div>
+     <p><strong>2. Review all rates and booking rules.</strong> The direct-booking form stays disabled until this property has a recently synchronized calendar, a positive default nightly rate, and your explicit activation below.</p>
+     <p>Before enabling direct requests: confirm nightly rates, taxes, cleaning fee, minimum stay, guest capacity, and that Airbnb's booking calendar is connected and synced in Pacific Stay. Guests must not see unsynced dates as available.</p>
+     <label style={{display:'flex',flexDirection:'row',alignItems:'flex-start',gap:10}}>
+      <input type="checkbox" style={{width:20,height:20,flexShrink:0}} checked={Boolean(draft.content.directBookingEnabled)} onChange={e=>{
+       if(e.target.checked&&!(Number(draft.base_nightly_rate)>0)){setMessage('Set a valid default nightly rate before enabling Casa Del Cactus direct bookings.');return;}
+       content('directBookingEnabled',e.target.checked);
+      }}/>
+      <span>I have confirmed Casa's Airbnb calendar successfully synced, reviewed all direct rates, fees, house rules, and cancellation terms. Enable direct booking requests.</span>
+     </label>
+     <p>Save changes to apply. If this is off, guests stay on Airbnb. Bookings are requests reviewed by Pacific Stay, not automatic confirmations.</p>
+    </div>}
    </details>
    <details><summary>Amenities & sleeping arrangements</summary>
     {(draft.content.amenities??[]).map((g,i)=><div key={i}><label>Amenity group<input value={g.title} onChange={e=>content('amenities',draft.content.amenities!.map((v,j)=>j===i?{...v,title:e.target.value}:v))}/></label><label>Amenities (one per line)<textarea rows={4} value={g.items.join('\n')} onChange={e=>content('amenities',draft.content.amenities!.map((v,j)=>j===i?{...v,items:e.target.value.split('\n')}:v))}/></label></div>)}

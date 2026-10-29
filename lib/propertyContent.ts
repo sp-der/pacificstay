@@ -4,7 +4,7 @@ import { refreshLegacyBeachBabyGallery } from './beachBabyGallery';
 export type ManagedProperty = {
   id: string; slug: string; name: string; active: boolean; max_guests: number; min_nights: number; max_nights: number;
   base_nightly_rate: number | null; weekend_nightly_rate: number | null; cleaning_fee: number | null;
-  tax_rate: number | null; content: Partial<Property> & { photoTour?: PhotoTourSection[]; cancellationPolicy?: string };
+  tax_rate: number | null; content: Partial<Property> & { photoTour?: PhotoTourSection[]; cancellationPolicy?: string; directBookingEnabled?: boolean };
 };
 export const propertySelect = 'id,slug,name,active,max_guests,min_nights,max_nights,base_nightly_rate,weekend_nightly_rate,cleaning_fee,tax_rate,content';
 

@@ -1,5 +1,6 @@
 export const dynamic = "force-dynamic";
 import { getManagedProperty } from "../../../lib/server/properties";
+import { getCasaBookingReadiness } from "../../../lib/server/bookingReadiness";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -54,6 +55,7 @@ export default async function PropertyPage({
   const { slug } = await params;
   const property = await getManagedProperty(slug);
   if (!property) notFound();
+  const casaDirectReady = slug === "casa-del-cactus" ? (await getCasaBookingReadiness()).ready : false;
 
   const hasReviews = Boolean(property.rating && property.reviewCount > 0);
   const photoCount = (property.photoTour ?? getPhotoTour(slug) ?? []).reduce((count, section) => count + section.images.length, 0);
@@ -121,7 +123,7 @@ export default async function PropertyPage({
 
       <section className="property-body property-shell">
         <aside className="property-booking-column">
-          <BookingCard slug={property.slug} name={property.name} guests={property.guests} />
+          <BookingCard slug={property.slug} name={property.name} guests={property.guests} casaDirectReady={casaDirectReady} />
           <div className="property-booking-help">
             <strong>Questions before booking?</strong>
             <p>Jami provides local guest support and can help with property-specific questions.</p>
