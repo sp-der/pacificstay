@@ -81,7 +81,7 @@ async function readiness(rows, ok = true, calendarReady = true, serviceKey = "te
         assert.equal(JSON.parse(options.body).p_slug, "casa-del-cactus");
         return { ok: true, json: async () => calendarReady };
       }
-      assert.match(url, /slug=eq\\.casa-del-cactus/);
+      assert.match(url, /slug=eq[.]casa-del-cactus/);
       return { ok, json: async () => rows };
     },
   });
