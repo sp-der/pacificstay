@@ -179,6 +179,36 @@
   min-height: 0;
 }
 
+
+/* Casa Del Cactus uses portrait photography throughout its Airbnb gallery.
+   Keep the full cover visible while its blurred image softly fills the frame. */
+.property-gallery-cactus .property-gallery-main {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  background: #d5dcd2;
+}
+
+.property-gallery-cactus .cactus-photo-backdrop {
+  position: absolute;
+  inset: -32px;
+  background-position: center;
+  background-size: cover;
+  filter: blur(26px) brightness(0.65);
+  pointer-events: none;
+}
+
+.property-gallery-cactus .property-gallery-main img {
+  position: relative;
+  z-index: 1;
+  object-fit: contain;
+  filter: drop-shadow(0 4px 16px rgba(0, 0, 0, 0.18));
+}
+
+.property-gallery-cactus .property-gallery-main::after {
+  z-index: 3;
+}
+
 .property-gallery-side {
   display: grid;
   grid-template-columns: 1fr 1fr;
