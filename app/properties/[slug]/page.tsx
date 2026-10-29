@@ -104,8 +104,9 @@ export default async function PropertyPage({
         </div>
       </section>
 
-      <section className="property-gallery property-shell" aria-label={`${property.name} gallery`}>
+      <section className={"property-gallery property-shell" + (slug === "casa-del-cactus" ? " property-gallery-cactus" : "")} aria-label={`${property.name} gallery`}>
         <div className="property-gallery-main">
+          {slug === "casa-del-cactus" && <div className="cactus-photo-backdrop" aria-hidden="true" style={{backgroundImage: "url(" + JSON.stringify(property.heroImage) + ")"}} />}
           <img src={property.heroImage || "/PSP.png"} alt={`${property.name} featured photo`} />
         </div>
         <div className="property-gallery-side">

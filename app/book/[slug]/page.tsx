@@ -2,7 +2,8 @@ export const dynamic = "force-dynamic";
 import { getManagedProperty } from "../../../lib/server/properties";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { getExternalBookingUrl } from "../../../lib/bookingDestinations";
 import { ArrowLeft, Mail, MapPin, ShieldCheck, Star } from "lucide-react";
 import DirectBookingForm from "./DirectBookingForm";
 import HostawayCalendar from "./HostawayCalendar";
@@ -23,6 +24,8 @@ export default async function DirectBookingPage({ params }: { params: Promise<{ 
   const { slug } = await params;
   const property = await getManagedProperty(slug);
   if (!property) notFound();
+  const externalBooking = getExternalBookingUrl(slug);
+  if (externalBooking) redirect(externalBooking);
   const hostawayListingId = getHostawayListingId(property.slug);
 
   return (

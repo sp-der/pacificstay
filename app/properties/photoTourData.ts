@@ -135,7 +135,24 @@ export const chestnutPhotoTour: PhotoTourSection[] = [
   },
 ];
 
+
+const casaDelCactusImages = Array.from({ length: 30 }, (_, index) =>
+  "/new-listing-1798660872755121079/listing-" + String(index + 1).padStart(2, "0") + ".webp"
+);
+
+export const casaDelCactusPreviewImages = casaDelCactusImages.slice(0, 4);
+
+export const casaDelCactusPhotoTour: PhotoTourSection[] = [
+  {
+    id: "casa-del-cactus-tour",
+    label: "Casa Del Cactus",
+    thumbnail: casaDelCactusImages[0],
+    images: casaDelCactusImages,
+  },
+];
+
 export function getPhotoTour(slug: string) {
   if (slug === "chestnut-by-the-sea") return chestnutPhotoTour;
+  if (slug === "casa-del-cactus") return casaDelCactusPhotoTour;
   return null;
 }
