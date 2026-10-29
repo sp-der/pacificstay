@@ -1,4 +1,4 @@
-import { chestnutPreviewImages } from "./photoTourData";
+import { chestnutPreviewImages, casaDelCactusPreviewImages } from "./photoTourData";
 
 export type PropertyAmenityGroup = {
   title: string;
@@ -164,6 +164,73 @@ export const properties: Property[] = [
       { label: "Location", score: "5.0" },
       { label: "Value", score: "4.8" },
     ],
+  },
+  {
+    slug: "casa-del-cactus",
+    name: "Casa Del Cactus, Charming Hideaway",
+    location: "Vista, California",
+    area: "Vista · North County San Diego",
+    tag: "Private, newly renovated cactus-lined retreat",
+    heroImage: casaDelCactusPreviewImages[0],
+    gallery: casaDelCactusPreviewImages.slice(1),
+    guests: 5,
+    bedrooms: 2,
+    beds: 4,
+    baths: 1,
+    minNights: 1,
+    propertyType: "Entire home",
+    summary:
+      "A private, gated two-bedroom escape surrounded by greenery and cacti, with an inviting patio, outdoor dining, and all the comforts of home.",
+    description: [
+      "Casa Del Cactus is a freshly renovated getaway in Vista, where a peaceful setting and warm, simple interiors make it easy to settle in. Trees and cacti surround the home, providing a relaxing backdrop for friends or family.",
+      "Start the day with coffee outside, enjoy a meal from the barbecue on the deck, or unwind under open evening skies. Inside, guests have a full kitchen, laundry, Wi-Fi, air conditioning, and a workspace for longer or more flexible stays.",
+    ],
+    highlights: [
+      "Privately gated, recently renovated home",
+      "Patio seating and deck with barbecue",
+      "Full kitchen and coffee maker",
+      "Washer and dryer",
+      "Wi-Fi, air conditioning, and dedicated workspace",
+      "Free parking on premises",
+    ],
+    amenities: [
+      {
+        title: "Kitchen & dining",
+        items: ["Kitchen", "Coffee maker", "Cooking basics", "Outdoor barbecue", "Outdoor seating"],
+      },
+      {
+        title: "Comfort & convenience",
+        items: ["Wi-Fi", "Dedicated workspace", "TV", "Air conditioning", "Washer", "Dryer", "Hair dryer"],
+      },
+      {
+        title: "Outdoor & parking",
+        items: ["Private gated setting", "Patio", "Deck", "Free parking on premises"],
+      },
+    ],
+    sleeping: [],
+    checkIn: "After 4:00 PM",
+    checkOut: "Before 11:00 AM",
+    parking: "Free parking on premises",
+    wifi: "Wi-Fi included",
+    access: "Access instructions supplied before arrival",
+    houseRules: [
+      "Maximum of 5 guests",
+      "Check-in after 4:00 PM",
+      "Checkout before 11:00 AM",
+      "Review additional house rules on Airbnb before booking",
+    ],
+    safety: [
+      "Exterior security cameras on property",
+      "Carbon monoxide alarm",
+      "Smoke alarm",
+    ],
+    locationCopy:
+      "Casa Del Cactus is listed in Vista, California, near San Marcos in North County San Diego. The area offers access to parks, local dining, and other North County attractions.",
+    airbnbUrl: "https://www.airbnb.com/rooms/1798660872755121079",
+    rating: "",
+    reviewCount: 0,
+    guestFavorite: false,
+    reviewScores: [],
   },
 ];
 
