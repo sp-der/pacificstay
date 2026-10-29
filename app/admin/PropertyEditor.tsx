@@ -81,6 +81,18 @@ export default function PropertyEditor({token}:{token:string}) {
    <details><summary>Rates & booking limits</summary><p>USD. Nightly overrides below take priority. Confirm tax rates with your tax adviser before changing them.</p>
     {Object.entries({base_nightly_rate:'Default nightly rate ($)',weekend_nightly_rate:'Friday / Saturday nightly rate ($)',cleaning_fee:'Cleaning fee ($)',min_nights:'Minimum nights',max_nights:'Maximum nights',max_guests:'Maximum guests'}).map(([key,label])=><label key={key}>{label}<input required type="number" min={key.includes('nights')||key==='max_guests'?1:0} step={key.includes('rate')||key==='cleaning_fee'?'0.01':1} max={key==='max_guests'?30:key.includes('nights')?365:999999} value={draft[key as keyof ManagedProperty] as number??''} onChange={e=>{setDraft({...draft,[key]:Number(e.target.value)});setDirty(true);}}/></label>)}
     <label>Lodging tax & assessment (%)<input type="number" required min={0} max={100} step="0.001" value={Number(((draft.tax_rate??0)*100).toFixed(3))} onChange={e=>{setDraft({...draft,tax_rate:Number(e.target.value)/100});setDirty(true);}}/></label>
+    {draft.slug==='casa-del-cactus'&&<div style={{padding:'16px',marginTop:'14px',background:'rgba(49,91,94,.07)',borderRadius:'12px'}}>
+     <strong>Casa Del Cactus · Direct booking readiness</strong>
+     <p>Before enabling direct requests: confirm nightly rates, taxes, cleaning fee, minimum stay, guest capacity, and that Airbnb's booking calendar is connected and synced in Pacific Stay. Guests must not see unsynced dates as available.</p>
+     <label style={{display:'flex',flexDirection:'row',alignItems:'flex-start',gap:10}}>
+      <input type="checkbox" style={{width:20,height:20,flexShrink:0}} checked={Boolean(draft.content.directBookingEnabled)} onChange={e=>{
+       if(e.target.checked&&!(Number(draft.base_nightly_rate)>0)){setMessage('Set a valid default nightly rate before enabling Casa Del Cactus direct bookings.');return;}
+       content('directBookingEnabled',e.target.checked);
+      }}/>
+      <span>I have verified the pricing, calendar sync, house rules, and policies for Casa Del Cactus. Enable Pacific Stay direct booking requests.</span>
+     </label>
+     <p>Save changes to apply. If this is off, guests stay on Airbnb. Bookings are requests reviewed by Pacific Stay, not automatic confirmations.</p>
+    </div>}
    </details>
    <details><summary>Amenities & sleeping arrangements</summary>
     {(draft.content.amenities??[]).map((g,i)=><div key={i}><label>Amenity group<input value={g.title} onChange={e=>content('amenities',draft.content.amenities!.map((v,j)=>j===i?{...v,title:e.target.value}:v))}/></label><label>Amenities (one per line)<textarea rows={4} value={g.items.join('\n')} onChange={e=>content('amenities',draft.content.amenities!.map((v,j)=>j===i?{...v,items:e.target.value.split('\n')}:v))}/></label></div>)}
