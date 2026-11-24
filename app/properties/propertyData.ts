@@ -76,7 +76,7 @@ export const properties: Property[] = [
       "Jacuzzi, fire pit, outdoor shower & BBQ patio",
       "Beach cruisers for exploring Carlsbad Village",
       "Walkable access to restaurants, wine tasting rooms, shops and the coast",
-      "Guest favorite with a 4.88 rating",
+      "Guest favorite with a 4.92 rating",
       "Locally supported by Jami Jimenez",
     ],
     amenities: [
@@ -153,12 +153,12 @@ export const properties: Property[] = [
     locationCopy:
       "Chestnut By the Sea is in Carlsbad, California, near Carlsbad State Beach and Carlsbad Village. The beach is only a short walk away, while restaurants, wine tasting rooms, shopping, and other Village favorites are within an easy walk. The neighborhood is known for its scenic coastal setting and walkability.",
     airbnbUrl: "https://www.airbnb.com/h/chestnutbytheseav2",
-    rating: "4.88",
-    reviewCount: 24,
+    rating: "4.92",
+    reviewCount: 36,
     guestFavorite: true,
     reviewScores: [
-      { label: "Cleanliness", score: "4.8" },
-      { label: "Accuracy", score: "4.8" },
+      { label: "Cleanliness", score: "4.9" },
+      { label: "Accuracy", score: "4.9" },
       { label: "Check-in", score: "5.0" },
       { label: "Communication", score: "4.9" },
       { label: "Location", score: "5.0" },
